@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -38,7 +38,7 @@ public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnChartValueSelectedListener {
 
     @BindView(R.id.chartWorkTime)
-    PieChart mCartWorkTime;
+    PieChart mChartWorkTime;
 
     private DashboardPresenter mPresenter;
     private LoadingView mLoadingView;
@@ -73,35 +73,36 @@ public class DashboardActivity extends AppCompatActivity
     }
 
     private void setupChart() {
-        mCartWorkTime.setUsePercentValues(true);
-        mCartWorkTime.getDescription().setEnabled(false);
+        mChartWorkTime.setUsePercentValues(true);
+        mChartWorkTime.getDescription().setEnabled(false);
 
        // mCartWorkTime.setCenterTextTypeface(mTfLight);
-        mCartWorkTime.setCenterText("rty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty ");
+        mChartWorkTime.setCenterText("rty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty ");
 
-        mCartWorkTime.setDrawHoleEnabled(true);
-        mCartWorkTime.setHoleColor(Color.WHITE);
+        mChartWorkTime.setDrawHoleEnabled(true);
+        mChartWorkTime.setHoleColor(Color.WHITE);
 
-        mCartWorkTime.setTransparentCircleColor(Color.WHITE);
-        mCartWorkTime.setTransparentCircleAlpha(70);
-        mCartWorkTime.setHoleRadius(65f);
-        mCartWorkTime.setTransparentCircleRadius(70f);
-        mCartWorkTime.setDrawCenterText(true);
-        mCartWorkTime.setRotationAngle(0);
-        mCartWorkTime.setRotationEnabled(false);
-        mCartWorkTime.setHighlightPerTapEnabled(true);
+        mChartWorkTime.setTransparentCircleColor(Color.WHITE);
+        mChartWorkTime.setTransparentCircleAlpha(70);
+        mChartWorkTime.setHoleRadius(65f);
+        mChartWorkTime.setTransparentCircleRadius(70f);
+        mChartWorkTime.setDrawCenterText(true);
+        mChartWorkTime.setRotationAngle(0);
+        mChartWorkTime.setRotationEnabled(false);
+        mChartWorkTime.setHighlightPerTapEnabled(true);
 
-        mCartWorkTime.setOnChartValueSelectedListener(this);
+        mChartWorkTime.setOnChartValueSelectedListener(this);
 
-        mCartWorkTime.getLegend().setForm(Legend.LegendForm.CIRCLE);
-        mCartWorkTime.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
-        mCartWorkTime.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
-        mCartWorkTime.getLegend().setTextSize(13);
+//        mChartWorkTime.getLegend().setForm(Legend.LegendForm.CIRCLE);
+//        mChartWorkTime.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
+//        mChartWorkTime.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
+//        mChartWorkTime.getLegend().setTextSize(13);
+        mChartWorkTime.getLegend().setEnabled(false);
 
-        setData(3, 100);
+        setData(3);
 
-        mCartWorkTime.setEntryLabelColor(Color.WHITE);
-        mCartWorkTime.setEntryLabelTextSize(12f);
+        mChartWorkTime.setEntryLabelColor(Color.WHITE);
+        mChartWorkTime.setEntryLabelTextSize(13f);
     }
 
     @Override
@@ -109,7 +110,7 @@ public class DashboardActivity extends AppCompatActivity
 
         if (e == null)
             return;
-        mCartWorkTime.setCenterText("VAL SELECTED"+
+        mChartWorkTime.setCenterText("VAL SELECTED"+
                 "Value: " + e.getY() + ", index: " + h.getX()
                         + ", DataSet index: " + h.getDataSetIndex());
     }
@@ -119,25 +120,20 @@ public class DashboardActivity extends AppCompatActivity
         Log.i("PieChart", "nothing selected");
     }
 
-    private void setData(int count, float range) {
-
-        float mult = range;
+    private void setData(int count) {
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
 
-        // NOTE: The order of the entries when being added to the entries array determines their position around the center of
-        // the chart.
-
         entries.add(new PieEntry(60,
-                "Regular",
+                "",
                 null));
 
         entries.add(new PieEntry(30,
-                "F%ckup",
+                "",
                 null));
 
         entries.add(new PieEntry(10,
-                "Team f%ckup",
+                "",
                 null));
 
 
@@ -148,34 +144,27 @@ public class DashboardActivity extends AppCompatActivity
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(10f);
 
-        // add a lot of colors
-
         ArrayList<Integer> colors = new ArrayList<Integer>();
 
-        //for (int c : Color.BLUE)
-            colors.add(Color.BLUE);
-
-        //for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(Color.RED);
-
-        //for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(Color.GREEN);
+        colors.add(ContextCompat.getColor(this, R.color.colorRegular));
+        colors.add(ContextCompat.getColor(this, R.color.colorFuckup));
+        colors.add(ContextCompat.getColor(this, R.color.colorTeamFuckup));
 
 
         dataSet.setColors(colors);
-        //dataSet.setSelectionShift(0f);
+        dataSet.setSelectionShift(10f);
 
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(11f);
         data.setValueTextColor(Color.WHITE);
         //data.setValueTypeface(mTfLight);
-        mCartWorkTime.setData(data);
+        mChartWorkTime.setData(data);
 
         // undo all highlights
-        mCartWorkTime.highlightValues(null);
+        mChartWorkTime.highlightValues(null);
 
-        mCartWorkTime.invalidate();
+        mChartWorkTime.invalidate();
     }
 
     @Override
