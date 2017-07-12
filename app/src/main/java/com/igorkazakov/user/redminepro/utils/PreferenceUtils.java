@@ -19,6 +19,7 @@ public class PreferenceUtils {
     private static final String USER_PASSWORD = "USER_PASSWORD";
     private static final String USER_NAME = "USER_NAME";
     private static final String USER_MAIL = "USER_MAIL";
+    private static final String SAVE_CREDENTIALS = "SAVE_CREDENTIALS";
 
     public PreferenceUtils() {}
 
@@ -28,6 +29,7 @@ public class PreferenceUtils {
     }
 
     public static void releasePreferenceUtils() {
+        sPreferenceUtils.cleanUserCredentials();
         sPreferenceUtils.mSharedPreferences = null;
         sPreferenceUtils = null;
     }
@@ -74,6 +76,25 @@ public class PreferenceUtils {
 
     public String getUserMail() {
         return getStringValue(USER_MAIL, "");
+    }
+
+    public void saveUserCredentials(boolean value) {
+        setValue(SAVE_CREDENTIALS, value);
+    }
+
+    public boolean getUserCredentials() {
+        return getBooleanValue(SAVE_CREDENTIALS, false);
+    }
+
+    public void cleanUserCredentials() {
+
+        if (!sPreferenceUtils.getUserCredentials()) {
+            sPreferenceUtils.saveUserMail("");
+            sPreferenceUtils.saveUserName("");
+            sPreferenceUtils.saveUserId(-1);
+            sPreferenceUtils.saveUserPassword("");
+            sPreferenceUtils.saveUserLogin("");
+        }
     }
 
     private void setValue(String key, String value){

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.api.ContentType;
-import com.igorkazakov.user.redminepro.api.responseEntity.User;
+import com.igorkazakov.user.redminepro.api.response.LoginResponse;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
@@ -19,19 +19,19 @@ import rx.schedulers.Schedulers;
 public class RedmineRepository {
 
     @NonNull
-    public Observable<User> auth(@NonNull String login, @NonNull String password) {
+    public static Observable<LoginResponse> auth(@NonNull String login, @NonNull String password) {
 
         String authString = AuthorizationUtils.createAuthorizationString(login, password);
         return ApiFactory.getRedmineService()
                 .login(authString, ContentType.JSON.getValue())
-                .flatMap(user -> {
+                .flatMap(loginResponse -> {
 
-                    PreferenceUtils.getInstance().saveUserId(user.getId());
-                    PreferenceUtils.getInstance().saveUserLogin(user.getLogin());
-                    PreferenceUtils.getInstance().saveUserName(user.getFirstName() + " " + user.getLastName());
-                    PreferenceUtils.getInstance().saveUserMail(user.getMail());
+                    PreferenceUtils.getInstance().saveUserId(loginResponse.getUser().getId());
+                    PreferenceUtils.getInstance().saveUserLogin(loginResponse.getUser().getLogin());
+                    PreferenceUtils.getInstance().saveUserName(loginResponse.getUser().getFirstName() + " " + loginResponse.getUser().getLastName());
+                    PreferenceUtils.getInstance().saveUserMail(loginResponse.getUser().getMail());
                     ApiFactory.recreate();
-                    return Observable.just(user);
+                    return Observable.just(loginResponse);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

@@ -1,6 +1,7 @@
 package com.igorkazakov.user.redminepro.api;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.User;
+import com.igorkazakov.user.redminepro.api.response.LoginResponse;
+
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import rx.Observable;
@@ -12,7 +13,7 @@ import rx.Observable;
 public interface RedmineService {
 
     @GET("/users/current.json")
-    Observable<User> login(@Header("Authorization") String authorization,
-                           @Header("Content-Type") String contentType);
+    Observable<LoginResponse> login(@Header("Authorization") String authorization,
+                                    @Header("Content-Type") String contentType);
 
 }

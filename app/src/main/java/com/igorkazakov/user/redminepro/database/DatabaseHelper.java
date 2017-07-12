@@ -3,7 +3,7 @@ package com.igorkazakov.user.redminepro.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.igorkazakov.user.redminepro.entity.User;
+import com.igorkazakov.user.redminepro.database.entity.User;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;

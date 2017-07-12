@@ -1,9 +1,7 @@
-package com.igorkazakov.user.redminepro.entity;
+package com.igorkazakov.user.redminepro.database.entity;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
-import java.util.List;
 
 /**
  * Created by user on 11.07.17.
