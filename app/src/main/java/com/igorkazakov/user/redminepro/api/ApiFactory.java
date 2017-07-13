@@ -75,6 +75,7 @@ public final class ApiFactory {
 
         return new OkHttpClient.Builder()
                 .addInterceptor(LoggingInterceptor.create())
+                .addInterceptor(AuthInterceptor.create())
                 .build();
     }
 }

@@ -43,6 +43,9 @@ public class LoginPresenter {
             mLoginView.showPasswordError();
 
         } else {
+
+            PreferenceUtils.getInstance().saveUserPassword(password);
+
             RedmineRepository.auth(login, password)
                     .doOnSubscribe(mLoginView::showLoading)
                     .doOnTerminate(mLoginView::hideLoading)

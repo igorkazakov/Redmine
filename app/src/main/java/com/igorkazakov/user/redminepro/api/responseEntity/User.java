@@ -1,5 +1,6 @@
 package com.igorkazakov.user.redminepro.api.responseEntity;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -9,18 +10,23 @@ import com.google.gson.annotations.SerializedName;
 public class User {
 
     @SerializedName("id")
+    @Expose
     private int id;
 
     @SerializedName("login")
+    @Expose
     private String login;
 
     @SerializedName("firstname")
+    @Expose
     private String firstName;
 
     @SerializedName("lastname")
+    @Expose
     private String lastName;
 
     @SerializedName("mail")
+    @Expose
     private String mail;
 
     public int getId() {
