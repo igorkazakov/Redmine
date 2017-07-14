@@ -115,9 +115,9 @@ public class PreferenceUtils {
         ed.commit();
     }
 
-    private void setValue(String key, float value){
+    private void setValue(String key, long value){
         SharedPreferences.Editor ed = sPreferenceUtils.mSharedPreferences.edit();
-        ed.putFloat(key, value);
+        ed.putLong(key, value);
         ed.commit();
     }
 

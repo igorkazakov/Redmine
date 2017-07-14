@@ -17,6 +17,7 @@ public final class ApiFactory {
 
     private static OkHttpClient sClient;
     private static volatile RedmineService sService;
+    private static volatile OggyService sOggyService;
 
     private ApiFactory() {}
 
@@ -28,7 +29,23 @@ public final class ApiFactory {
             synchronized (ApiFactory.class) {
                 service = sService;
                 if (service == null) {
-                    service = sService = buildRetrofit().create(RedmineService.class);
+                    service = sService = buildRetrofit(BuildConfig.REDMINE_API_ENDPOINT).create(RedmineService.class);
+                }
+            }
+        }
+
+        return service;
+    }
+
+    @NonNull
+    public static OggyService getOggyService() {
+
+        OggyService service = sOggyService;
+        if (service == null) {
+            synchronized (ApiFactory.class) {
+                service = sOggyService;
+                if (service == null) {
+                    service = sOggyService = buildRetrofit(BuildConfig.OGGY_API_ENDPOINT).create(OggyService.class);
                 }
             }
         }
@@ -40,14 +57,14 @@ public final class ApiFactory {
     public static void recreate() {
         sClient = null;
         sClient = getClient();
-        sService = buildRetrofit().create(RedmineService.class);
+        sService = buildRetrofit(BuildConfig.REDMINE_API_ENDPOINT).create(RedmineService.class);
     }
 
     @NonNull
-    private static Retrofit buildRetrofit() {
+    private static Retrofit buildRetrofit(String baseUrl) {
 
         return new Retrofit.Builder()
-                .baseUrl(BuildConfig.API_ENDPOINT)
+                .baseUrl(baseUrl)
                 .client(getClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

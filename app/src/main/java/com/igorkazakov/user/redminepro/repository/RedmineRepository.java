@@ -14,7 +14,6 @@ import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -96,7 +95,7 @@ public class RedmineRepository {
     public static Observable<List<TimeEntryEntity>> getTimeEntriesWithInterval(String interval) {
 
         long userId = PreferenceUtils.getInstance().getUserId();
-        interval = "%3E%3C" + "2017-01-01|2017-07-13";
+        interval = "><" + "2017-01-01|2017-07-13";
         return ApiFactory.getRedmineService()
                 .timeEntriesForYear(limit, userId, offset, interval)
                 .flatMap(timeEntryResponse -> {
@@ -123,25 +122,23 @@ public class RedmineRepository {
                 .concatMap(new Func1<Integer, Observable<List<TimeEntryEntity>>>() {
                     @Override
                     public Observable<List<TimeEntryEntity>> call(Integer integer) {
-                        offset += limit;
+
                         return getTimeEntriesWithInterval("");
                     }
                 })
-                .takeUntil(timeEntryEntities -> !timeEntryEntities.isEmpty())
-                .toList()
-                .map(superList -> {
+                .takeUntil(timeEntryEntities -> {
 
-                    List<TimeEntryEntity> list = new ArrayList<TimeEntryEntity>();
-                    for (List<TimeEntryEntity> itemList : superList) {
-                        list.addAll(itemList);
-                    }
-
-                    return list;
+                    offset += limit;
+                    return timeEntryEntities.isEmpty();
                 })
-//                .scan((timeEntryEntities, timeEntryEntities2) -> {
-//                    timeEntryEntities.addAll(timeEntryEntities2);
-//                    return timeEntryEntities;
-//                })
+                .scan((accum, nextList) -> {
+
+                    if (nextList.isEmpty()) {
+                        offset = 0;
+                    }
+                    accum.addAll(nextList);
+                    return accum;
+                })
                 .subscribe(list -> System.out.println("total list size: " + list.size()));
     }
 

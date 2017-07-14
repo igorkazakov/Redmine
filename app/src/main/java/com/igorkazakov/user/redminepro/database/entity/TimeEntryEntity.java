@@ -191,9 +191,27 @@ public class TimeEntryEntity {
             timeEntryEntity.setSpentOn(item.getSpentOn());
             timeEntryEntity.setUpdatedOn(item.getUpdatedOn());
             timeEntryEntity.setCreatedOn(item.getCreatedOn());
+            timeEntryEntity.setType(item.getCustomFields().get(0).getValue());
             times.add(timeEntryEntity);
         }
 
         return times;
+    }
+
+    public enum TimeType {
+
+        REGULAR("Regular"),
+        FUCKUP("Fuc%up"),
+        TEAMFUCKUP("Team Fuc%up");
+
+        private String value;
+
+        private TimeType(String string){
+            this.value = string;
+        }
+
+        public String getValue(){
+            return  this.value;
+        }
     }
 }

@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -28,15 +27,12 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.api.responseEntity.LoginAndTimeEntries;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Observable;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnChartValueSelectedListener {
@@ -77,14 +73,18 @@ public class DashboardActivity extends AppCompatActivity
 
 
 
-        RedmineRepository.issuesWithTimeEntries()
-                .onErrorResumeNext(object -> {
-                    return Observable.just(new LoginAndTimeEntries(null, null));
-                })
-                .subscribe(object -> Toast.makeText(getApplicationContext(), "successres", Toast.LENGTH_LONG),
-                        throwable -> Toast.makeText(getApplicationContext(), "errorres", Toast.LENGTH_LONG));
+//        RedmineRepository.issuesWithTimeEntries()
+//                .onErrorResumeNext(object -> {
+//                    return Observable.just(new LoginAndTimeEntries(null, null));
+//                })
+//                .subscribe(object -> Toast.makeText(getApplicationContext(), "successres", Toast.LENGTH_LONG),
+//                        throwable -> Toast.makeText(getApplicationContext(), "errorres", Toast.LENGTH_LONG));
 
-        RedmineRepository.getTimeEntriesForYear();
+        //RedmineRepository.getTimeEntriesForYear();
+       // DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval();
+        //DateUtils.getPreviousWeekInterval();
+        //DateUtils.getCurrentWeekInterval();
+        //RedmineRepository.getTimeEntriesForYear();
     }
 
 

@@ -3,7 +3,9 @@ package com.igorkazakov.user.redminepro.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.igorkazakov.user.redminepro.database.dao.CalendarDayDAO;
 import com.igorkazakov.user.redminepro.database.dao.TimeEntryDAO;
+import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
@@ -21,6 +23,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     private TimeEntryDAO mTimeEntryDAO;
+    private CalendarDayDAO mCalendarDayDAO;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -58,6 +61,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         return mTimeEntryDAO;
+    }
+
+    public CalendarDayDAO getCalendarDayDAO() {
+
+        if (mCalendarDayDAO == null) {
+            try {
+                mCalendarDayDAO = new CalendarDayDAO(getConnectionSource(), CalendarDayEntity.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mCalendarDayDAO;
     }
 
     @Override
