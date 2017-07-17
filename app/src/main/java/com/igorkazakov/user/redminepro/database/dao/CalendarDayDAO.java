@@ -1,6 +1,8 @@
 package com.igorkazakov.user.redminepro.database.dao;
 
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
+import com.igorkazakov.user.redminepro.utils.DateUtils;
+import com.igorkazakov.user.redminepro.utils.TimeInterval;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -59,7 +61,22 @@ public class CalendarDayDAO extends BaseDaoImpl<CalendarDayEntity, Long> {
         }
     }
 
-    public long getHoursForYear() {
-        
+    public long getHoursNormForInterval(TimeInterval interval) {
+
+        long result = 0;
+
+        String sqlLong = " select sum(hours) as rt from CalendarDayEntity where " +
+                " CalendarDayEntity.date >= ? and CalendarDayEntity.date <= ?";
+
+        try {
+
+            String startDate = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
+            String endDate = DateUtils.stringFromDate(interval.getEnd(), DateUtils.getSimpleFormatter());
+            result = this.queryRawValue(sqlLong, startDate, endDate);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

@@ -33,6 +33,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, TimeEntryEntity.class);
+            TableUtils.createTable(connectionSource, CalendarDayEntity.class);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -43,6 +44,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             TableUtils.dropTable(connectionSource, TimeEntryEntity.class, true);
+            TableUtils.dropTable(connectionSource, CalendarDayEntity.class, true);
             onCreate(database, connectionSource);
 
         } catch (SQLException e) {

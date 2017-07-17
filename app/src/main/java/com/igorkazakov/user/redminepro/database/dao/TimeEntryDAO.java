@@ -2,12 +2,13 @@ package com.igorkazakov.user.redminepro.database.dao;
 
 import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
+import com.igorkazakov.user.redminepro.utils.TimeInterval;
+import com.igorkazakov.user.redminepro.utils.TimeModel;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,30 +62,31 @@ public final class TimeEntryDAO extends BaseDaoImpl<TimeEntryEntity, Long> {
         }
     }
 
-    public List<Long> getWorkHoursWithInterval(Date start, Date end) {
+    public TimeModel getWorkHoursWithInterval(TimeInterval interval) {
 
-        List<Long> result = new ArrayList<>();
+        TimeModel model = new TimeModel(0, 0, 0);
 
         String sqlLong = " select sum(hours) as rt from TimeEntryEntity where " +
                 " TimeEntryEntity.type = ? and TimeEntryEntity.spent_on >= ? and TimeEntryEntity.spent_on <= ?";
 
         try {
 
-            String startDate = DateUtils.stringFromDate(start, DateUtils.getSimpleFormatter());
-            String endDate = DateUtils.stringFromDate(end, DateUtils.getSimpleFormatter());
+            String startDate = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
+            String endDate = DateUtils.stringFromDate(interval.getEnd(), DateUtils.getSimpleFormatter());
 
             long regular = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.REGULAR.getValue(), startDate, endDate);
             long fuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.FUCKUP.getValue(), startDate, endDate);
             long teamFuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.TEAMFUCKUP.getValue(), startDate, endDate);
 
-            result.add(regular);
-            result.add(fuckup);
-            result.add(teamFuckup);
+            model.setRegularTime(regular);
+            model.setFuckupTime(fuckup);
+            model.setTeamFuckupTime(teamFuckup);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return result;
+
+        return model;
     }
 }
 

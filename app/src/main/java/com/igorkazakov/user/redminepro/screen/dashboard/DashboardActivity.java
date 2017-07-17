@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -27,15 +28,18 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.screen.general.LoadingDialog;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.arturvasilov.rxloader.LifecycleHandler;
+import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
 public class DashboardActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnChartValueSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnChartValueSelectedListener, DashboardView {
 
     @BindView(R.id.chartWorkTime)
     PieChart mChartWorkTime;
@@ -71,20 +75,12 @@ public class DashboardActivity extends AppCompatActivity
 
         setupChart();
 
+        mLoadingView = LoadingDialog.view(getSupportFragmentManager());
+        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
+        mPresenter = new DashboardPresenter(lifecycleHandler, this);
+        mPresenter.tryLoadDashboardData();
 
 
-//        RedmineRepository.issuesWithTimeEntries()
-//                .onErrorResumeNext(object -> {
-//                    return Observable.just(new LoginAndTimeEntries(null, null));
-//                })
-//                .subscribe(object -> Toast.makeText(getApplicationContext(), "successres", Toast.LENGTH_LONG),
-//                        throwable -> Toast.makeText(getApplicationContext(), "errorres", Toast.LENGTH_LONG));
-
-        //RedmineRepository.getTimeEntriesForYear();
-       // DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval();
-        //DateUtils.getPreviousWeekInterval();
-        //DateUtils.getCurrentWeekInterval();
-        //RedmineRepository.getTimeEntriesForYear();
     }
 
 
@@ -94,7 +90,7 @@ public class DashboardActivity extends AppCompatActivity
         mChartWorkTime.getDescription().setEnabled(false);
 
        // mCartWorkTime.setCenterTextTypeface(mTfLight);
-        mChartWorkTime.setCenterText("rty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty qwerty ");
+        mChartWorkTime.setCenterText(" qwerty ");
 
         mChartWorkTime.setDrawHoleEnabled(true);
         mChartWorkTime.setHoleColor(Color.WHITE);
@@ -110,10 +106,10 @@ public class DashboardActivity extends AppCompatActivity
 
         mChartWorkTime.setOnChartValueSelectedListener(this);
 
-//        mChartWorkTime.getLegend().setForm(Legend.LegendForm.CIRCLE);
-//        mChartWorkTime.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
-//        mChartWorkTime.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
-//        mChartWorkTime.getLegend().setTextSize(13);
+        mChartWorkTime.getLegend().setForm(Legend.LegendForm.CIRCLE);
+        mChartWorkTime.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
+        mChartWorkTime.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
+        mChartWorkTime.getLegend().setTextSize(13);
         mChartWorkTime.getLegend().setEnabled(false);
 
         setData(3);
@@ -231,5 +227,15 @@ public class DashboardActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
     }
 }

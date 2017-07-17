@@ -73,10 +73,28 @@ public class DateUtils {
         return new TimeInterval(start, end);
     }
 
+    public static TimeInterval getMonthInterval(int month) {
+
+        Date start, end;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.MONTH, month);
+
+        calendar.set(Calendar.DAY_OF_MONTH,
+                calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+
+        start = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH,
+                calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        end = calendar.getTime();
+
+        return new TimeInterval(start, end);
+    }
+
     public static TimeInterval getIntervalFromStartYear() {
 
         Date currentDate = new Date();
-        int year= currentDate.getYear();
+        int year = Calendar.getInstance().get(Calendar.YEAR);
         Calendar calendarStart = Calendar.getInstance();
         calendarStart.set(Calendar.YEAR,year);
         calendarStart.set(Calendar.MONTH,0);
