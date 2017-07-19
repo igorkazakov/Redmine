@@ -4,8 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorFuckup">#D74826</color>
-    <color name="colorTeamFuckup">#EFAA65</color>
-    <color name="colorRegular">#2A9CC0</color>
+    <color name="colorFuckup">#F44336</color>
+    <color name="colorTeamFuckup">#F9A825</color>
+    <color name="colorRegular">#00695C</color>
 
 </resources>

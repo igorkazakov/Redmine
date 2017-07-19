@@ -3,6 +3,7 @@ package com.igorkazakov.user.redminepro.screen.dashboard;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -30,6 +30,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.screen.general.LoadingDialog;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
+import com.igorkazakov.user.redminepro.utils.TimeModel;
 
 import java.util.ArrayList;
 
@@ -72,29 +73,33 @@ public class DashboardActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        setupChart();
-
         mLoadingView = LoadingDialog.view(getSupportFragmentManager());
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mPresenter = new DashboardPresenter(lifecycleHandler, this);
         mPresenter.tryLoadDashboardData();
-
+        setupChart(mPresenter.getHoursForYear(), mPresenter.calculateKpiForYear());
 
     }
 
+    private int getColorForKpi(float kpi) {
 
+        if (kpi >= mPresenter.getNormalKpi()) {
+            return ContextCompat.getColor(this, R.color.colorRegular);
 
-    private void setupChart() {
+        } else {
+            return ContextCompat.getColor(this, R.color.colorFuckup);
+        }
+    }
+
+    private void setupChart(TimeModel model, float kpi) {
         mChartWorkTime.setUsePercentValues(true);
         mChartWorkTime.getDescription().setEnabled(false);
-
-       // mCartWorkTime.setCenterTextTypeface(mTfLight);
-        mChartWorkTime.setCenterText(" qwerty ");
-
+        mChartWorkTime.setCenterTextSize(16);
+        mChartWorkTime.setCenterText("KPI\n" + String.valueOf(kpi));
+        mChartWorkTime.setCenterTextColor(getColorForKpi(kpi));
+        mChartWorkTime.setCenterTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         mChartWorkTime.setDrawHoleEnabled(true);
         mChartWorkTime.setHoleColor(Color.WHITE);
-
         mChartWorkTime.setTransparentCircleColor(Color.WHITE);
         mChartWorkTime.setTransparentCircleAlpha(70);
         mChartWorkTime.setHoleRadius(65f);
@@ -103,18 +108,22 @@ public class DashboardActivity extends AppCompatActivity
         mChartWorkTime.setRotationAngle(0);
         mChartWorkTime.setRotationEnabled(false);
         mChartWorkTime.setHighlightPerTapEnabled(true);
-
         mChartWorkTime.setOnChartValueSelectedListener(this);
 
-        mChartWorkTime.getLegend().setForm(Legend.LegendForm.CIRCLE);
-        mChartWorkTime.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
-        mChartWorkTime.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
-        mChartWorkTime.getLegend().setTextSize(13);
-        mChartWorkTime.getLegend().setEnabled(false);
+        Legend l = mChartWorkTime.getLegend();
+        l.setForm(Legend.LegendForm.CIRCLE);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setTextSize(9);
+        l.setDrawInside(false);
+        l.setXEntrySpace(7f);
+        l.setYEntrySpace(0f);
+        l.setYOffset(0f);
 
-        setData(3);
-
+        setData(model);
         mChartWorkTime.setEntryLabelColor(Color.WHITE);
+        mChartWorkTime.setDrawEntryLabels(false);
         mChartWorkTime.setEntryLabelTextSize(13f);
     }
 
@@ -123,52 +132,40 @@ public class DashboardActivity extends AppCompatActivity
 
         if (e == null)
             return;
-        mChartWorkTime.setCenterText("VAL SELECTED"+
-                "Value: " + e.getY() + ", index: " + h.getX()
-                        + ", DataSet index: " + h.getDataSetIndex());
+
+        PieEntry entry = (PieEntry) e;
+        mChartWorkTime.setCenterText("KPI\n" +
+                String.valueOf(mPresenter.calculateKpiForYear()) + "\n" +
+                entry.getLabel() + "\n" +
+                String.valueOf((int)entry.getValue()) + "h");
     }
 
     @Override
-    public void onNothingSelected() {
-        Log.i("PieChart", "nothing selected");
-    }
+    public void onNothingSelected() {}
 
-    private void setData(int count) {
+    private void setData(TimeModel model) {
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
 
-        entries.add(new PieEntry(60, "", null));
-        entries.add(new PieEntry(30, "", null));
-        entries.add(new PieEntry(10, "", null));
-
+        entries.add(new PieEntry(model.getRegularTime(), "REGULAR", null));
+        entries.add(new PieEntry(model.getFuckupTime(), "F%CKUP", null));
+        entries.add(new PieEntry(model.getTeamFuckupTime(), "TEAM F%UCKUP", null));
 
         PieDataSet dataSet = new PieDataSet(entries, "");
-
-        dataSet.setDrawIcons(false);
-
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(10f);
 
         ArrayList<Integer> colors = new ArrayList<Integer>();
-
         colors.add(ContextCompat.getColor(this, R.color.colorRegular));
         colors.add(ContextCompat.getColor(this, R.color.colorFuckup));
         colors.add(ContextCompat.getColor(this, R.color.colorTeamFuckup));
-
-
         dataSet.setColors(colors);
         dataSet.setSelectionShift(10f);
-
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
+        data.setValueTextSize(10f);
         data.setValueTextColor(Color.WHITE);
-        //data.setValueTypeface(mTfLight);
         mChartWorkTime.setData(data);
-
-        // undo all highlights
-        mChartWorkTime.highlightValues(null);
-
         mChartWorkTime.invalidate();
     }
 
@@ -231,11 +228,11 @@ public class DashboardActivity extends AppCompatActivity
 
     @Override
     public void showLoading() {
-
+        mLoadingView.showLoading();
     }
 
     @Override
     public void hideLoading() {
-
+        mLoadingView.hideLoading();
     }
 }

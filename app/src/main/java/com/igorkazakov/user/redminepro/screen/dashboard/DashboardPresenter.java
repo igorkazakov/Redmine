@@ -22,6 +22,11 @@ public class DashboardPresenter {
 
     private LifecycleHandler mLifecycleHandler;
     private DashboardView mView;
+    private float normalKpi = 0.7f;
+
+    public float getNormalKpi() {
+        return normalKpi;
+    }
 
     public  DashboardPresenter(@NonNull LifecycleHandler lifecycleHandler, @NonNull DashboardView view) {
 
@@ -36,6 +41,11 @@ public class DashboardPresenter {
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.auth_request))
                 .subscribe();
+    }
+
+    public TimeModel getHoursForYear() {
+        TimeInterval interval = DateUtils.getIntervalFromStartYear();
+        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
     }
 
     public float calculateKpiForYear() {
@@ -74,7 +84,20 @@ public class DashboardPresenter {
         return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
     }
 
-//    public float remainHours() {
-//
-//    }
+    public float remainHoursForNormalKpi() {
+
+        TimeInterval interval = DateUtils.getCurrentWeekInterval();
+        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
+        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
+
+        return norm / normalKpi - (model.getRegularTime() + model.getTeamFuckupTime());
+    }
+
+    public float remainDaysForWeek() {
+
+        TimeInterval interval = DateUtils.getCurrentWeekInterval();
+        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
+        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
+        return norm - (model.getRegularTime() + model.getTeamFuckupTime() + model.getTeamFuckupTime());
+    }
 }
