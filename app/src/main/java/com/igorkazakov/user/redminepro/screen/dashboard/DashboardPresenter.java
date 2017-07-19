@@ -40,7 +40,8 @@ public class DashboardPresenter {
                 .doOnSubscribe(mView::showLoading)
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.auth_request))
-                .subscribe();
+                .subscribe(response -> mView.setupView(),
+                        throwable -> throwable.printStackTrace());
     }
 
     public TimeModel getHoursForYear() {

@@ -8,5 +8,5 @@ import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 
 public interface DashboardView extends LoadingView {
 
-
+    void setupView();
 }
