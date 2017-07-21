@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.utils;
+package com.igorkazakov.user.redminepro.models;
 
 /**
  * Created by user on 17.07.17.

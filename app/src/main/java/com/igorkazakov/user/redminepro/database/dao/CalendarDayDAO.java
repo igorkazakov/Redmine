@@ -2,12 +2,13 @@ package com.igorkazakov.user.redminepro.database.dao;
 
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
-import com.igorkazakov.user.redminepro.utils.TimeInterval;
+import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +31,8 @@ public class CalendarDayDAO extends BaseDaoImpl<CalendarDayEntity, Long> {
             return calendarDayEntityList;
         }
     }
+
+
 
     public void saveCalendarDay(CalendarDayEntity calendarDayEntity) {
 
@@ -79,4 +82,47 @@ public class CalendarDayDAO extends BaseDaoImpl<CalendarDayEntity, Long> {
         }
         return result;
     }
+
+    public long getHoursNormForDate(Date date) {
+
+        long result = 0;
+
+        String sqlLong = " select sum(hours) as rt from CalendarDayEntity where " +
+                " CalendarDayEntity.date == ? ";
+
+        try {
+
+            String queryDate = DateUtils.stringFromDate(date, DateUtils.getSimpleFormatter());
+
+            result = this.queryRawValue(sqlLong, queryDate);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+//    public long getHoursNormForIntervalWithObjects(TimeInterval interval) {
+//
+//        List<CalendarDayEntity> calendarDayEntityList = new ArrayList();
+//        long result = 0;
+//
+//        try {
+//
+//            String startDate = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
+//            String endDate = DateUtils.stringFromDate(interval.getEnd(), DateUtils.getSimpleFormatter());
+//            calendarDayEntityList = this.queryBuilder().where().
+//                    between("date", startDate, endDate).query();
+//
+//            for (int i = 0; i < calendarDayEntityList.size(); i++) {
+//
+//                CalendarDayEntity item = calendarDayEntityList.get(i);
+//                result += item.getHours();
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } finally {
+//            return result;
+//        }
+//    }
 }

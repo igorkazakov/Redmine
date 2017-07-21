@@ -2,13 +2,14 @@ package com.igorkazakov.user.redminepro.database.dao;
 
 import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
-import com.igorkazakov.user.redminepro.utils.TimeInterval;
-import com.igorkazakov.user.redminepro.utils.TimeModel;
+import com.igorkazakov.user.redminepro.models.TimeInterval;
+import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,6 +78,32 @@ public final class TimeEntryDAO extends BaseDaoImpl<TimeEntryEntity, Long> {
             long regular = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.REGULAR.getValue(), startDate, endDate);
             long fuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.FUCKUP.getValue(), startDate, endDate);
             long teamFuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.TEAMFUCKUP.getValue(), startDate, endDate);
+
+            model.setRegularTime(regular);
+            model.setFuckupTime(fuckup);
+            model.setTeamFuckupTime(teamFuckup);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return model;
+    }
+
+    public TimeModel getWorkHoursWithDate(Date date) {
+
+        TimeModel model = new TimeModel(0, 0, 0);
+
+        String sqlLong = " select sum(hours) as rt from TimeEntryEntity where " +
+                " TimeEntryEntity.type = ? and TimeEntryEntity.spent_on == ? ";
+
+        try {
+
+            String queryDate = DateUtils.stringFromDate(date, DateUtils.getSimpleFormatter());
+
+            long regular = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.REGULAR.getValue(), queryDate);
+            long fuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.FUCKUP.getValue(), queryDate);
+            long teamFuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.TEAMFUCKUP.getValue(), queryDate);
 
             model.setRegularTime(regular);
             model.setFuckupTime(fuckup);

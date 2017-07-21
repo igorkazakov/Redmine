@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.utils;
+package com.igorkazakov.user.redminepro.models;
 
 import java.util.Date;
 

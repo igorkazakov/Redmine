@@ -2,15 +2,18 @@ package com.igorkazakov.user.redminepro.screen.dashboard;
 
 import android.support.annotation.NonNull;
 
+import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.models.TimeInterval;
+import com.igorkazakov.user.redminepro.models.TimeModel;
+import com.igorkazakov.user.redminepro.repository.OggyRepository;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
-import com.igorkazakov.user.redminepro.utils.TimeInterval;
-import com.igorkazakov.user.redminepro.utils.TimeModel;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import ru.arturvasilov.rxloader.LifecycleHandler;
 
@@ -22,11 +25,6 @@ public class DashboardPresenter {
 
     private LifecycleHandler mLifecycleHandler;
     private DashboardView mView;
-    private float normalKpi = 0.7f;
-
-    public float getNormalKpi() {
-        return normalKpi;
-    }
 
     public  DashboardPresenter(@NonNull LifecycleHandler lifecycleHandler, @NonNull DashboardView view) {
 
@@ -36,17 +34,50 @@ public class DashboardPresenter {
 
     public void tryLoadDashboardData() {
 
-        RedmineRepository.loadDashboardScreenData()
+//        RedmineRepository.loadDashboardScreenData()
+//                .doOnSubscribe(mView::showLoading)
+//                .doOnTerminate(mView::hideLoading)
+//                .compose(mLifecycleHandler.reload(R.id.auth_request))
+//                .subscribe(response -> mView.setupView(),
+//                        throwable -> throwable.printStackTrace());
+
+        RedmineRepository.getTimeEntriesForYear()
                 .doOnSubscribe(mView::showLoading)
+                .doOnTerminate(() -> loadCalendarData())
+                .compose(mLifecycleHandler.load(R.id.time_entry_request))
+                .subscribe(response -> {},
+                        throwable -> throwable.printStackTrace());
+    }
+
+    public void loadCalendarData() {
+
+        OggyRepository.getCalendarDaysForYear()
                 .doOnTerminate(mView::hideLoading)
-                .compose(mLifecycleHandler.reload(R.id.auth_request))
+                .compose(mLifecycleHandler.load(R.id.calendar_days_request))
                 .subscribe(response -> mView.setupView(),
                         throwable -> throwable.printStackTrace());
+
     }
 
     public TimeModel getHoursForYear() {
         TimeInterval interval = DateUtils.getIntervalFromStartYear();
         return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
+    }
+
+    public TimeModel getHoursForCurrentMonth() {
+        int month = Calendar.getInstance().get(Calendar.MONTH);
+        TimeInterval interval = DateUtils.getMonthInterval(month);
+        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
+    }
+
+    public TimeModel getHoursForYesterday() {
+        Date date = DateUtils.getYesterday();
+        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithDate(date);
+    }
+
+    public TimeModel getHoursForToday() {
+        Date date = new Date();
+        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithDate(date);
     }
 
     public float calculateKpiForYear() {
@@ -60,9 +91,17 @@ public class DashboardPresenter {
 
     public float calculateKpiForCurrentMonth() {
 
-        TimeInterval interval = DateUtils.getMonthInterval(Calendar.getInstance().get(Calendar.MONTH));
-        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
+        TimeInterval interval = DateUtils.getCurrentMonthInterval();
+        TimeModel model = getHoursForCurrentMonth();
         float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
+
+        return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
+    }
+
+    public float calculateKpiForDate(Date date) {
+
+        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithDate(date);
+        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForDate(date);
 
         return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
     }
@@ -76,8 +115,18 @@ public class DashboardPresenter {
         return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
     }
 
-    public float calculateKpiForPreviousWeek() {
+    public TimeModel getHoursForPreviousWeek() {
+        TimeInterval interval = DateUtils.getPreviousWeekInterval();
+        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
+    }
 
+    public TimeModel getHoursForCurrentWeek() {
+        TimeInterval interval = DateUtils.getCurrentWeekInterval();
+        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
+    }
+
+
+    public float calculateKpiForPreviousWeek() {
         TimeInterval interval = DateUtils.getPreviousWeekInterval();
         TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
         float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
@@ -85,18 +134,23 @@ public class DashboardPresenter {
         return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
     }
 
+    public float getWholeCurrentWeekHoursNorm() {
+        TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
+        return DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
+    }
+
     public float remainHoursForNormalKpi() {
 
-        TimeInterval interval = DateUtils.getCurrentWeekInterval();
+        TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
         float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
 
-        return norm / normalKpi - (model.getRegularTime() + model.getTeamFuckupTime());
+        return NumberUtils.round(norm * BuildConfig.NORMAL_KPI - (model.getRegularTime() + model.getTeamFuckupTime()));
     }
 
     public float remainDaysForWeek() {
 
-        TimeInterval interval = DateUtils.getCurrentWeekInterval();
+        TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
         float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
         return norm - (model.getRegularTime() + model.getTeamFuckupTime() + model.getTeamFuckupTime());

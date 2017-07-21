@@ -15,7 +15,7 @@ import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
-import com.igorkazakov.user.redminepro.utils.TimeInterval;
+import com.igorkazakov.user.redminepro.models.TimeInterval;
 
 import java.util.List;
 

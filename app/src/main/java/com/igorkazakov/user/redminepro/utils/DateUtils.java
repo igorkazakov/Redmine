@@ -1,5 +1,7 @@
 package com.igorkazakov.user.redminepro.utils;
 
+import com.igorkazakov.user.redminepro.models.TimeInterval;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,6 +38,12 @@ public class DateUtils {
         return format.format(date);
     }
 
+    public static Date getYesterday() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -1);
+        return c.getTime();
+    }
+
     public static Date getMonday(Date date) {
 
         Calendar c = Calendar.getInstance();
@@ -63,13 +71,35 @@ public class DateUtils {
 
     public static TimeInterval getCurrentWeekInterval() {
 
-        int daysForCurrentSunday = 6;
         Calendar c = Calendar.getInstance();
         c.setTime(DateUtils.getMonday(new Date()));
-        Date end = c.getTime();
-        c.add(Calendar.DATE, daysForCurrentSunday);
         Date start = c.getTime();
+        Date end = new Date();
 
+        return new TimeInterval(start, end);
+    }
+
+    public static TimeInterval getCurrentMonthInterval() {
+
+        Date start, end;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.DAY_OF_MONTH,
+                calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+
+        start = calendar.getTime();
+
+        end = new Date();
+        return new TimeInterval(start, end);
+    }
+
+    public static TimeInterval getCurrentWholeWeekInterval() {
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(DateUtils.getMonday(new Date()));
+        Date start = c.getTime();
+        c.add(Calendar.DAY_OF_WEEK, 6);
+        Date end = c.getTime();
         return new TimeInterval(start, end);
     }
 

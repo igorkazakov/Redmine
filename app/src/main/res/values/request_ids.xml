@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="auth_request" type="id"/>
+    <item name="time_entry_request" type="id"/>
+    <item name="calendar_days_request" type="id"/>
 </resources>

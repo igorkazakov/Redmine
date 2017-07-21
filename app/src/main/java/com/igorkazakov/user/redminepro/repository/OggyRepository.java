@@ -12,8 +12,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func2;
-import rx.functions.Func6;
 import rx.schedulers.Schedulers;
 
 /**
@@ -70,23 +68,19 @@ public class OggyRepository {
                 calendarDay5,
                 calendarDay6,
 
-                new Func6<List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>>() {
+                (calendarDayEntities,
+                 calendarDayEntities1,
+                 calendarDayEntities2,
+                 calendarDayEntities3,
+                 calendarDayEntities4,
+                 calendarDayEntities5) -> {
 
-                    @Override
-                    public List<CalendarDayEntity> call(List<CalendarDayEntity> calendarDayEntities,
-                                                        List<CalendarDayEntity> calendarDayEntities1,
-                                                        List<CalendarDayEntity> calendarDayEntities2,
-                                                        List<CalendarDayEntity> calendarDayEntities3,
-                                                        List<CalendarDayEntity> calendarDayEntities4,
-                                                        List<CalendarDayEntity> calendarDayEntities5) {
-                        return null;
-                    }
+                    calendarDayEntities.addAll(calendarDayEntities1);
+                    calendarDayEntities.addAll(calendarDayEntities2);
+                    calendarDayEntities.addAll(calendarDayEntities3);
+                    calendarDayEntities.addAll(calendarDayEntities4);
+                    calendarDayEntities.addAll(calendarDayEntities5);
+                    return calendarDayEntities;
                 });
 
         Observable<List<CalendarDayEntity>> observable2 = Observable.zip(calendarDay7,
@@ -96,31 +90,25 @@ public class OggyRepository {
                 calendarDay11,
                 calendarDay12,
 
-                new Func6<List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>,
-                        List<CalendarDayEntity>>() {
+                (calendarDayEntities,
+                 calendarDayEntities1,
+                 calendarDayEntities2,
+                 calendarDayEntities3,
+                 calendarDayEntities4,
+                 calendarDayEntities5) -> {
 
-                    @Override
-                    public List<CalendarDayEntity> call(List<CalendarDayEntity> calendarDayEntities,
-                                                        List<CalendarDayEntity> calendarDayEntities1,
-                                                        List<CalendarDayEntity> calendarDayEntities2,
-                                                        List<CalendarDayEntity> calendarDayEntities3,
-                                                        List<CalendarDayEntity> calendarDayEntities4,
-                                                        List<CalendarDayEntity> calendarDayEntities5) {
-                        return null;
-                    }
+                    calendarDayEntities.addAll(calendarDayEntities1);
+                    calendarDayEntities.addAll(calendarDayEntities2);
+                    calendarDayEntities.addAll(calendarDayEntities3);
+                    calendarDayEntities.addAll(calendarDayEntities4);
+                    calendarDayEntities.addAll(calendarDayEntities5);
+                    return calendarDayEntities;
                 });
 
         return Observable.zip(observable1, observable2,
-        new Func2<List<CalendarDayEntity>, List<CalendarDayEntity>, List<CalendarDayEntity>>() {
-            @Override
-            public List<CalendarDayEntity> call(List<CalendarDayEntity> listObservable, List<CalendarDayEntity> listObservable2) {
-                return null;
-            }
-        });
+                (listObservable, listObservable2) -> {
+                    listObservable.addAll(listObservable2);
+                    return listObservable;
+                });
     }
 }
