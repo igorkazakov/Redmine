@@ -27,6 +27,7 @@
         <activity
             android:name=".screen.dashboard.DashboardActivity"
             android:label="@string/title_activity_dashboard"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "REDMINE_API_ENDPOINT", '"http://redmine.oggettoweb.com"'
         buildConfigField "String", "OGGY_API_ENDPOINT", '"http://new.oggy.co"'
         buildConfigField "float", "NORMAL_KPI", "0.7f"

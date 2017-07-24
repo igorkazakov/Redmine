@@ -45,9 +45,9 @@ public class StatisticHolder extends RecyclerView.ViewHolder {
     public void bind(StatisticModel model) {
 
         mRowTitle.setText(model.getTitle());
-        mRegularTextView.setText(String.valueOf(model.getTimeModel().getRegularTime()));
-        mFuckupTextView.setText(String.valueOf(model.getTimeModel().getFuckupTime()));
-        mTeamFuckupTextView.setText(String.valueOf(model.getTimeModel().getTeamFuckupTime()));
+        mRegularTextView.setText(String.valueOf(model.getTimeModel().getRegularTime()).replace(".0", ""));
+        mFuckupTextView.setText(String.valueOf(model.getTimeModel().getFuckupTime()).replace(".0", ""));
+        mTeamFuckupTextView.setText(String.valueOf(model.getTimeModel().getTeamFuckupTime()).replace(".0", ""));
         mContentView.setCardBackgroundColor(ColorUtils.getColorForKpi(model.getKpi(), mContext));
     }
 }

@@ -9,6 +9,7 @@ import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.screen.dashboard.DashboardActivity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingDialog;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
+import com.igorkazakov.user.redminepro.utils.KeyboardUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,6 +79,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @Override
     public void openDashboardScreen() {
+
+        KeyboardUtils.hideKeyboard(this);
         DashboardActivity.start(this);
         finish();
     }

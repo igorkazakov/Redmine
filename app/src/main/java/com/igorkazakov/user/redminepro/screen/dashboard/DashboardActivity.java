@@ -6,9 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -34,7 +33,7 @@ import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.screen.general.LoadingDialog;
+import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
@@ -64,6 +63,10 @@ public class DashboardActivity extends AppCompatActivity
     @BindView(R.id.remainKpiLabel)
     TextView mRemainKpiLabel;
 
+    @BindView(R.id.dashboardContainer)
+    FrameLayout mContentView;
+
+
     private DashboardPresenter mPresenter;
     private LoadingView mLoadingView;
     private KpiStatisticAdapter mAdapter;
@@ -81,10 +84,6 @@ public class DashboardActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -93,12 +92,11 @@ public class DashboardActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        mLoadingView = LoadingDialog.view(getSupportFragmentManager());
+        mLoadingView = LoadingFragment.view(getSupportFragmentManager());
 
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mPresenter = new DashboardPresenter(lifecycleHandler, this);
         mPresenter.tryLoadDashboardData();
-
 
     }
 
@@ -126,12 +124,12 @@ public class DashboardActivity extends AppCompatActivity
         setupStatisticRecyclerView();
         String text = String.format(getResources().getString(R.string.remain_kpi),
                 String.valueOf(mPresenter.remainHoursForNormalKpi()),
-                String.valueOf(BuildConfig.NORMAL_KPI));
+                String.valueOf(BuildConfig.NORMAL_KPI)).replace(".0", "");
         mRemainKpiLabel.setText(Html.fromHtml(text));
 
         text = String.format(getResources().getString(R.string.remain_hours),
                 String.valueOf(mPresenter.remainDaysForWeek()),
-                String.valueOf(mPresenter.getWholeCurrentWeekHoursNorm()));
+                String.valueOf(mPresenter.getWholeCurrentWeekHoursNorm())).replace(".0", "");
         mRemainHoursLabel.setText(Html.fromHtml(text));
     }
 
@@ -231,7 +229,8 @@ public class DashboardActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
+            mPresenter.tryLoadDashboardData();
             return true;
         }
 
