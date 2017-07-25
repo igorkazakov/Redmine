@@ -4,8 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.igorkazakov.user.redminepro.database.dao.CalendarDayDAO;
+import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
+import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
@@ -24,6 +26,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private TimeEntryDAO mTimeEntryDAO;
     private CalendarDayDAO mCalendarDayDAO;
+    private IssueEntityDAO mIssueEntityDAO;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -34,6 +37,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.createTable(connectionSource, TimeEntryEntity.class);
             TableUtils.createTable(connectionSource, CalendarDayEntity.class);
+            TableUtils.createTable(connectionSource, IssueEntity.class);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -45,11 +49,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.dropTable(connectionSource, TimeEntryEntity.class, true);
             TableUtils.dropTable(connectionSource, CalendarDayEntity.class, true);
+            TableUtils.dropTable(connectionSource, IssueEntity.class, true);
             onCreate(database, connectionSource);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public IssueEntityDAO getIssueEntityDAO() {
+
+        if (mIssueEntityDAO == null) {
+            try {
+                mIssueEntityDAO = new IssueEntityDAO(getConnectionSource(), IssueEntity.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mIssueEntityDAO;
     }
 
     public TimeEntryDAO getTimeEntryDAO() {

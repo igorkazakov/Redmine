@@ -24,4 +24,5 @@
     <!-- Strings related to dashboard -->
     <string name="remain_kpi"><![CDATA[<b style="font-size: 30px">%1$s</b> effective hours to KPI = <b>%2$s</b> for the week]]></string>
     <string name="remain_hours"><![CDATA[<b>%1$s</b> hours up to <b>%2$s</b> per week]]></string>
+    <string name="title_activity_issues">IssuesActivity</string>
 </resources>

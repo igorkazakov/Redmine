@@ -4,18 +4,17 @@ import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.api.ContentType;
-import com.igorkazakov.user.redminepro.api.response.IssuesResponse;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
-import com.igorkazakov.user.redminepro.api.response.TimeEntryResponse;
-import com.igorkazakov.user.redminepro.api.responseEntity.LoginAndTimeEntries;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
+import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
+import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
-import com.igorkazakov.user.redminepro.models.TimeInterval;
 
 import java.util.List;
 
@@ -54,25 +53,6 @@ public class RedmineRepository {
     }
 
     @NonNull
-    public static Observable<LoginAndTimeEntries> issuesWithTimeEntries() {
-
-        Observable<IssuesResponse> issuesResponseObservable = ApiFactory.getRedmineService()
-                .issues()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        Observable<TimeEntryResponse> jsonObjectObservable = ApiFactory.getRedmineService()
-                .timeEntries(50, 171, 0)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        return Observable.zip(issuesResponseObservable, jsonObjectObservable, (issuesResponse, timeEntryResponse) -> {
-
-            return new LoginAndTimeEntries(issuesResponse.getIssues(), timeEntryResponse.getTimeEntries());
-        });
-    }
-
-    @NonNull
     public static Observable<List<TimeEntryEntity>> getTimeEntries() {
 
         long userId = PreferenceUtils.getInstance().getUserId();
@@ -96,7 +76,7 @@ public class RedmineRepository {
     }
 
     @NonNull
-    public static Observable<List<TimeEntryEntity>> getTimeEntriesWithInterval(TimeInterval interval) {
+    public static Observable<List<TimeEntryEntity>> getTimeEntriesWithInterval(TimeInterval interval, int offset) {
 
         long userId = PreferenceUtils.getInstance().getUserId();
         String startDateString = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
@@ -131,31 +111,57 @@ public class RedmineRepository {
                     @Override
                     public Observable<List<TimeEntryEntity>> call(Integer integer) {
 
-                        return getTimeEntriesWithInterval(interval);
+                        int offset = integer * limit;
+                        return getTimeEntriesWithInterval(interval, offset);
                     }
                 })
-                .takeUntil(timeEntryEntities -> {
-
-                    offset += limit;
-                    return timeEntryEntities.isEmpty();
-                })
+                .takeUntil(List::isEmpty)
                 .scan((accum, nextList) -> {
 
-                    if (nextList.isEmpty()) {
-                        offset = 0;
-                    }
                     accum.addAll(nextList);
                     return accum;
                 });
     }
 
     @NonNull
-    public static Observable<IssuesResponse> getIssues() {
+    public static Observable<List<IssueEntity>> getIssues(int offset) {
 
         return ApiFactory.getRedmineService()
-                .issues()
+                .issues(limit, offset)
+                .flatMap(issuesResponse -> {
+
+                    List<Issue> issues = issuesResponse.getIssues();
+                    List<IssueEntity> issueEntities = IssueEntity.convertItems(issues);
+                    DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntities(issueEntities);
+                    return Observable.just(issueEntities);
+                })
+                .onErrorResumeNext(throwable -> {
+
+                    List<IssueEntity> issueEntities = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
+                    return Observable.just(issueEntities);
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @NonNull
+    public static Observable<List<IssueEntity>> getMyIssues() {
+
+        return Observable.range(0, Integer.MAX_VALUE - 1)
+                .concatMap(new Func1<Integer, Observable<List<IssueEntity>>>() {
+                    @Override
+                    public Observable<List<IssueEntity>> call(Integer integer) {
+
+                        int offset = integer * limit;
+                        return getIssues(offset);
+                    }
+                })
+                .takeUntil(List::isEmpty)
+                .scan((accum, nextList) -> {
+
+                    accum.addAll(nextList);
+                    return accum;
+                });
     }
 
     @NonNull

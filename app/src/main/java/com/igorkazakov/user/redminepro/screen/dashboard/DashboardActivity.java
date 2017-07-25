@@ -35,6 +35,7 @@ import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
+import com.igorkazakov.user.redminepro.screen.issues.IssuesActivity;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 
@@ -92,12 +93,11 @@ public class DashboardActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        mLoadingView = LoadingFragment.view(getSupportFragmentManager());
+        mLoadingView = new LoadingFragment(this, mContentView);
 
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mPresenter = new DashboardPresenter(lifecycleHandler, this);
         mPresenter.tryLoadDashboardData();
-
     }
 
     private void setupStatisticRecyclerView() {
@@ -243,8 +243,9 @@ public class DashboardActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
+        if (id == R.id.nav_issues) {
+            IssuesActivity.start(this);
+            
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -271,4 +272,6 @@ public class DashboardActivity extends AppCompatActivity
     public void hideLoading() {
         mLoadingView.hideLoading();
     }
+
+
 }

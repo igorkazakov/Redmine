@@ -30,7 +30,8 @@ public interface RedmineService {
                                               @Query("offset") int offset,
                                               @Query("spent_on") String interval);
 
-    @GET("/issues.json")
-    Observable<IssuesResponse> issues();
+    @GET("/issues.json?assigned_to_id=me")
+    Observable<IssuesResponse> issues(@Query("limit") int limit,
+                                      @Query("offset") int offset);
 
 }

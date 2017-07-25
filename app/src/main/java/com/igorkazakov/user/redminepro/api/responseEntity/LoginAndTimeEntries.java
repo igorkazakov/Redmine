@@ -1,5 +1,6 @@
 package com.igorkazakov.user.redminepro.api.responseEntity;
 
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 
 import java.util.List;
