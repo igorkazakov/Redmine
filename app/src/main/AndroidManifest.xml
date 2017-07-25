@@ -33,7 +33,9 @@
         <activity
             android:name=".screen.issues.IssuesActivity"
             android:label="@string/title_activity_issues"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:parentActivityName=".screen.dashboard.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

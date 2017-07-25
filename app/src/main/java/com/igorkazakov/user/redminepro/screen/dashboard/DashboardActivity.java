@@ -245,7 +245,7 @@ public class DashboardActivity extends AppCompatActivity
 
         if (id == R.id.nav_issues) {
             IssuesActivity.start(this);
-            
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

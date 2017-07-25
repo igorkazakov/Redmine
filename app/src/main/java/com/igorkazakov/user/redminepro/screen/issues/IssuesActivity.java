@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.models.IssueModel;
-import com.igorkazakov.user.redminepro.screen.dashboard.DashboardActivity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 
 import java.util.List;
@@ -46,6 +45,7 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mLoadingView = new LoadingFragment(this, mContentView);
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mPresenter = new IssuesPresenter(lifecycleHandler, this);
