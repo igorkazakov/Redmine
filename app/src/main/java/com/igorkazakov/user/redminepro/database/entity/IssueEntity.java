@@ -267,8 +267,12 @@ public class IssueEntity {
             issueEntity.setAuthorName(item.getAuthor().getName());
             issueEntity.setAssignedToId(item.getAssignedTo().getId());
             issueEntity.setAssignedToName(item.getAssignedTo().getName());
-            issueEntity.setFixedVersionId(item.getFixedVersion().getId());
-            issueEntity.setFixedVersionName(item.getFixedVersion().getName());
+
+            if (item.getFixedVersion() != null) {
+                issueEntity.setFixedVersionId(item.getFixedVersion().getId());
+                issueEntity.setFixedVersionName(item.getFixedVersion().getName());
+            }
+
             issueEntity.setSubject(item.getSubject());
             issueEntity.setDescription(item.getDescription());
             issueEntity.setUpdatedOn(item.getUpdatedOn());

@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
@@ -25,10 +29,16 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
 
 
     @BindView(R.id.contentView)
-    ConstraintLayout mContentView;
+    FrameLayout mContentView;
 
     @BindView(R.id.issuesList)
     RecyclerView mIssueList;
+
+    @BindView(R.id.issueFab)
+    FloatingActionButton mIssueFab;
+
+    @BindView(R.id.issueSwipeRefresh)
+    SwipeRefreshLayout mIssueSwipeRefresh;
 
     private IssuesPresenter mPresenter;
     private LoadingFragment mLoadingView;
@@ -46,6 +56,10 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mIssueSwipeRefresh.setOnRefreshListener(() -> mPresenter.tryLoadIssuesData());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mIssueList.setLayoutManager(linearLayoutManager);
         mLoadingView = new LoadingFragment(this, mContentView);
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mPresenter = new IssuesPresenter(lifecycleHandler, this);
@@ -58,15 +72,18 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
         List<IssueModel> issueModels = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getMyIssues();
         IssuesAdapter adapter = new IssuesAdapter(issueModels);
         mIssueList.setAdapter(adapter);
+        mIssueSwipeRefresh.setRefreshing(false);
     }
 
     @Override
     public void showLoading() {
+        mIssueFab.setVisibility(View.GONE);
         mLoadingView.showLoading();
     }
 
     @Override
     public void hideLoading() {
         mLoadingView.hideLoading();
+        mIssueFab.setVisibility(View.VISIBLE);
     }
 }

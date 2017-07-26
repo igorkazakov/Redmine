@@ -64,7 +64,7 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
     public List<IssueModel> getMyIssues() {
 
         List<IssueEntity> issueEntities;
-        List<IssueModel> issueModels = null;
+        List<IssueModel> issueModels = new ArrayList<>();
         long userId = PreferenceUtils.getInstance().getUserId();
 
         try {

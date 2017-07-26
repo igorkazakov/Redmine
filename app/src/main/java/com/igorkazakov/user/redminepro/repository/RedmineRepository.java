@@ -16,6 +16,7 @@ import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -116,10 +117,15 @@ public class RedmineRepository {
                     }
                 })
                 .takeUntil(List::isEmpty)
-                .scan((accum, nextList) -> {
+                .toList()
+                .map(superList -> {
 
-                    accum.addAll(nextList);
-                    return accum;
+                    List<TimeEntryEntity> list = new ArrayList<>();
+                    for (List<TimeEntryEntity> itemList : superList) {
+                        list.addAll(itemList);
+                    }
+
+                    return list;
                 });
     }
 
@@ -157,10 +163,15 @@ public class RedmineRepository {
                     }
                 })
                 .takeUntil(List::isEmpty)
-                .scan((accum, nextList) -> {
+                .toList()
+                .map(superList -> {
 
-                    accum.addAll(nextList);
-                    return accum;
+                    List<IssueEntity> list = new ArrayList<>();
+                    for (List<IssueEntity> itemList : superList) {
+                        list.addAll(itemList);
+                    }
+
+                    return list;
                 });
     }
 
