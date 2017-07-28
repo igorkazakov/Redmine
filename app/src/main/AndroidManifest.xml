@@ -32,10 +32,16 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".screen.issues.IssuesActivity"
-            android:label="@string/title_activity_issues"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:label="@string/title_activity_issues"
             android:parentActivityName=".screen.dashboard.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".screen.IssueDetail.IssueDetailActivity"
+            android:label="@string/title_activity_issue_detail"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:parentActivityName=".screen.issues.IssuesActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

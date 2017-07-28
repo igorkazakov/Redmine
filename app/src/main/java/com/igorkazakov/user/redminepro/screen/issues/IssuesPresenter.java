@@ -27,7 +27,7 @@ public class IssuesPresenter {
         RedmineRepository.getMyIssues()
                 .doOnSubscribe(mView::showLoading)
                 .doOnTerminate(mView::hideLoading)
-                .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
+                .compose(mLifecycleHandler.reload(R.id.issues_request))
                 .subscribe(response -> mView.setupView(),
                         throwable -> throwable.printStackTrace());
     }

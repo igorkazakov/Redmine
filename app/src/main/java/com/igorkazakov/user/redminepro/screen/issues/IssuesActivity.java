@@ -60,6 +60,23 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mIssueList.setLayoutManager(linearLayoutManager);
+
+        mIssueList.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0 && mIssueFab.isShown()) {
+                    mIssueFab.hide();
+                } else {
+                    mIssueFab.show();
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+
         mLoadingView = new LoadingFragment(this, mContentView);
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mPresenter = new IssuesPresenter(lifecycleHandler, this);

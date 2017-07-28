@@ -72,7 +72,8 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
 
             for(IssueEntity issue: issueEntities) {
 
-                issueModels.add(new IssueModel(issue.getProjectName(),
+                issueModels.add(new IssueModel(issue.getId(),
+                        issue.getProjectName(),
                         String.valueOf(issue.getId()),
                         issue.getSubject()));
             }

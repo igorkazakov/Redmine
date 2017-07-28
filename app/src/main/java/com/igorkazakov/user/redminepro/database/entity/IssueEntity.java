@@ -1,10 +1,15 @@
 package com.igorkazakov.user.redminepro.database.entity;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -75,6 +80,18 @@ public class IssueEntity {
 
     @DatabaseField(columnName = "updated_on")
     private String updatedOn;
+
+    @ForeignCollectionField(eager = true)
+    private Collection<Child> children = null;
+
+    @ForeignCollectionField(eager = true)
+    private Collection<Attachment> attachments = null;
+
+    @ForeignCollectionField(eager = true)
+    private Collection<Object> changesets = null;
+
+    @ForeignCollectionField(eager = true)
+    private Collection<Journal> journals = null;
 
     public long getId() {
         return id;
@@ -244,6 +261,83 @@ public class IssueEntity {
         this.updatedOn = updatedOn;
     }
 
+    public Collection<Child> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Collection<Child> children) {
+        this.children = children;
+    }
+
+    public Collection<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Collection<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Collection<Object> getChangesets() {
+        return changesets;
+    }
+
+    public void setChangesets(Collection<Object> changesets) {
+        this.changesets = changesets;
+    }
+
+    public Collection<Journal> getJournals() {
+        return journals;
+    }
+
+    public void setJournals(Collection<Journal> journals) {
+        this.journals = journals;
+    }
+
+    public static IssueEntity convertItem(Issue issue) {
+
+        if (issue == null) {
+            return null;
+        }
+
+        IssueEntity issueEntity = new IssueEntity();
+        issueEntity.setId(issue.getId());
+        issueEntity.setProjectId(issue.getProject().getId());
+        issueEntity.setProjectName(issue.getProject().getName());
+        issueEntity.setTrackerId(issue.getTracker().getId());
+        issueEntity.setTrackerName(issue.getTracker().getName());
+        issueEntity.setStatusId(issue.getStatus().getId());
+        issueEntity.setStatusName(issue.getStatus().getName());
+        issueEntity.setPriorityId(issue.getPriority().getId());
+        issueEntity.setPriorityName(issue.getPriority().getName());
+
+        if (issue.getAuthor() != null) {
+            issueEntity.setAuthorId(issue.getAuthor().getId());
+            issueEntity.setAuthorName(issue.getAuthor().getName());
+        }
+
+        if (issue.getAssignedTo() != null) {
+            issueEntity.setAssignedToId(issue.getAssignedTo().getId());
+            issueEntity.setAssignedToName(issue.getAssignedTo().getName());
+        }
+
+        if (issue.getFixedVersion() != null) {
+            issueEntity.setFixedVersionId(issue.getFixedVersion().getId());
+            issueEntity.setFixedVersionName(issue.getFixedVersion().getName());
+        }
+
+        issueEntity.setSubject(issue.getSubject());
+        issueEntity.setDescription(issue.getDescription());
+        issueEntity.setUpdatedOn(issue.getUpdatedOn());
+        issueEntity.setCreatedOn(issue.getCreatedOn());
+        issueEntity.setStartDate(issue.getStartDate());
+        issueEntity.setDoneRatio(issue.getDoneRatio());
+        issueEntity.setChildren(issue.getChildren());
+        issueEntity.setAttachments(issue.getAttachments());
+        issueEntity.setJournals(issue.getJournals());
+
+        return issueEntity;
+    }
+
     public static List<IssueEntity> convertItems(List<Issue> items) {
 
         if (items == null) {
@@ -253,33 +347,7 @@ public class IssueEntity {
         ArrayList<IssueEntity> issues = new ArrayList<>();
         for (Issue item : items) {
 
-            IssueEntity issueEntity = new IssueEntity();
-            issueEntity.setId(item.getId());
-            issueEntity.setProjectId(item.getProject().getId());
-            issueEntity.setProjectName(item.getProject().getName());
-            issueEntity.setTrackerId(item.getTracker().getId());
-            issueEntity.setTrackerName(item.getTracker().getName());
-            issueEntity.setStatusId(item.getStatus().getId());
-            issueEntity.setStatusName(item.getStatus().getName());
-            issueEntity.setPriorityId(item.getPriority().getId());
-            issueEntity.setPriorityName(item.getPriority().getName());
-            issueEntity.setAuthorId(item.getAuthor().getId());
-            issueEntity.setAuthorName(item.getAuthor().getName());
-            issueEntity.setAssignedToId(item.getAssignedTo().getId());
-            issueEntity.setAssignedToName(item.getAssignedTo().getName());
-
-            if (item.getFixedVersion() != null) {
-                issueEntity.setFixedVersionId(item.getFixedVersion().getId());
-                issueEntity.setFixedVersionName(item.getFixedVersion().getName());
-            }
-
-            issueEntity.setSubject(item.getSubject());
-            issueEntity.setDescription(item.getDescription());
-            issueEntity.setUpdatedOn(item.getUpdatedOn());
-            issueEntity.setCreatedOn(item.getCreatedOn());
-            issueEntity.setStartDate(item.getStartDate());
-            issueEntity.setDoneRatio(item.getDoneRatio());
-            issues.add(issueEntity);
+            issues.add(IssueEntity.convertItem(item));
         }
 
         return issues;

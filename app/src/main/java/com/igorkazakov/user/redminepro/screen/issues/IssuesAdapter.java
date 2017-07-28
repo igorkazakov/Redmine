@@ -1,5 +1,6 @@
 package com.igorkazakov.user.redminepro.screen.issues;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +26,9 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueHolder> {
     @Override
     public IssueHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.issue_item, parent, false);
-        return new IssueHolder(view);
+        Context context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.issue_item, parent, false);
+        return new IssueHolder(view, context);
     }
 
     @Override

@@ -3,4 +3,6 @@
     <item name="auth_request" type="id"/>
     <item name="time_entry_request" type="id"/>
     <item name="calendar_days_request" type="id"/>
+    <item name="issues_request" type="id"/>
+    <item name="issue_details_request" type="id"/>
 </resources>

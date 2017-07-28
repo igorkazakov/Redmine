@@ -3,12 +3,17 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.AssignedTo;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Author;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
+
+import java.util.List;
 
 /**
  * Created by user on 13.07.17.
@@ -58,6 +63,18 @@ public class Issue {
     @SerializedName("updated_on")
     @Expose
     private String updatedOn;
+    @SerializedName("children")
+    @Expose
+    private List<Child> children = null;
+    @SerializedName("attachments")
+    @Expose
+    private List<Attachment> attachments = null;
+    @SerializedName("changesets")
+    @Expose
+    private List<Object> changesets = null;
+    @SerializedName("journals")
+    @Expose
+    private List<Journal> journals = null;
 
     public Long getId() {
         return id;
@@ -169,5 +186,37 @@ public class Issue {
 
     public void setUpdatedOn(String updatedOn) {
         this.updatedOn = updatedOn;
+    }
+
+    public List<Child> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Child> children) {
+        this.children = children;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public List<Object> getChangesets() {
+        return changesets;
+    }
+
+    public void setChangesets(List<Object> changesets) {
+        this.changesets = changesets;
+    }
+
+    public List<Journal> getJournals() {
+        return journals;
+    }
+
+    public void setJournals(List<Journal> journals) {
+        this.journals = journals;
     }
 }

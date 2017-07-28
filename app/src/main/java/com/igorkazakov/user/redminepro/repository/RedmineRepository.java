@@ -16,6 +16,7 @@ import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,5 +188,31 @@ public class RedmineRepository {
                 return null;
             }
         });
+    }
+
+    @NonNull
+    public static Observable<IssueEntity> getIssueDetails(long issueId) {
+
+        long userId = PreferenceUtils.getInstance().getUserId();
+        return ApiFactory.getRedmineService()
+                .issueDetails(issueId)
+                .flatMap(issuesResponse -> {
+
+                    IssueEntity issueEntity = IssueEntity.convertItem(issuesResponse);
+                    DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntity(issueEntity);
+                    return Observable.just(issueEntity);
+                })
+                .onErrorResumeNext(throwable -> {
+
+                    IssueEntity issueEntity = null;
+                    try {
+                        issueEntity = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().queryForId(issueId);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    return Observable.just(issueEntity);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

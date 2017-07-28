@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 
 public class IssueModel {
 
+    private long mId;
     private String mProjectName;
     private String mIssueSubject;
     private String mIssueNumber;
@@ -24,9 +25,18 @@ public class IssueModel {
         return mIssueNumber;
     }
 
-    public IssueModel(@NonNull String projectName, @NonNull String issueNumber, @NonNull String issueSubject) {
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        this.mId = id;
+    }
+
+    public IssueModel(long issueId, @NonNull String projectName, @NonNull String issueNumber, @NonNull String issueSubject) {
         mProjectName = projectName;
         mIssueNumber = issueNumber;
         mIssueSubject = issueSubject;
+        mId = issueId;
     }
 }
