@@ -23,7 +23,7 @@ public class IssueDetailPresenter {
 
     public void tryLoadIssueDetailsData(long issueId) {
 
-        RedmineRepository.getIssueDetails(44703)
+        RedmineRepository.getIssueDetails(issueId)
                 .doOnSubscribe(mView::showLoading)
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.issue_details_request))

@@ -51,6 +51,16 @@ public class Issue {
     @SerializedName("description")
     @Expose
     private String description;
+
+    @SerializedName("spent_hours")
+    @Expose
+    private double spentHours;
+
+    @SerializedName("estimated_hours")
+    @Expose
+    private double estimatedHours;
+
+
     @SerializedName("start_date")
     @Expose
     private String startDate;
@@ -75,6 +85,22 @@ public class Issue {
     @SerializedName("journals")
     @Expose
     private List<Journal> journals = null;
+
+    public double getSpentHours() {
+        return spentHours;
+    }
+
+    public void setSpentHours(double spentHours) {
+        this.spentHours = spentHours;
+    }
+
+    public double getEstimatedHours() {
+        return estimatedHours;
+    }
+
+    public void setEstimatedHours(double estimatedHours) {
+        this.estimatedHours = estimatedHours;
+    }
 
     public Long getId() {
         return id;

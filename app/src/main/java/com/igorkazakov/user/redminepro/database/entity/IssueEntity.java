@@ -4,12 +4,12 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -81,17 +81,39 @@ public class IssueEntity {
     @DatabaseField(columnName = "updated_on")
     private String updatedOn;
 
-    @ForeignCollectionField(eager = true)
-    private Collection<Child> children = null;
+    @DatabaseField(columnName = "spent_hours")
+    private double spentHours;
+
+    @DatabaseField(columnName = "estimated_hours")
+    private double estimatedHours;
 
     @ForeignCollectionField(eager = true)
-    private Collection<Attachment> attachments = null;
+    private ForeignCollection<ChildEntity> children = null;
 
     @ForeignCollectionField(eager = true)
-    private Collection<Object> changesets = null;
+    private ForeignCollection<AttachmentEntity> attachments = null;
+
+   // @ForeignCollectionField(eager = true)
+   // private Collection<Object> changesets = null;
 
     @ForeignCollectionField(eager = true)
-    private Collection<Journal> journals = null;
+    private ForeignCollection<JournalEntity> journals = null;
+
+    public double getSpentHours() {
+        return spentHours;
+    }
+
+    public void setSpentHours(double spentHours) {
+        this.spentHours = spentHours;
+    }
+
+    public double getEstimatedHours() {
+        return estimatedHours;
+    }
+
+    public void setEstimatedHours(double estimatedHours) {
+        this.estimatedHours = estimatedHours;
+    }
 
     public long getId() {
         return id;
@@ -261,36 +283,48 @@ public class IssueEntity {
         this.updatedOn = updatedOn;
     }
 
-    public Collection<Child> getChildren() {
+    public ForeignCollection<ChildEntity> getChildren() {
         return children;
     }
 
-    public void setChildren(Collection<Child> children) {
+    public void setChildren(ForeignCollection<ChildEntity> children) {
         this.children = children;
     }
 
-    public Collection<Attachment> getAttachments() {
+    public void convertChildren(List<Child> children, IssueEntity parent) {
+        this.children = ChildEntity.concertItems(children, parent);
+    }
+
+    public ForeignCollection<AttachmentEntity> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(Collection<Attachment> attachments) {
+    public void setAttachments(ForeignCollection<AttachmentEntity> attachments) {
         this.attachments = attachments;
     }
 
-    public Collection<Object> getChangesets() {
-        return changesets;
+    public void convertAttachments(List<Attachment> attachments, IssueEntity parent) {
+        this.attachments = AttachmentEntity.convertItems(attachments, parent);
     }
 
-    public void setChangesets(Collection<Object> changesets) {
-        this.changesets = changesets;
-    }
+//    public Collection<Object> getChangesets() {
+//        return changesets;
+//    }
 
-    public Collection<Journal> getJournals() {
+//    public void setChangesets(Collection<Object> changesets) {
+//        this.changesets = changesets;
+//    }
+
+    public ForeignCollection<JournalEntity> getJournals() {
         return journals;
     }
 
-    public void setJournals(Collection<Journal> journals) {
+    public void setJournals(ForeignCollection<JournalEntity> journals) {
         this.journals = journals;
+    }
+
+    public void convertJournals(List<Journal> journals, IssueEntity parent) {
+        this.journals = JournalEntity.convertItems(journals, parent);
     }
 
     public static IssueEntity convertItem(Issue issue) {
@@ -309,6 +343,8 @@ public class IssueEntity {
         issueEntity.setStatusName(issue.getStatus().getName());
         issueEntity.setPriorityId(issue.getPriority().getId());
         issueEntity.setPriorityName(issue.getPriority().getName());
+        issueEntity.setSpentHours(issue.getSpentHours());
+        issueEntity.setEstimatedHours(issue.getEstimatedHours());
 
         if (issue.getAuthor() != null) {
             issueEntity.setAuthorId(issue.getAuthor().getId());
@@ -331,9 +367,9 @@ public class IssueEntity {
         issueEntity.setCreatedOn(issue.getCreatedOn());
         issueEntity.setStartDate(issue.getStartDate());
         issueEntity.setDoneRatio(issue.getDoneRatio());
-        issueEntity.setChildren(issue.getChildren());
-        issueEntity.setAttachments(issue.getAttachments());
-        issueEntity.setJournals(issue.getJournals());
+        issueEntity.convertChildren(issue.getChildren(), issueEntity);
+        issueEntity.convertAttachments(issue.getAttachments(), issueEntity);
+        issueEntity.convertJournals(issue.getJournals(), issueEntity);
 
         return issueEntity;
     }

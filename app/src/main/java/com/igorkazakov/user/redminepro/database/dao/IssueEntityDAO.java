@@ -39,7 +39,22 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
 
         try {
 
+//            ForeignCollection<AttachmentEntity> attachmentEntities = this.getEmptyForeignCollection("attachments");
+//            List<AttachmentEntity> attachments = DatabaseManager.getDatabaseHelper().getAttachmentEntityDAO().getAll();
+//
+//            for (AttachmentEntity attachmentEntity: attachments) {
+//                attachmentEntities.add(attachmentEntity);
+//            }
+//
+//            timeEntryEntity.setA
             createOrUpdate(timeEntryEntity);
+//            ForeignCollection<AttachmentEntity> attachmentEntities = timeEntryEntity.getAttachments();
+//            for (AttachmentEntity attachmentEntity: attachmentEntities) {
+//                attachmentEntity.setParent(timeEntryEntity);
+//            }
+//
+//            timeEntryEntity.setAttachments(attachmentEntities);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

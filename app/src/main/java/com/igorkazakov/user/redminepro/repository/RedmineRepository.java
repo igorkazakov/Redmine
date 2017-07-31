@@ -198,7 +198,7 @@ public class RedmineRepository {
                 .issueDetails(issueId)
                 .flatMap(issuesResponse -> {
 
-                    IssueEntity issueEntity = IssueEntity.convertItem(issuesResponse);
+                    IssueEntity issueEntity = IssueEntity.convertItem(issuesResponse.getIssue());
                     DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntity(issueEntity);
                     return Observable.just(issueEntity);
                 })

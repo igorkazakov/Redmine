@@ -11,6 +11,12 @@ import java.util.List;
 
 public class IssuesResponse {
 
+    @SerializedName("issues")
+    private List<Issue> mIssues;
+
+    @SerializedName("issue")
+    private Issue mIssue;
+
     public List<Issue> getIssues() {
         return mIssues;
     }
@@ -19,6 +25,11 @@ public class IssuesResponse {
         this.mIssues = mIssueList;
     }
 
-    @SerializedName("issues")
-    private List<Issue> mIssues;
+    public Issue getIssue() {
+        return mIssue;
+    }
+
+    public void setIssue(Issue mIssue) {
+        this.mIssue = mIssue;
+    }
 }

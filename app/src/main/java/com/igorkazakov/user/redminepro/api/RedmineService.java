@@ -3,7 +3,6 @@ package com.igorkazakov.user.redminepro.api;
 import com.igorkazakov.user.redminepro.api.response.IssuesResponse;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
 import com.igorkazakov.user.redminepro.api.response.TimeEntryResponse;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -37,6 +36,6 @@ public interface RedmineService {
                                       @Query("offset") int offset);
 
     @GET("/issues/{issue_id}.json?include=attachments,journals,children,relations,changesets")
-    Observable<Issue> issueDetails(@Path("issue_id") long issueid);
+    Observable<IssuesResponse> issueDetails(@Path("issue_id") long issueid);
 
 }

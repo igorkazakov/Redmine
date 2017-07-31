@@ -22,28 +22,29 @@
             android:layout_marginTop="8dp">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/issueNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Ускорение загрузки приложения"
+                    android:textSize="17sp" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Ускорение загрузки приложения"
-                    android:textSize="16sp" />
-
-                <LinearLayout
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -52,21 +53,22 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/statusTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Feedback"
                         android:layout_gravity="end"
+                        android:text="Feedback"
                         android:textAlignment="viewEnd" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -75,21 +77,22 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/priorityTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="normal"
                         android:layout_gravity="end"
+                        android:text="normal"
                         android:textAlignment="viewEnd" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -98,21 +101,22 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/assignedToTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Natalia Gnatyuk"
                         android:layout_gravity="end"
+                        android:text="Natalia Gnatyuk"
                         android:textAlignment="viewEnd" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -121,21 +125,22 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/trackerTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="bug"
                         android:layout_gravity="end"
+                        android:text="bug"
                         android:textAlignment="viewEnd" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -144,21 +149,22 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/fixedVersionTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="1.16"
                         android:layout_gravity="end"
+                        android:text="1.16"
                         android:textAlignment="viewEnd" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -167,22 +173,22 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/startDateTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="17 июля 2017"
                         android:layout_gravity="end"
+                        android:text="17 июля 2017"
                         android:textAlignment="viewEnd" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -191,21 +197,22 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/estimatedHoursTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="17.00 часов"
                         android:layout_gravity="end"
+                        android:text="17.00 часов"
                         android:textAlignment="viewEnd" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -214,10 +221,11 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/spentHoursTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="9.80 часов"
                         android:layout_gravity="end"
+                        android:text="9.80 часов"
                         android:textAlignment="viewEnd" />
                 </LinearLayout>
 
