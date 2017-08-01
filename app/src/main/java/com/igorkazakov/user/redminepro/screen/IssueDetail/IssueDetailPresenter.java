@@ -3,7 +3,17 @@ package com.igorkazakov.user.redminepro.screen.IssueDetail;
 import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
+import com.igorkazakov.user.redminepro.database.entity.ChildEntity;
+import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import ru.arturvasilov.rxloader.LifecycleHandler;
 
@@ -29,5 +39,24 @@ public class IssueDetailPresenter {
                 .compose(mLifecycleHandler.reload(R.id.issue_details_request))
                 .subscribe(issueEntity -> mView.setupView(issueEntity),
                         Throwable::printStackTrace);
+    }
+
+    public List<IssueEntity> getChildIssues(long issueId) {
+
+        List<IssueEntity> issueEntityList = new ArrayList<>();
+        IssueEntityDAO issueDao = DatabaseManager.getDatabaseHelper().getIssueEntityDAO();
+        try {
+            IssueEntity issueEntity = issueDao.queryForId(issueId);
+            Set<Long> idsSet = new HashSet<>();
+            for (ChildEntity childEntity: issueEntity.getChildren()) {
+                idsSet.add(childEntity.getId());
+            }
+            issueEntityList = issueDao.getIssuesByIds(idsSet);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return issueEntityList;
     }
 }

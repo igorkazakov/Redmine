@@ -27,4 +27,7 @@
     <!-- Strings related to issues -->
     <string name="title_activity_issues">My issues</string>
     <string name="title_activity_issue_detail">Issue overview</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

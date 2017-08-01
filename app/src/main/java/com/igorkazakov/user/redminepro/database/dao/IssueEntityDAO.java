@@ -9,6 +9,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by user on 25.07.17.
@@ -38,23 +39,7 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
         }
 
         try {
-
-//            ForeignCollection<AttachmentEntity> attachmentEntities = this.getEmptyForeignCollection("attachments");
-//            List<AttachmentEntity> attachments = DatabaseManager.getDatabaseHelper().getAttachmentEntityDAO().getAll();
-//
-//            for (AttachmentEntity attachmentEntity: attachments) {
-//                attachmentEntities.add(attachmentEntity);
-//            }
-//
-//            timeEntryEntity.setA
             createOrUpdate(timeEntryEntity);
-//            ForeignCollection<AttachmentEntity> attachmentEntities = timeEntryEntity.getAttachments();
-//            for (AttachmentEntity attachmentEntity: attachmentEntities) {
-//                attachmentEntity.setParent(timeEntryEntity);
-//            }
-//
-//            timeEntryEntity.setAttachments(attachmentEntities);
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -74,6 +59,20 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
                 e.printStackTrace();
             }
         }
+    }
+
+    public List<IssueEntity> getIssuesByIds(Set<Long> set) {
+
+        List<IssueEntity> issueEntityList = new ArrayList<>();
+
+        try {
+            issueEntityList = this.queryBuilder().where().in("id", set).query();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return issueEntityList;
     }
 
     public List<IssueModel> getMyIssues() {

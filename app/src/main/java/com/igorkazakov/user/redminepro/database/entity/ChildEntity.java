@@ -32,6 +32,10 @@ public class ChildEntity {
         this.parent = parent;
     }
 
+    public IssueEntity getParent() {
+        return parent;
+    }
+
     public Long getId() {
         return id;
     }

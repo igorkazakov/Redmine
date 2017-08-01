@@ -193,7 +193,6 @@ public class RedmineRepository {
     @NonNull
     public static Observable<IssueEntity> getIssueDetails(long issueId) {
 
-        long userId = PreferenceUtils.getInstance().getUserId();
         return ApiFactory.getRedmineService()
                 .issueDetails(issueId)
                 .flatMap(issuesResponse -> {
