@@ -97,7 +97,7 @@ public class RedmineRepository {
                 })
                 .onErrorResumeNext(throwable -> {
 
-                    List<TimeEntryEntity> timeEntryEntities = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getAll();
+                    List<TimeEntryEntity> timeEntryEntities = new ArrayList<TimeEntryEntity>();//DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getAll();
                     return Observable.just(timeEntryEntities);
                 })
                 .subscribeOn(Schedulers.io())
@@ -122,8 +122,14 @@ public class RedmineRepository {
                 .map(superList -> {
 
                     List<TimeEntryEntity> list = new ArrayList<>();
-                    for (List<TimeEntryEntity> itemList : superList) {
-                        list.addAll(itemList);
+
+                    if (superList.size() != 0) {
+                        for (List<TimeEntryEntity> itemList : superList) {
+                            list.addAll(itemList);
+                        }
+
+                    } else {
+                        list = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getAll();
                     }
 
                     return list;
@@ -144,7 +150,7 @@ public class RedmineRepository {
                 })
                 .onErrorResumeNext(throwable -> {
 
-                    List<IssueEntity> issueEntities = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
+                    List<IssueEntity> issueEntities = new ArrayList<IssueEntity>();//DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
                     return Observable.just(issueEntities);
                 })
                 .subscribeOn(Schedulers.io())
@@ -168,8 +174,15 @@ public class RedmineRepository {
                 .map(superList -> {
 
                     List<IssueEntity> list = new ArrayList<>();
-                    for (List<IssueEntity> itemList : superList) {
-                        list.addAll(itemList);
+
+                    if (superList.size() == 0) {
+                        list = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
+
+                    } else {
+
+                        for (List<IssueEntity> itemList : superList) {
+                            list.addAll(itemList);
+                        }
                     }
 
                     return list;

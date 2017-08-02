@@ -6,7 +6,6 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -68,25 +67,33 @@ public class ChildEntity {
 
         ForeignCollection<ChildEntity> childEntityCollection = null;
         try {
-            childEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("children");
-        } catch (SQLException e) {
+
+            if (parent.getChildren() == null) {
+                childEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("children");
+
+            } else {
+                childEntityCollection = parent.getChildren();
+            }
+
+            for (Child child : childList) {
+
+                ChildEntity childEntity = new ChildEntity();
+                childEntity.setParent(parent);
+                childEntity.setId(child.getId());
+                if (child.getTracker() != null) {
+                    childEntity.setTracker(child.getTracker().getName());
+                }
+                childEntity.setSubject(child.getSubject());
+
+                if (childEntityCollection != null) {
+                    childEntityCollection.add(childEntity);
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //Collection<ChildEntity> childEntityCollection = new ArrayList<>();
-        for (Child child : childList) {
 
-            ChildEntity childEntity = new ChildEntity();
-            childEntity.setParent(parent);
-            childEntity.setId(child.getId());
-            if (child.getTracker() != null) {
-                childEntity.setTracker(child.getTracker().getName());
-            }
-            childEntity.setSubject(child.getSubject());
-
-            if (childEntityCollection != null) {
-                childEntityCollection.add(childEntity);
-            }
-        }
 
         return childEntityCollection;
     }

@@ -8,6 +8,7 @@ import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +40,9 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
         }
 
         try {
+            Set<Long> set = new HashSet<>();
+            set.add(timeEntryEntity.getId());
+            deleteExtraEntitiesFromBd(set);
             createOrUpdate(timeEntryEntity);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -54,6 +58,14 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
 
         for (IssueEntity issueEntity : issueEntities) {
             try {
+
+                Set<Long> set = new HashSet<>();
+
+                for (IssueEntity entity: issueEntities) {
+                    set.add(entity.getId());
+                }
+
+                this.deleteExtraEntitiesFromBd(set);
                 this.createOrUpdate(issueEntity);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -97,5 +109,16 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
         }
 
         return issueModels;
+    }
+
+    public void deleteExtraEntitiesFromBd(Set<Long> set) {
+
+        try {
+            List<IssueEntity> issueEntityList = this.queryBuilder().where().not().in("id", set).query();
+            delete(issueEntityList);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

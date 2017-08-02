@@ -5,11 +5,11 @@ import android.support.annotation.NonNull;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
+import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.ChildEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -41,22 +41,32 @@ public class IssueDetailPresenter {
                         Throwable::printStackTrace);
     }
 
-    public List<IssueEntity> getChildIssues(long issueId) {
+    public List<IssueEntity> getChildIssues(IssueEntity issueEntity) {
 
         List<IssueEntity> issueEntityList = new ArrayList<>();
         IssueEntityDAO issueDao = DatabaseManager.getDatabaseHelper().getIssueEntityDAO();
         try {
-            IssueEntity issueEntity = issueDao.queryForId(issueId);
             Set<Long> idsSet = new HashSet<>();
-            for (ChildEntity childEntity: issueEntity.getChildren()) {
+            for (ChildEntity childEntity : issueEntity.getChildren()) {
                 idsSet.add(childEntity.getId());
             }
             issueEntityList = issueDao.getIssuesByIds(idsSet);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return issueEntityList;
+    }
+
+    public List<AttachmentEntity> getAttachments(IssueEntity issueEntity) {
+
+        List<AttachmentEntity> attachmentEntities = new ArrayList<>();
+
+        for (AttachmentEntity attachmentEntity : issueEntity.getAttachments()) {
+            attachmentEntities.add(attachmentEntity);
+        }
+
+        return attachmentEntities;
     }
 }

@@ -36,6 +36,9 @@ public class AttachmentEntity {
     @DatabaseField(columnName = "author_id")
     private long authorId;
 
+    @DatabaseField(columnName = "author_name")
+    private String authorName;
+
     @DatabaseField(columnName = "created_on")
     private String createdOn;
 
@@ -45,6 +48,14 @@ public class AttachmentEntity {
     public void setParent(IssueEntity parent) {
 
         this.parent = parent;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
     public Long getId() {
@@ -132,6 +143,7 @@ public class AttachmentEntity {
             attachmentEntity.setId(attachment.getId());
             if (attachment.getAuthor() != null) {
                 attachmentEntity.setAuthor(attachment.getAuthor().getId());
+                attachmentEntity.setAuthorName(attachment.getAuthor().getName());
             }
             attachmentEntity.setContentType(attachment.getContentType());
             attachmentEntity.setCreatedOn(attachment.getCreatedOn());

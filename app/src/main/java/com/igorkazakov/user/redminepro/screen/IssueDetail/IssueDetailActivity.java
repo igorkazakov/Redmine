@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 
@@ -94,12 +95,28 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
         long issueId = getIntent().getLongExtra(ISSUE_ID_KEY, 0);
         getSupportActionBar().setSubtitle("#" + String.valueOf(issueId));
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mChildIssuesList.setLayoutManager(linearLayoutManager);
-        mAttachmentList.setLayoutManager(linearLayoutManager);
+        setupChidIssueList();
+        setupAttachmentIssueList();
 
         mPresenter.tryLoadIssueDetailsData(issueId);
+    }
+
+    private void setupChidIssueList() {
+        mChildIssuesList.setLayoutManager(new LinearLayoutManager(this){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+    }
+
+    private void setupAttachmentIssueList() {
+        mAttachmentList.setLayoutManager(new LinearLayoutManager(this){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
     }
 
     @Override
@@ -125,12 +142,20 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
         mSpentHoursTextView.setText(String.valueOf(issueEntity.getSpentHours()));
         mIssueNameTextView.setText(issueEntity.getSubject());
 
-        List<IssueEntity> issueEntities = mPresenter.getChildIssues(issueEntity.getId());
+        List<IssueEntity> issueEntities = mPresenter.getChildIssues(issueEntity);
         if (issueEntities.size() == 0) {
             mChildIssueListView.setVisibility(View.GONE);
         }
         ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
         mChildIssuesList.setAdapter(adapter);
+
+        List<AttachmentEntity> attachmentEntities = mPresenter.getAttachments(issueEntity);
+        if (attachmentEntities.size() == 0) {
+            mAttachmentListView.setVisibility(View.GONE);
+        }
+        AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
+        mAttachmentList.setAdapter(attachmentAdapter);
+
     }
 
     @Override
