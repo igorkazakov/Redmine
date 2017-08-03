@@ -2,6 +2,7 @@ package com.igorkazakov.user.redminepro.database.entity;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.database.dao.ChildEntityDAO;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -65,14 +66,17 @@ public class ChildEntity {
             return null;
         }
 
-        ForeignCollection<ChildEntity> childEntityCollection = null;
+        ChildEntityDAO childEntityDAO = DatabaseManager.getDatabaseHelper().getChildEntityDAO();
+        childEntityDAO.deleteExtraEntitiesFromBd(childList);
+
+
+        ForeignCollection<ChildEntity> childEntityCollection = parent.getChildren();
         try {
 
-            if (parent.getChildren() == null) {
-                childEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("children");
+           // childEntityDAO.delete(childEntityDAO.getAll());
 
-            } else {
-                childEntityCollection = parent.getChildren();
+            if (childEntityCollection == null) {
+                childEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("children");
             }
 
             for (Child child : childList) {
@@ -86,14 +90,19 @@ public class ChildEntity {
                 childEntity.setSubject(child.getSubject());
 
                 if (childEntityCollection != null) {
-                    childEntityCollection.add(childEntity);
+
+                    if (childEntityDAO.queryForId(child.getId()) == null) {
+                        childEntityCollection.add(childEntity);
+                    } else {
+                        childEntityCollection.refresh(childEntity);
+                    }
                 }
+
+                childEntityDAO.createOrUpdate(childEntity);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //Collection<ChildEntity> childEntityCollection = new ArrayList<>();
-
 
         return childEntityCollection;
     }

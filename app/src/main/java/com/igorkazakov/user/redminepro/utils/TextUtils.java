@@ -2,6 +2,8 @@ package com.igorkazakov.user.redminepro.utils;
 
 import android.support.annotation.NonNull;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.regex.Pattern;
 
 /**
@@ -26,5 +28,17 @@ public class TextUtils {
 
     public static boolean validatePassword(@NonNull String value) {
         return value.isEmpty();
+    }
+
+    public static long convertStringToLong(String string) {
+
+        NumberFormat nf = NumberFormat.getInstance();
+        try {
+            return nf.parse(string).longValue();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 }

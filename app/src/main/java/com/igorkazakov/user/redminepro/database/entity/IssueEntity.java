@@ -335,14 +335,27 @@ public class IssueEntity {
 
         IssueEntity issueEntity = new IssueEntity();
         issueEntity.setId(issue.getId());
-        issueEntity.setProjectId(issue.getProject().getId());
-        issueEntity.setProjectName(issue.getProject().getName());
-        issueEntity.setTrackerId(issue.getTracker().getId());
-        issueEntity.setTrackerName(issue.getTracker().getName());
-        issueEntity.setStatusId(issue.getStatus().getId());
-        issueEntity.setStatusName(issue.getStatus().getName());
-        issueEntity.setPriorityId(issue.getPriority().getId());
-        issueEntity.setPriorityName(issue.getPriority().getName());
+
+        if (issue.getProject() != null) {
+            issueEntity.setProjectId(issue.getProject().getId());
+            issueEntity.setProjectName(issue.getProject().getName());
+        }
+
+        if (issue.getTracker() != null) {
+            issueEntity.setTrackerId(issue.getTracker().getId());
+            issueEntity.setTrackerName(issue.getTracker().getName());
+        }
+
+        if (issue.getStatus() != null) {
+            issueEntity.setStatusId(issue.getStatus().getId());
+            issueEntity.setStatusName(issue.getStatus().getName());
+        }
+
+        if (issue.getPriority() != null) {
+            issueEntity.setPriorityId(issue.getPriority().getId());
+            issueEntity.setPriorityName(issue.getPriority().getName());
+        }
+
         issueEntity.setSpentHours(issue.getSpentHours());
         issueEntity.setEstimatedHours(issue.getEstimatedHours());
 

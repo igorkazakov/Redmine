@@ -2,6 +2,7 @@ package com.igorkazakov.user.redminepro.database.entity;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.database.dao.DetailEntityDAO;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -15,6 +16,9 @@ import java.util.List;
 @DatabaseTable(tableName = "DetailEntity")
 public class DetailEntity {
 
+    @DatabaseField(id = true)
+    private long id;
+
     @DatabaseField(columnName = "property")
     private String property;
 
@@ -27,12 +31,20 @@ public class DetailEntity {
     @DatabaseField(columnName = "old_value")
     private String oldValue;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh= true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     protected JournalEntity parent;
 
     public void setParent(JournalEntity parent) {
 
         this.parent = parent;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getProperty() {
@@ -73,27 +85,35 @@ public class DetailEntity {
             return null;
         }
 
-        ForeignCollection<DetailEntity> detailEntityCollection = null;
+        DetailEntityDAO detailEntityDAO = DatabaseManager.getDatabaseHelper().getDetailEntityDAO();
+        detailEntityDAO.deleteAllDetails(parent.getId());
+
+        ForeignCollection<DetailEntity> detailEntityCollection = parent.getDetails();
         try {
-            detailEntityCollection = DatabaseManager.getDatabaseHelper().getJournalEntityDAO().getEmptyForeignCollection("details");
+
+            if (detailEntityCollection == null) {
+                detailEntityCollection = DatabaseManager.getDatabaseHelper().getJournalEntityDAO().getEmptyForeignCollection("details");
+            }
+
+            int idOffset = 0;
+            for (Detail detail : detailList) {
+                DetailEntity detailEntity = new DetailEntity();
+                detailEntity.setId(parent.getId() + ++idOffset);
+                detailEntity.setParent(parent);
+                detailEntity.setName(detail.getName());
+                detailEntity.setNewValue(detail.getNewValue());
+                detailEntity.setOldValue(detail.getOldValue());
+                detailEntity.setProperty(detail.getProperty());
+
+                if (detailEntityCollection != null) {
+                    detailEntityCollection.add(detailEntity);
+                }
+
+                detailEntityDAO.createOrUpdate(detailEntity);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        //Collection<DetailEntity> detailEntityCollection = new ArrayList<>();
-        for (Detail detail: detailList) {
-            DetailEntity detailEntity = new DetailEntity();
-            detailEntity.setParent(parent);
-            detailEntity.setName(detail.getName());
-            detailEntity.setNewValue(detail.getNewValue());
-            detailEntity.setOldValue(detail.getOldValue());
-            detailEntity.setProperty(detail.getProperty());
-
-            if (detailEntityCollection != null) {
-                detailEntityCollection.add(detailEntity);
-            }
-        }
-
         return detailEntityCollection;
     }
 }

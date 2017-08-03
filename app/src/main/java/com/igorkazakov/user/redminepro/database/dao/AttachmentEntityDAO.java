@@ -1,12 +1,15 @@
 package com.igorkazakov.user.redminepro.database.dao;
 
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by user on 31.07.17.
@@ -56,6 +59,22 @@ public class AttachmentEntityDAO extends BaseDaoImpl<AttachmentEntity, Long> {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void deleteExtraEntitiesFromBd(List<Attachment> attachmentList) {
+
+        Set<Long> set = new HashSet<>();
+        for (Attachment attachment: attachmentList) {
+            set.add(attachment.getId());
+        }
+
+        try {
+            List<AttachmentEntity> issueEntityList = this.queryBuilder().where().not().in("id", set).query();
+            delete(issueEntityList);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

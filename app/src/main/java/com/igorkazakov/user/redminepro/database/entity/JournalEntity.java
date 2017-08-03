@@ -3,13 +3,13 @@ package com.igorkazakov.user.redminepro.database.entity;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.database.dao.JournalEntityDAO;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,7 +31,7 @@ public class JournalEntity {
     private String createdOn;
 
     @ForeignCollectionField(eager = true)
-    private Collection<DetailEntity> details = null;
+    private ForeignCollection<DetailEntity> details = null;
 
     @DatabaseField(foreign = true, foreignAutoRefresh= true)
     protected IssueEntity parent;
@@ -73,11 +73,11 @@ public class JournalEntity {
         this.createdOn = createdOn;
     }
 
-    public Collection<DetailEntity> getDetails() {
+    public ForeignCollection<DetailEntity> getDetails() {
         return details;
     }
 
-    public void setDetails(Collection<DetailEntity> details) {
+    public void setDetails(ForeignCollection<DetailEntity> details) {
 
         this.details = details;
     }
@@ -93,27 +93,38 @@ public class JournalEntity {
             return null;
         }
 
-        ForeignCollection<JournalEntity> journalEntityCollection = null;
+        JournalEntityDAO journalEntityDAO = DatabaseManager.getDatabaseHelper().getJournalEntityDAO();
+        journalEntityDAO.deleteExtraEntitiesFromBd(journalList);
+
+        ForeignCollection<JournalEntity> journalEntityCollection = parent.getJournals();
         try {
-            journalEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("journals");
+
+            //journalEntityDAO.delete(journalEntityDAO.getAll());
+
+            if (journalEntityCollection == null) {
+                journalEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("journals");
+            }
+
+            for (Journal journal: journalList) {
+
+                JournalEntity journalEntity = new JournalEntity();
+                journalEntity.setParent(parent);
+                journalEntity.setId(journal.getId());
+                journalEntity.setCreatedOn(journal.getCreatedOn());
+                journalEntity.convertDetails(journal.getDetails(), journalEntity);
+                journalEntity.setNotes(journal.getNotes());
+                journalEntity.setUser(journal.getUser().getId());
+
+                if (journalEntityCollection != null) {
+                    if (journalEntityDAO.queryForId(journal.getId()) == null) {
+                        journalEntityCollection.add(journalEntity);
+                    } else {
+                        journalEntityCollection.refresh(journalEntity);
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        //Collection<JournalEntity> journalEntityCollection = new ArrayList<>();
-
-        for (Journal journal: journalList) {
-
-            JournalEntity journalEntity = new JournalEntity();
-            journalEntity.setParent(parent);
-            journalEntity.setId(journal.getId());
-            journalEntity.setCreatedOn(journal.getCreatedOn());
-            journalEntity.convertDetails(journal.getDetails(), journalEntity);
-            journalEntity.setNotes(journal.getNotes());
-            journalEntity.setUser(journal.getUser().getId());
-
-            if (journalEntityCollection != null) {
-                journalEntityCollection.add(journalEntity);
-            }
         }
 
         return journalEntityCollection;

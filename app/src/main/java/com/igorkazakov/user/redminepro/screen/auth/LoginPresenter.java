@@ -49,7 +49,7 @@ public class LoginPresenter {
             RedmineRepository.auth(login, password)
                     .doOnSubscribe(mLoginView::showLoading)
                     .doOnTerminate(mLoginView::hideLoading)
-                    .compose(mLifecycleHandler.load(R.id.auth_request))
+                    .compose(mLifecycleHandler.reload(R.id.auth_request))
                     .subscribe(user -> mLoginView.openDashboardScreen(),
                             throwable -> mLoginView.showPasswordError());
         }

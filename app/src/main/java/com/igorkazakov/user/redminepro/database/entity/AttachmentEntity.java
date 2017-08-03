@@ -2,6 +2,7 @@ package com.igorkazakov.user.redminepro.database.entity;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.database.dao.AttachmentEntityDAO;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -42,7 +43,7 @@ public class AttachmentEntity {
     @DatabaseField(columnName = "created_on")
     private String createdOn;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh= true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     protected IssueEntity parent;
 
     public void setParent(IssueEntity parent) {
@@ -128,33 +129,47 @@ public class AttachmentEntity {
             return null;
         }
 
-        ForeignCollection<AttachmentEntity> attachmentEntityCollection = null;
+        AttachmentEntityDAO attachmentEntityDAO = DatabaseManager.getDatabaseHelper().getAttachmentEntityDAO();
+        attachmentEntityDAO.deleteExtraEntitiesFromBd(attachmentList);
+
+        ForeignCollection<AttachmentEntity> attachmentEntityCollection = parent.getAttachments();
         try {
-            attachmentEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("attachments");
+
+            //attachmentEntityDAO.delete(attachmentEntityDAO.getAll());
+
+            if (attachmentEntityCollection == null) {
+                attachmentEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("attachments");
+            }
+
+            for (Attachment attachment : attachmentList) {
+
+                AttachmentEntity attachmentEntity = new AttachmentEntity();
+                attachmentEntity.setParent(parent);
+                attachmentEntity.setId(attachment.getId());
+                if (attachment.getAuthor() != null) {
+                    attachmentEntity.setAuthor(attachment.getAuthor().getId());
+                    attachmentEntity.setAuthorName(attachment.getAuthor().getName());
+                }
+                attachmentEntity.setContentType(attachment.getContentType());
+                attachmentEntity.setCreatedOn(attachment.getCreatedOn());
+                attachmentEntity.setContentUrl(attachment.getContentUrl());
+                attachmentEntity.setDescription(attachment.getDescription());
+                attachmentEntity.setFilename(attachment.getFilename());
+                attachmentEntity.setFilesize(attachment.getFilesize());
+
+                if (attachmentEntityCollection != null) {
+
+                    if (attachmentEntityDAO.queryForId(attachment.getId()) == null) {
+                        attachmentEntityCollection.add(attachmentEntity);
+                    } else {
+                        attachmentEntityCollection.refresh(attachmentEntity);
+                    }
+                }
+
+                attachmentEntityDAO.createOrUpdate(attachmentEntity);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        //Collection<AttachmentEntity> attachmentEntityCollection = new ArrayList<>();
-
-        for (Attachment attachment: attachmentList) {
-
-            AttachmentEntity attachmentEntity = new AttachmentEntity();
-            attachmentEntity.setParent(parent);
-            attachmentEntity.setId(attachment.getId());
-            if (attachment.getAuthor() != null) {
-                attachmentEntity.setAuthor(attachment.getAuthor().getId());
-                attachmentEntity.setAuthorName(attachment.getAuthor().getName());
-            }
-            attachmentEntity.setContentType(attachment.getContentType());
-            attachmentEntity.setCreatedOn(attachment.getCreatedOn());
-            attachmentEntity.setContentUrl(attachment.getContentUrl());
-            attachmentEntity.setDescription(attachment.getDescription());
-            attachmentEntity.setFilename(attachment.getFilename());
-            attachmentEntity.setFilesize(attachment.getFilesize());
-
-            if (attachmentEntityCollection != null) {
-                attachmentEntityCollection.add(attachmentEntity);
-            }
         }
 
         return attachmentEntityCollection;
