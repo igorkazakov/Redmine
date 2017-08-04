@@ -27,7 +27,8 @@
     <!-- Strings related to issues -->
     <string name="title_activity_issues">My issues</string>
     <string name="title_activity_issue_detail">Issue overview</string>
-
+    <!-- Strings related to detail issues -->
+    <string name="title_journal_issue_detail"><![CDATA[Updated by <b>%1$s %2$s</b> ago]]></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

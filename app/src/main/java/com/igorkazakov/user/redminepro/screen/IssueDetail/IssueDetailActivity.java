@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 
 import java.util.List;
@@ -63,11 +64,18 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     @BindView(R.id.attachmentList)
     RecyclerView mAttachmentList;
 
+    @BindView(R.id.journalIssuesList)
+    RecyclerView mJournalIssuesList;
+
     @BindView(R.id.childIssueListView)
     View mChildIssueListView;
 
     @BindView(R.id.attachmentListView)
     View mAttachmentListView;
+
+    @BindView(R.id.journalListView)
+    View mJournalListView;
+
 
 
     private IssueDetailPresenter mPresenter;
@@ -97,7 +105,7 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
 
         setupChidIssueList();
         setupAttachmentIssueList();
-
+        setupJournalIssueList();
         mPresenter.tryLoadIssueDetailsData(issueId);
     }
 
@@ -112,6 +120,15 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
 
     private void setupAttachmentIssueList() {
         mAttachmentList.setLayoutManager(new LinearLayoutManager(this){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+    }
+
+    private void setupJournalIssueList() {
+        mJournalIssuesList.setLayoutManager(new LinearLayoutManager(this){
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -155,6 +172,13 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
         }
         AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
         mAttachmentList.setAdapter(attachmentAdapter);
+
+        List<JournalEntity> journalEntities = mPresenter.getJournals(issueEntity);
+        if (journalEntities.size() == 0) {
+            mJournalListView.setVisibility(View.GONE);
+        }
+        JournalAdapter journalAdapter = new JournalAdapter(journalEntities);
+        mJournalIssuesList.setAdapter(journalAdapter);
 
     }
 

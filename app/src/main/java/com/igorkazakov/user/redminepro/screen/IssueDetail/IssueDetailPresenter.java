@@ -8,6 +8,7 @@ import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.ChildEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
 import java.util.ArrayList;
@@ -69,4 +70,17 @@ public class IssueDetailPresenter {
 
         return attachmentEntities;
     }
+
+    public List<JournalEntity> getJournals(IssueEntity issueEntity) {
+
+        List<JournalEntity> journalEntities = new ArrayList<>();
+
+        for (JournalEntity journalEntity : issueEntity.getJournals()) {
+            journalEntities.add(journalEntity);
+        }
+
+        return journalEntities;
+    }
+
+
 }

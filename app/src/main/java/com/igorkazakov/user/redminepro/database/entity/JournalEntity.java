@@ -24,6 +24,9 @@ public class JournalEntity {
     @DatabaseField(columnName = "user_id")
     private long userId;
 
+    @DatabaseField(columnName = "user_name")
+    private String userName;
+
     @DatabaseField(columnName = "notes")
     private String notes;
 
@@ -39,6 +42,15 @@ public class JournalEntity {
     public void setParent(IssueEntity parent) {
 
         this.parent = parent;
+    }
+
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Long getId() {
@@ -94,12 +106,12 @@ public class JournalEntity {
         }
 
         JournalEntityDAO journalEntityDAO = DatabaseManager.getDatabaseHelper().getJournalEntityDAO();
-        journalEntityDAO.deleteExtraEntitiesFromBd(journalList);
+        //journalEntityDAO.deleteExtraEntitiesFromBd(journalList);
 
         ForeignCollection<JournalEntity> journalEntityCollection = parent.getJournals();
         try {
 
-            //journalEntityDAO.delete(journalEntityDAO.getAll());
+            journalEntityDAO.delete(journalEntityDAO.getAll());
 
             if (journalEntityCollection == null) {
                 journalEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("journals");
@@ -113,7 +125,11 @@ public class JournalEntity {
                 journalEntity.setCreatedOn(journal.getCreatedOn());
                 journalEntity.convertDetails(journal.getDetails(), journalEntity);
                 journalEntity.setNotes(journal.getNotes());
-                journalEntity.setUser(journal.getUser().getId());
+
+                if (journal.getUser() != null) {
+                    journalEntity.setUser(journal.getUser().getId());
+                    journalEntity.setUserName(journal.getUser().getName());
+                }
 
                 if (journalEntityCollection != null) {
                     if (journalEntityDAO.queryForId(journal.getId()) == null) {

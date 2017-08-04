@@ -130,12 +130,12 @@ public class AttachmentEntity {
         }
 
         AttachmentEntityDAO attachmentEntityDAO = DatabaseManager.getDatabaseHelper().getAttachmentEntityDAO();
-        attachmentEntityDAO.deleteExtraEntitiesFromBd(attachmentList);
+        //attachmentEntityDAO.deleteExtraEntitiesFromBd(attachmentList);
 
         ForeignCollection<AttachmentEntity> attachmentEntityCollection = parent.getAttachments();
         try {
 
-            //attachmentEntityDAO.delete(attachmentEntityDAO.getAll());
+            attachmentEntityDAO.delete(attachmentEntityDAO.getAll());
 
             if (attachmentEntityCollection == null) {
                 attachmentEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("attachments");

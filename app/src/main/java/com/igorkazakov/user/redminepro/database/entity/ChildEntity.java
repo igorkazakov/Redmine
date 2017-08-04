@@ -67,13 +67,13 @@ public class ChildEntity {
         }
 
         ChildEntityDAO childEntityDAO = DatabaseManager.getDatabaseHelper().getChildEntityDAO();
-        childEntityDAO.deleteExtraEntitiesFromBd(childList);
+        //childEntityDAO.deleteExtraEntitiesFromBd(childList);
 
 
         ForeignCollection<ChildEntity> childEntityCollection = parent.getChildren();
         try {
 
-           // childEntityDAO.delete(childEntityDAO.getAll());
+            childEntityDAO.delete(childEntityDAO.getAll());
 
             if (childEntityCollection == null) {
                 childEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("children");

@@ -133,4 +133,47 @@ public class DateUtils {
 
         return new TimeInterval(startDate, currentDate);
     }
+
+    public static String timeDifference(Date oldDate) {
+
+        Date nowDate = new Date();
+
+        long diff = nowDate.getTime() - oldDate.getTime();
+
+        if (diff / 1000 < 1) {
+            return String.format("%s %s", 1, "second");
+        }
+
+        double rez = diff / 1000;
+
+        if (rez / 60 < 1) {
+            int roundRez = (int)Math.ceil(rez);
+            String timeString = roundRez == 1 ? "second" : "seconds";
+            return String.format("%s %s", roundRez, timeString);
+        }
+        rez = rez / 60;
+
+        if (rez / 60 < 1) {
+            int roundRez = (int)Math.ceil(rez);
+            String timeString = roundRez == 1 ? "minute" : "minutes";
+            return String.format("%s %s", roundRez, timeString);
+        }
+
+        rez = rez / 60;
+
+        if (rez / 24 < 1) {
+            int roundRez = (int)Math.ceil(rez);
+            String timeString = roundRez == 1 ? "hour" : "hours";
+            return String.format("%s %s", roundRez, timeString);
+        }
+
+        rez = rez / 24;
+        if (rez / 24 < 1) {
+            int roundRez = (int)Math.ceil(rez);
+            String timeString = roundRez == 1 ? "day" : "days";
+            return String.format("%s %s", roundRez, timeString);
+        }
+
+        return "";
+    }
 }
