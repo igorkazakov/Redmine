@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by user on 11.07.17.
  */
 
-public class User {
+public class AuthUser {
 
     @SerializedName("id")
     @Expose

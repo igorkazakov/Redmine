@@ -2,7 +2,11 @@ package com.igorkazakov.user.redminepro.api;
 
 import com.igorkazakov.user.redminepro.api.response.IssuesResponse;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
+import com.igorkazakov.user.redminepro.api.response.MembershipsResponse;
+import com.igorkazakov.user.redminepro.api.response.ProjectsResponse;
+import com.igorkazakov.user.redminepro.api.response.StatusesResponse;
 import com.igorkazakov.user.redminepro.api.response.TimeEntryResponse;
+import com.igorkazakov.user.redminepro.api.response.TrackersResponse;
 
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -38,4 +42,17 @@ public interface RedmineService {
     @GET("/issues/{issue_id}.json?include=attachments,journals,children,relations,changesets")
     Observable<IssuesResponse> issueDetails(@Path("issue_id") long issueid);
 
+    @GET("/issue_statuses.json")
+    Observable<StatusesResponse> statuses();
+
+    @GET("/trackers.json")
+    Observable<TrackersResponse> trackers();
+
+    @GET("/projects.json")
+    Observable<ProjectsResponse> projects();
+
+    @GET("/projects/{project_id}/memberships.json")
+    Observable<MembershipsResponse> memberships(@Query("limit") int limit,
+                                                @Query("offset") int offset,
+                                                @Path("project_id") long projectId);
 }

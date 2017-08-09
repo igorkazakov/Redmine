@@ -15,7 +15,7 @@ public class Journal {
     private Long id;
     @SerializedName("user")
     @Expose
-    private User user;
+    private ShortUser user;
     @SerializedName("notes")
     @Expose
     private String notes;
@@ -34,11 +34,11 @@ public class Journal {
         this.id = id;
     }
 
-    public User getUser() {
+    public ShortUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(ShortUser user) {
         this.user = user;
     }
 

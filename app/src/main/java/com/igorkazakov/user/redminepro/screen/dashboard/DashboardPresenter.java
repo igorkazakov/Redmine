@@ -32,13 +32,26 @@ public class DashboardPresenter {
         mView = view;
     }
 
+    public void loadRedmineData() {
+        RedmineRepository.getStatuses()
+                .compose(mLifecycleHandler.reload(R.id.projects_request))
+                .subscribe();
+        RedmineRepository.getTrackers()
+                .compose(mLifecycleHandler.reload(R.id.projects_request))
+                .subscribe();
+        RedmineRepository.getProjects()
+                .compose(mLifecycleHandler.reload(R.id.projects_request))
+                .subscribe();
+    }
+
     public void tryLoadDashboardData() {
 
         OggyRepository.getCalendarDaysForYear()
                 .doOnSubscribe(mView::showLoading)
                 .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
                 .subscribe(response -> loadTimeEntriesData(),
-                        throwable -> throwable.printStackTrace());
+                        Throwable::printStackTrace);
+
     }
 
     public void loadTimeEntriesData() {
@@ -47,7 +60,7 @@ public class DashboardPresenter {
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.time_entry_request))
                 .subscribe(response -> mView.setupView(),
-                        throwable -> throwable.printStackTrace());
+                        Throwable::printStackTrace);
     }
 
     public TimeModel getHoursForYear() {

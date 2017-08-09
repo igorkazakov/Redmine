@@ -5,4 +5,5 @@
     <item name="calendar_days_request" type="id"/>
     <item name="issues_request" type="id"/>
     <item name="issue_details_request" type="id"/>
+    <item name="projects_request" type="id"/>
 </resources>

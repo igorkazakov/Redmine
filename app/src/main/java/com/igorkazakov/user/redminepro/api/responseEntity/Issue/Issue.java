@@ -9,7 +9,7 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Ch
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortProject;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 
@@ -26,7 +26,7 @@ public class Issue {
     private Long id;
     @SerializedName("project")
     @Expose
-    private Project project;
+    private ShortProject project;
     @SerializedName("tracker")
     @Expose
     private Tracker tracker;
@@ -110,11 +110,11 @@ public class Issue {
         this.id = id;
     }
 
-    public Project getProject() {
+    public ShortProject getProject() {
         return project;
     }
 
-    public void setProject(Project project) {
+    public void setProject(ShortProject project) {
         this.project = project;
     }
 

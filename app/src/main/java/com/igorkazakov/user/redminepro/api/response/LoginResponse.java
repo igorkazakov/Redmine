@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.igorkazakov.user.redminepro.api.responseEntity.User;
+import com.igorkazakov.user.redminepro.api.responseEntity.AuthUser;
 
 /**
  * Created by user on 12.07.17.
@@ -10,13 +10,13 @@ import com.igorkazakov.user.redminepro.api.responseEntity.User;
 public class LoginResponse {
 
     @SerializedName("user")
-    private User user;
+    private AuthUser user;
 
-    public User getUser() {
+    public AuthUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(AuthUser user) {
         this.user = user;
     }
 }

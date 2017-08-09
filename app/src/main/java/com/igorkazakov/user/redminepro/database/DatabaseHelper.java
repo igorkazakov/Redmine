@@ -9,14 +9,22 @@ import com.igorkazakov.user.redminepro.database.dao.ChildEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.DetailEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.JournalEntityDAO;
+import com.igorkazakov.user.redminepro.database.dao.ProjectEntityDAO;
+import com.igorkazakov.user.redminepro.database.dao.StatusEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.TimeEntryDAO;
+import com.igorkazakov.user.redminepro.database.dao.TrackerEntityDAO;
+import com.igorkazakov.user.redminepro.database.dao.UserEntityDAO;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.database.entity.ChildEntity;
 import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.database.entity.ProjectEntity;
+import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
+import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
+import com.igorkazakov.user.redminepro.database.entity.UserEntity;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -39,6 +47,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private ChildEntityDAO mChildEntityDAO;
     private DetailEntityDAO mDetailEntityDAO;
     private JournalEntityDAO mJournalEntityDAO;
+    private StatusEntityDAO mStatusEntityDAO;
+    private TrackerEntityDAO mTrackerEntityDAO;
+    private UserEntityDAO mUserEntityDAO;
+    private ProjectEntityDAO mProjectEntityDAO;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -54,6 +66,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, ChildEntity.class);
             TableUtils.createTable(connectionSource, DetailEntity.class);
             TableUtils.createTable(connectionSource, JournalEntity.class);
+            TableUtils.createTable(connectionSource, StatusEntity.class);
+            TableUtils.createTable(connectionSource, TrackerEntity.class);
+            TableUtils.createTable(connectionSource, UserEntity.class);
+            TableUtils.createTable(connectionSource, ProjectEntity.class);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -70,11 +86,67 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, ChildEntity.class, true);
             TableUtils.dropTable(connectionSource, DetailEntity.class, true);
             TableUtils.dropTable(connectionSource, JournalEntity.class, true);
+            TableUtils.dropTable(connectionSource, StatusEntity.class, true);
+            TableUtils.dropTable(connectionSource, TrackerEntity.class, true);
+            TableUtils.dropTable(connectionSource, UserEntity.class, true);
+            TableUtils.dropTable(connectionSource, ProjectEntity.class, true);
             onCreate(database, connectionSource);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public StatusEntityDAO getStatusEntityDAO() {
+
+        if (mStatusEntityDAO == null) {
+            try {
+                mStatusEntityDAO = new StatusEntityDAO(getConnectionSource(), StatusEntity.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mStatusEntityDAO;
+    }
+
+    public TrackerEntityDAO getTrackerEntityDAO() {
+
+        if (mTrackerEntityDAO == null) {
+            try {
+                mTrackerEntityDAO = new TrackerEntityDAO(getConnectionSource(), TrackerEntity.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mTrackerEntityDAO;
+    }
+
+    public UserEntityDAO getUserEntityDAO() {
+
+        if (mUserEntityDAO == null) {
+            try {
+                mUserEntityDAO = new UserEntityDAO(getConnectionSource(), UserEntity.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mUserEntityDAO;
+    }
+
+    public ProjectEntityDAO getProjectEntityDAO() {
+
+        if (mProjectEntityDAO == null) {
+            try {
+                mProjectEntityDAO = new ProjectEntityDAO(getConnectionSource(), ProjectEntity.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mProjectEntityDAO;
     }
 
     public AttachmentEntityDAO getAttachmentEntityDAO() {

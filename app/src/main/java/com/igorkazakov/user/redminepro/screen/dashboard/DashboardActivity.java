@@ -97,6 +97,7 @@ public class DashboardActivity extends AppCompatActivity
 
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mPresenter = new DashboardPresenter(lifecycleHandler, this);
+        mPresenter.loadRedmineData();
         mPresenter.tryLoadDashboardData();
     }
 
