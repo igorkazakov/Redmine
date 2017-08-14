@@ -52,7 +52,7 @@ public interface RedmineService {
     Observable<ProjectsResponse> projects();
 
     @GET("/projects/{project_id}/memberships.json")
-    Observable<MembershipsResponse> memberships(@Query("limit") int limit,
-                                                @Query("offset") int offset,
-                                                @Path("project_id") long projectId);
+    Observable<MembershipsResponse> memberships(@Path("project_id") long projectId,
+                                                @Query("limit") int limit,
+                                                @Query("offset") int offset);
 }

@@ -3,11 +3,12 @@ package com.igorkazakov.user.redminepro.database.entity;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.AttachmentEntityDAO;
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -123,23 +124,19 @@ public class AttachmentEntity {
         this.createdOn = createdOn;
     }
 
-    public static ForeignCollection<AttachmentEntity> convertItems(List<Attachment> attachmentList, IssueEntity parent) {
+    public static Collection<Long> convertItems(List<Attachment> attachmentList, IssueEntity parent) {
 
         if (attachmentList == null) {
             return null;
         }
 
         AttachmentEntityDAO attachmentEntityDAO = DatabaseManager.getDatabaseHelper().getAttachmentEntityDAO();
-        //attachmentEntityDAO.deleteExtraEntitiesFromBd(attachmentList);
+        attachmentEntityDAO.deleteExtraEntitiesFromBd(attachmentList);
 
-        ForeignCollection<AttachmentEntity> attachmentEntityCollection = parent.getAttachments();
+        Collection<Long> idsList = new ArrayList<>();
         try {
 
-            attachmentEntityDAO.delete(attachmentEntityDAO.getAll());
-
-            if (attachmentEntityCollection == null) {
-                attachmentEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("attachments");
-            }
+            //attachmentEntityDAO.delete(attachmentEntityDAO.getAll());
 
             for (Attachment attachment : attachmentList) {
 
@@ -157,21 +154,13 @@ public class AttachmentEntity {
                 attachmentEntity.setFilename(attachment.getFilename());
                 attachmentEntity.setFilesize(attachment.getFilesize());
 
-                if (attachmentEntityCollection != null) {
-
-                    if (attachmentEntityDAO.queryForId(attachment.getId()) == null) {
-                        attachmentEntityCollection.add(attachmentEntity);
-                    } else {
-                        attachmentEntityCollection.refresh(attachmentEntity);
-                    }
-                }
-
                 attachmentEntityDAO.createOrUpdate(attachmentEntity);
+                idsList.add(attachmentEntity.getId());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return attachmentEntityCollection;
+        return idsList;
     }
 }

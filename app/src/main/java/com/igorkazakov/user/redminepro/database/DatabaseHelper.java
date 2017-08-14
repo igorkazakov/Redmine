@@ -9,22 +9,26 @@ import com.igorkazakov.user.redminepro.database.dao.ChildEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.DetailEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.JournalEntityDAO;
+import com.igorkazakov.user.redminepro.database.dao.PriorityEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.ProjectEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.StatusEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.database.dao.TrackerEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.UserEntityDAO;
+import com.igorkazakov.user.redminepro.database.dao.VersionEntityDAO;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.database.entity.ChildEntity;
 import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.entity.ProjectEntity;
 import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
 import com.igorkazakov.user.redminepro.database.entity.UserEntity;
+import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -51,6 +55,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private TrackerEntityDAO mTrackerEntityDAO;
     private UserEntityDAO mUserEntityDAO;
     private ProjectEntityDAO mProjectEntityDAO;
+    private VersionEntityDAO mVersionEntityDAO;
+    private PriorityEntityDAO mPriorityEntityDAO;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -70,6 +76,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, TrackerEntity.class);
             TableUtils.createTable(connectionSource, UserEntity.class);
             TableUtils.createTable(connectionSource, ProjectEntity.class);
+            TableUtils.createTable(connectionSource, VersionEntity.class);
+            TableUtils.createTable(connectionSource, PriorityEntity.class);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -90,11 +98,39 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, TrackerEntity.class, true);
             TableUtils.dropTable(connectionSource, UserEntity.class, true);
             TableUtils.dropTable(connectionSource, ProjectEntity.class, true);
+            TableUtils.dropTable(connectionSource, VersionEntity.class, true);
+            TableUtils.dropTable(connectionSource, PriorityEntity.class, true);
             onCreate(database, connectionSource);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public VersionEntityDAO getVersionEntityDAO() {
+
+        if (mVersionEntityDAO == null) {
+            try {
+                mVersionEntityDAO = new VersionEntityDAO(getConnectionSource(), VersionEntity.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mVersionEntityDAO;
+    }
+
+    public PriorityEntityDAO getPriorityEntityDAO() {
+
+        if (mPriorityEntityDAO == null) {
+            try {
+                mPriorityEntityDAO = new PriorityEntityDAO(getConnectionSource(), PriorityEntity.class);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mPriorityEntityDAO;
     }
 
     public StatusEntityDAO getStatusEntityDAO() {

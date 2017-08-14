@@ -4,12 +4,13 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.De
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.JournalEntityDAO;
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class JournalEntity {
     private String createdOn;
 
     @ForeignCollectionField(eager = true)
-    private ForeignCollection<DetailEntity> details = null;
+    private Collection<Long> details = null;
 
     @DatabaseField(foreign = true, foreignAutoRefresh= true)
     protected IssueEntity parent;
@@ -85,11 +86,11 @@ public class JournalEntity {
         this.createdOn = createdOn;
     }
 
-    public ForeignCollection<DetailEntity> getDetails() {
+    public Collection<Long> getDetails() {
         return details;
     }
 
-    public void setDetails(ForeignCollection<DetailEntity> details) {
+    public void setDetails(Collection<Long> details) {
 
         this.details = details;
     }
@@ -99,23 +100,19 @@ public class JournalEntity {
         this.details = DetailEntity.convertItems(details, parent);
     }
 
-    public static ForeignCollection<JournalEntity> convertItems(List<Journal> journalList, IssueEntity parent) {
+    public static Collection<Long> convertItems(List<Journal> journalList, IssueEntity parent) {
 
         if (journalList == null) {
             return null;
         }
 
         JournalEntityDAO journalEntityDAO = DatabaseManager.getDatabaseHelper().getJournalEntityDAO();
-        //journalEntityDAO.deleteExtraEntitiesFromBd(journalList);
+        journalEntityDAO.deleteExtraEntitiesFromBd(journalList);
+        Collection<Long> idsList = new ArrayList<>();
 
-        ForeignCollection<JournalEntity> journalEntityCollection = parent.getJournals();
         try {
 
-            journalEntityDAO.delete(journalEntityDAO.getAll());
-
-            if (journalEntityCollection == null) {
-                journalEntityCollection = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getEmptyForeignCollection("journals");
-            }
+            //journalEntityDAO.delete(journalEntityDAO.getAll());
 
             for (Journal journal: journalList) {
 
@@ -131,18 +128,13 @@ public class JournalEntity {
                     journalEntity.setUserName(journal.getUser().getName());
                 }
 
-                if (journalEntityCollection != null) {
-                    if (journalEntityDAO.queryForId(journal.getId()) == null) {
-                        journalEntityCollection.add(journalEntity);
-                    } else {
-                        journalEntityCollection.refresh(journalEntity);
-                    }
-                }
+                journalEntityDAO.createOrUpdate(journalEntity);
+                idsList.add(journalEntity.getId());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return journalEntityCollection;
+        return idsList;
     }
 }

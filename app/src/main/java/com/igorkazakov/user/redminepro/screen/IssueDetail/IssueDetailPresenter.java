@@ -4,13 +4,16 @@ import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.database.dao.AttachmentEntityDAO;
+import com.igorkazakov.user.redminepro.database.dao.DetailEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
-import com.igorkazakov.user.redminepro.database.entity.ChildEntity;
+import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,12 +49,16 @@ public class IssueDetailPresenter {
 
         List<IssueEntity> issueEntityList = new ArrayList<>();
         IssueEntityDAO issueDao = DatabaseManager.getDatabaseHelper().getIssueEntityDAO();
+
         try {
             Set<Long> idsSet = new HashSet<>();
-            for (ChildEntity childEntity : issueEntity.getChildren()) {
-                idsSet.add(childEntity.getId());
+            for (long id : issueEntity.getChildrenIds()) {
+
+                IssueEntity issue = issueDao.queryForId(id);
+                if (issue != null) {
+                    issueEntityList.add(issue);
+                }
             }
-            issueEntityList = issueDao.getIssuesByIds(idsSet);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,9 +70,20 @@ public class IssueDetailPresenter {
     public List<AttachmentEntity> getAttachments(IssueEntity issueEntity) {
 
         List<AttachmentEntity> attachmentEntities = new ArrayList<>();
+        AttachmentEntityDAO attachmentEntityDAO = DatabaseManager.getDatabaseHelper().getAttachmentEntityDAO();
 
-        for (AttachmentEntity attachmentEntity : issueEntity.getAttachments()) {
-            attachmentEntities.add(attachmentEntity);
+        try {
+
+            for (long id : issueEntity.getAttachmentIds()) {
+
+                AttachmentEntity attachmentEntity = attachmentEntityDAO.queryForId(id);
+                if (attachmentEntity != null) {
+                    attachmentEntities.add(attachmentEntity);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return attachmentEntities;
@@ -75,12 +93,42 @@ public class IssueDetailPresenter {
 
         List<JournalEntity> journalEntities = new ArrayList<>();
 
-        for (JournalEntity journalEntity : issueEntity.getJournals()) {
-            journalEntities.add(journalEntity);
-        }
+        try {
 
+            for (long id : issueEntity.getJournalIds()) {
+                JournalEntity journalEntity = DatabaseManager.
+                        getDatabaseHelper().
+                        getJournalEntityDAO()
+                        .queryForId(id);
+
+                if (journalEntity != null) {
+                    journalEntities.add(journalEntity);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return journalEntities;
     }
 
+    public static List<DetailEntity> getJournalDetails(JournalEntity journalEntity) {
+
+        List<DetailEntity> detailEntities = new ArrayList<>();
+        DetailEntityDAO detailEntityDAO = DatabaseManager.getDatabaseHelper().getDetailEntityDAO();
+        try {
+            for (long id : journalEntity.getDetails()) {
+
+                DetailEntity detailEntity = detailEntityDAO.queryForId(id);
+                if (detailEntity != null) {
+                    detailEntities.add(detailEntity);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return detailEntities;
+    }
 
 }

@@ -325,6 +325,8 @@ public class RedmineRepository {
                     }
                 })
                 .takeUntil(List::isEmpty)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
 
@@ -332,7 +334,7 @@ public class RedmineRepository {
     private static  Observable<List<UserEntity>> getMemberships(int offset, long projectId) {
 
         return ApiFactory.getRedmineService()
-                .memberships(limit, offset, projectId)
+                .memberships(projectId, limit, offset)
                 .flatMap(membershipsResponse -> {
 
                     List<Membership> memberships = membershipsResponse.getMemberships();
@@ -347,7 +349,7 @@ public class RedmineRepository {
 
                     return Observable.just(userEntities);
                 })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

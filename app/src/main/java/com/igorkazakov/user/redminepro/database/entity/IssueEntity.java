@@ -4,12 +4,12 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -88,16 +88,16 @@ public class IssueEntity {
     private double estimatedHours;
 
     @ForeignCollectionField(eager = true)
-    private ForeignCollection<ChildEntity> children = null;
+    private Collection<Long> childrenIds = null;
 
     @ForeignCollectionField(eager = true)
-    private ForeignCollection<AttachmentEntity> attachments = null;
+    private Collection<Long> attachmentIds = null;
 
    // @ForeignCollectionField(eager = true)
    // private Collection<Object> changesets = null;
 
     @ForeignCollectionField(eager = true)
-    private ForeignCollection<JournalEntity> journals = null;
+    private Collection<Long> journalIds = null;
 
     public double getSpentHours() {
         return spentHours;
@@ -283,28 +283,28 @@ public class IssueEntity {
         this.updatedOn = updatedOn;
     }
 
-    public ForeignCollection<ChildEntity> getChildren() {
-        return children;
+    public Collection<Long> getChildrenIds() {
+        return childrenIds;
     }
 
-    public void setChildren(ForeignCollection<ChildEntity> children) {
-        this.children = children;
+    public void setChildrenIds(Collection<Long> childrenIds) {
+        this.childrenIds = childrenIds;
     }
 
     public void convertChildren(List<Child> children, IssueEntity parent) {
-        this.children = ChildEntity.concertItems(children, parent);
+        this.childrenIds = ChildEntity.concertItems(children, parent);
     }
 
-    public ForeignCollection<AttachmentEntity> getAttachments() {
-        return attachments;
+    public Collection<Long> getAttachmentIds() {
+        return attachmentIds;
     }
 
-    public void setAttachments(ForeignCollection<AttachmentEntity> attachments) {
-        this.attachments = attachments;
+    public void setAttachmentIds(Collection<Long> attachmentIds) {
+        this.attachmentIds = attachmentIds;
     }
 
     public void convertAttachments(List<Attachment> attachments, IssueEntity parent) {
-        this.attachments = AttachmentEntity.convertItems(attachments, parent);
+        this.attachmentIds = AttachmentEntity.convertItems(attachments, parent);
     }
 
 //    public Collection<Object> getChangesets() {
@@ -315,16 +315,16 @@ public class IssueEntity {
 //        this.changesets = changesets;
 //    }
 
-    public ForeignCollection<JournalEntity> getJournals() {
-        return journals;
+    public Collection<Long> getJournalIds() {
+        return journalIds;
     }
 
-    public void setJournals(ForeignCollection<JournalEntity> journals) {
-        this.journals = journals;
+    public void setJournalIds(Collection<Long> journalIds) {
+        this.journalIds = journalIds;
     }
 
     public void convertJournals(List<Journal> journals, IssueEntity parent) {
-        this.journals = JournalEntity.convertItems(journals, parent);
+        this.journalIds = JournalEntity.convertItems(journals, parent);
     }
 
     public static IssueEntity convertItem(Issue issue) {

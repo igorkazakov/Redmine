@@ -3,11 +3,12 @@ package com.igorkazakov.user.redminepro.database.entity;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.DetailEntityDAO;
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -79,21 +80,17 @@ public class DetailEntity {
         this.oldValue = oldValue;
     }
 
-    public static ForeignCollection<DetailEntity> convertItems(List<Detail> detailList, JournalEntity parent) {
+    public static Collection<Long> convertItems(List<Detail> detailList, JournalEntity parent) {
 
         if (detailList == null) {
             return null;
         }
 
         DetailEntityDAO detailEntityDAO = DatabaseManager.getDatabaseHelper().getDetailEntityDAO();
-        detailEntityDAO.deleteAllDetails(parent.getId());
+        detailEntityDAO.deleteDetailsByParent(parent.getId());
 
-        ForeignCollection<DetailEntity> detailEntityCollection = parent.getDetails();
+        List<Long> idsList = new ArrayList<>();
         try {
-
-            if (detailEntityCollection == null) {
-                detailEntityCollection = DatabaseManager.getDatabaseHelper().getJournalEntityDAO().getEmptyForeignCollection("details");
-            }
 
             int idOffset = 0;
             for (Detail detail : detailList) {
@@ -105,15 +102,12 @@ public class DetailEntity {
                 detailEntity.setOldValue(detail.getOldValue());
                 detailEntity.setProperty(detail.getProperty());
 
-                if (detailEntityCollection != null) {
-                    detailEntityCollection.add(detailEntity);
-                }
-
                 detailEntityDAO.createOrUpdate(detailEntity);
+                idsList.add(detailEntity.getId());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return detailEntityCollection;
+        return idsList;
     }
 }

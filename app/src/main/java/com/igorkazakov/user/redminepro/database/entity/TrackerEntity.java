@@ -17,7 +17,7 @@ public class TrackerEntity {
     @DatabaseField(id = true)
     private Long id;
 
-    @DatabaseField(columnName = "id")
+    @DatabaseField(columnName = "name")
     private String name;
 
     public Long getId() {
