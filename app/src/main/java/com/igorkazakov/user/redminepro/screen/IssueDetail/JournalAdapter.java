@@ -18,9 +18,11 @@ import java.util.List;
 public class JournalAdapter extends RecyclerView.Adapter<JournalHolder> {
 
     private List<JournalEntity> journalEntities;
+    private IssueDetailPresenter issueDetailPresenter;
 
-    public JournalAdapter(List<JournalEntity> journalEntities) {
+    public JournalAdapter(List<JournalEntity> journalEntities, IssueDetailPresenter issueDetailPresenter) {
         this.journalEntities = journalEntities;
+        this.issueDetailPresenter =
     }
 
     @Override
@@ -33,7 +35,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalHolder> {
 
     @Override
     public void onBindViewHolder(JournalHolder holder, int position) {
-        holder.bind(journalEntities.get(position));
+        holder.bind(journalEntities.get(position), issueDetailPresenter);
     }
 
     @Override

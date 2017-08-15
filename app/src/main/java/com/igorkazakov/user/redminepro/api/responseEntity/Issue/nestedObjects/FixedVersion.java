@@ -16,6 +16,18 @@ public class FixedVersion {
     @Expose
     private String name;
 
+    @SerializedName("project")
+    @Expose
+    private ShortProject project;
+
+    public ShortProject getProject() {
+        return project;
+    }
+
+    public void setProject(ShortProject project) {
+        this.project = project;
+    }
+
     public Long getId() {
         return id;
     }

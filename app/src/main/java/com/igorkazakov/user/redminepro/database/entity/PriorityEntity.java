@@ -4,6 +4,9 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Pr
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by user on 14.08.17.
  */
@@ -44,5 +47,20 @@ public class PriorityEntity {
         versionEntity.setName(priority.getName());
 
         return versionEntity;
+    }
+
+    public static List<PriorityEntity> convertItems(List<Priority> items) {
+
+        if (items == null) {
+            return null;
+        }
+
+        ArrayList<PriorityEntity> priorityEntities = new ArrayList<>();
+        for (Priority item : items) {
+
+            priorityEntities.add(PriorityEntity.convertItem(item));
+        }
+
+        return priorityEntities;
     }
 }

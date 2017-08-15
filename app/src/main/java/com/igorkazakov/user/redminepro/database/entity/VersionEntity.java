@@ -4,6 +4,9 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Fi
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by user on 14.08.17.
  */
@@ -16,6 +19,17 @@ public class VersionEntity {
 
     @DatabaseField(columnName = "name")
     private String name;
+
+    @DatabaseField(columnName = "project_id")
+    private long projectId;
+
+    public long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(long projectId) {
+        this.projectId = projectId;
+    }
 
     public Long getId() {
         return id;
@@ -41,8 +55,28 @@ public class VersionEntity {
 
         VersionEntity versionEntity = new VersionEntity();
         versionEntity.setId(fixedVersion.getId());
+
+        if (fixedVersion.getProject() != null) {
+            versionEntity.setProjectId(fixedVersion.getProject().getId());
+        }
+
         versionEntity.setName(fixedVersion.getName());
 
         return versionEntity;
+    }
+
+    public static List<VersionEntity> convertItems(List<FixedVersion> items) {
+
+        if (items == null) {
+            return null;
+        }
+
+        ArrayList<VersionEntity> versionEntities = new ArrayList<>();
+        for (FixedVersion item : items) {
+
+            versionEntities.add(VersionEntity.convertItem(item));
+        }
+
+        return versionEntities;
     }
 }

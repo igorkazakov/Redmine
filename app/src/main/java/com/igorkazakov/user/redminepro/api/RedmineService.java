@@ -3,10 +3,12 @@ package com.igorkazakov.user.redminepro.api;
 import com.igorkazakov.user.redminepro.api.response.IssuesResponse;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
 import com.igorkazakov.user.redminepro.api.response.MembershipsResponse;
+import com.igorkazakov.user.redminepro.api.response.PrioritiesResponse;
 import com.igorkazakov.user.redminepro.api.response.ProjectsResponse;
 import com.igorkazakov.user.redminepro.api.response.StatusesResponse;
 import com.igorkazakov.user.redminepro.api.response.TimeEntryResponse;
 import com.igorkazakov.user.redminepro.api.response.TrackersResponse;
+import com.igorkazakov.user.redminepro.api.response.VersionsResponse;
 
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -55,4 +57,10 @@ public interface RedmineService {
     Observable<MembershipsResponse> memberships(@Path("project_id") long projectId,
                                                 @Query("limit") int limit,
                                                 @Query("offset") int offset);
+
+    @GET("/projects/{project_id}/versions.json")
+    Observable<VersionsResponse> versions(@Path("project_id") long projectId);
+
+    @GET("/enumerations/issue_priorities.json")
+    Observable<PrioritiesResponse> priorities();
 }

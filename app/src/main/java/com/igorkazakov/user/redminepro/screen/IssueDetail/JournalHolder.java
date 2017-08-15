@@ -38,7 +38,7 @@ public class JournalHolder extends RecyclerView.ViewHolder {
         mContext = context;
     }
 
-    public void bind(JournalEntity entity) {
+    public void bind(JournalEntity entity, IssueDetailPresenter issueDetailPresenter) {
 
         mJournalEntity = entity;
 

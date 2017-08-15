@@ -6,6 +6,8 @@ import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.api.ContentType;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
@@ -15,11 +17,13 @@ import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.entity.ProjectEntity;
 import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
 import com.igorkazakov.user.redminepro.database.entity.UserEntity;
+import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
@@ -305,11 +309,56 @@ public class RedmineRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    @NonNull
+    public static Observable<List<VersionEntity>> getVersionsByProject(long projectId) {
+
+        return ApiFactory.getRedmineService()
+                .versions(projectId)
+                .flatMap(versionsResponse -> {
+
+                    List<FixedVersion> fixedVersions = versionsResponse.getFixedVersions();
+                    List<VersionEntity> versionEntities = VersionEntity.convertItems(fixedVersions);
+                    DatabaseManager.getDatabaseHelper().getVersionEntityDAO().saveVersionEntities(versionEntities);
+
+                    return Observable.just(versionEntities);
+                })
+                .onErrorResumeNext(throwable -> {
+
+                    List<VersionEntity> versionEntities = DatabaseManager.getDatabaseHelper().getVersionEntityDAO().getAll();
+                    return Observable.just(versionEntities);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @NonNull
+    public static Observable<List<PriorityEntity>> getProjectPriorities() {
+
+        return ApiFactory.getRedmineService()
+                .priorities()
+                .flatMap(prioritiesResponse -> {
+
+                    List<Priority> priorities = prioritiesResponse.getPriorities();
+                    List<PriorityEntity> priorityEntities = PriorityEntity.convertItems(priorities);
+                    DatabaseManager.getDatabaseHelper().getPriorityEntityDAO().savePriorityEntities(priorityEntities);
+
+                    return Observable.just(priorityEntities);
+                })
+                .onErrorResumeNext(throwable -> {
+
+                    List<PriorityEntity> priorityEntities = DatabaseManager.getDatabaseHelper().getPriorityEntityDAO().getAll();
+                    return Observable.just(priorityEntities);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     private static void loadUsers(@NonNull List<ProjectEntity> projectEntities) {
 
         for (ProjectEntity projectEntity: projectEntities) {
 
             getPaginatedMemberships(projectEntity.getId());
+            getVersionsByProject(projectEntity.getId());
         }
     }
 
