@@ -62,7 +62,7 @@ public class JournalHolder extends RecyclerView.ViewHolder {
             mNotesTextView.setVisibility(View.GONE);
         }
 
-        JournalDetailAdapter journalAdapter = new JournalDetailAdapter(entity.getDetails());
+        JournalDetailAdapter journalAdapter = new JournalDetailAdapter(entity, issueDetailPresenter);
         mDetailJournalList.setAdapter(journalAdapter);
     }
 }

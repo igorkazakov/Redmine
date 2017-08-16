@@ -37,7 +37,7 @@ public class JournalEntity {
     @ForeignCollectionField(eager = true)
     private Collection<Long> details = null;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh= true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     protected IssueEntity parent;
 
     public void setParent(IssueEntity parent) {

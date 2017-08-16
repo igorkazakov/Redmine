@@ -11,6 +11,11 @@ import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
+import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
+import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
+import com.igorkazakov.user.redminepro.database.entity.UserEntity;
+import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
 import java.sql.SQLException;
@@ -112,7 +117,7 @@ public class IssueDetailPresenter {
         return journalEntities;
     }
 
-    public static List<DetailEntity> getJournalDetails(JournalEntity journalEntity) {
+    public List<DetailEntity> getJournalDetails(JournalEntity journalEntity) {
 
         List<DetailEntity> detailEntities = new ArrayList<>();
         DetailEntityDAO detailEntityDAO = DatabaseManager.getDatabaseHelper().getDetailEntityDAO();
@@ -131,4 +136,58 @@ public class IssueDetailPresenter {
         return detailEntities;
     }
 
+    public UserEntity getUserById(long id) {
+        UserEntity entity = null;
+        try {
+            entity = DatabaseManager.getDatabaseHelper().getUserEntityDAO().queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return entity;
+    }
+
+    public StatusEntity getStatusById(long id) {
+        StatusEntity entity = null;
+        try {
+            entity = DatabaseManager.getDatabaseHelper().getStatusEntityDAO().queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return entity;
+    }
+
+    public TrackerEntity getTrackerById(long id) {
+        TrackerEntity entity = null;
+        try {
+            entity = DatabaseManager.getDatabaseHelper().getTrackerEntityDAO().queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return entity;
+    }
+
+    public VersionEntity getVersionById(long id) {
+        VersionEntity entity = null;
+        try {
+            entity = DatabaseManager.getDatabaseHelper().getVersionEntityDAO().queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return entity;
+    }
+
+    public PriorityEntity getPriorityById(long id) {
+        PriorityEntity entity = null;
+        try {
+            entity = DatabaseManager.getDatabaseHelper().getPriorityEntityDAO().queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return entity;
+    }
 }

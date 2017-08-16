@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
+import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
 import com.j256.ormlite.dao.ForeignCollection;
 
 import java.util.ArrayList;
@@ -20,9 +21,11 @@ import java.util.List;
 public class JournalDetailAdapter extends RecyclerView.Adapter<JournalDetailHolder> {
 
     private List<DetailEntity> detailEntities;
+    private IssueDetailPresenter issueDetailPresenter;
 
-    public JournalDetailAdapter(ForeignCollection<DetailEntity> detailEntities) {
-        this.detailEntities = new ArrayList<>(detailEntities);
+    public JournalDetailAdapter(JournalEntity entity, IssueDetailPresenter issueDetailPresenter) {
+        this.issueDetailPresenter = issueDetailPresenter;
+        this.detailEntities = issueDetailPresenter.getJournalDetails(entity);
     }
 
     @Override
@@ -35,7 +38,7 @@ public class JournalDetailAdapter extends RecyclerView.Adapter<JournalDetailHold
 
     @Override
     public void onBindViewHolder(JournalDetailHolder holder, int position) {
-        holder.bind(detailEntities.get(position));
+        holder.bind(detailEntities.get(position), issueDetailPresenter);
     }
 
     @Override

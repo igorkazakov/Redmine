@@ -177,7 +177,7 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
         if (journalEntities.size() == 0) {
             mJournalListView.setVisibility(View.GONE);
         }
-        JournalAdapter journalAdapter = new JournalAdapter(journalEntities);
+        JournalAdapter journalAdapter = new JournalAdapter(journalEntities, mPresenter);
         mJournalIssuesList.setAdapter(journalAdapter);
 
     }

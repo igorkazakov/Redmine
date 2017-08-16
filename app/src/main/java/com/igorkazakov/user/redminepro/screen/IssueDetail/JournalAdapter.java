@@ -22,7 +22,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalHolder> {
 
     public JournalAdapter(List<JournalEntity> journalEntities, IssueDetailPresenter issueDetailPresenter) {
         this.journalEntities = journalEntities;
-        this.issueDetailPresenter =
+        this.issueDetailPresenter = issueDetailPresenter;
     }
 
     @Override

@@ -25,7 +25,7 @@ public class ChildEntity {
     @DatabaseField(columnName = "subject")
     private String subject;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh= true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     protected IssueEntity parent;
 
     public void setParent(IssueEntity parent) {
