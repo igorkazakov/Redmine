@@ -77,4 +77,18 @@ public class AttachmentEntityDAO extends BaseDaoImpl<AttachmentEntity, Long> {
             e.printStackTrace();
         }
     }
+
+    public List<AttachmentEntity> getAttachmentByParent(long parent) {
+
+        List<AttachmentEntity> attachmentEntities = new ArrayList<>();
+
+        try {
+            attachmentEntities = this.queryBuilder().where().eq("parent_id", parent).query();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return attachmentEntities;
+    }
 }

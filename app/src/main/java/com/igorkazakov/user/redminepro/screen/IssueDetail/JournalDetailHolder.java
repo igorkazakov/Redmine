@@ -63,6 +63,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                             oldValue = user.getName();
                         }
                     }
+                    break;
                 }
 
                 case "fixed_version_id": {
@@ -83,6 +84,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                             oldValue = version.getName();
                         }
                     }
+                    break;
                 }
 
                 case "status_id": {
@@ -103,6 +105,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                             oldValue = status.getName();
                         }
                     }
+                    break;
                 }
 
                 case "tracker_id": {
@@ -123,6 +126,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                             oldValue = tracker.getName();
                         }
                     }
+                    break;
                 }
 
                 case "priority_id": {
@@ -142,6 +146,19 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                         if (priority != null) {
                             oldValue = priority.getName();
                         }
+                    }
+                    break;
+                }
+
+                case "subject":
+                case "parent_id":
+                case "description": {
+                    if (mDetailEntity.getNewValue() != null) {
+                        newValue = mDetailEntity.getNewValue();
+                    }
+
+                    if (mDetailEntity.getOldValue() != null) {
+                        oldValue = mDetailEntity.getOldValue();
                     }
                 }
             }
@@ -196,6 +213,14 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                     prefixStr = "<b>Assignee</b> ";
                     break;
 
+                case "description":
+                    prefixStr = "<b>Description</b> ";
+                    break;
+
+                case "priority_id":
+                    prefixStr = "<b>Priority</b> ";
+                    break;
+
                 default:
                     prefixStr = "";
             }
@@ -209,6 +234,9 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
             } else if (newValue != null && newValue.length() > 0) {
 
                 string = string.concat("set to " + "<b>" + newValue + "</b>");
+
+            } else {
+                string = "";
             }
         }
 

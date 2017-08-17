@@ -77,4 +77,18 @@ public class JournalEntityDAO extends BaseDaoImpl<JournalEntity, Long> {
             e.printStackTrace();
         }
     }
+
+    public List<JournalEntity> getjournalsByParent(long parent) {
+
+        List<JournalEntity> journalEntities= new ArrayList<>();
+
+        try {
+            journalEntities = this.queryBuilder().where().eq("parent_id", parent).query();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return journalEntities;
+    }
 }

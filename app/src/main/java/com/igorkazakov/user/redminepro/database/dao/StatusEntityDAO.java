@@ -64,56 +64,17 @@ public class StatusEntityDAO extends BaseDaoImpl<StatusEntity, Long> {
         }
     }
 
-    public TimeModel getWorkHoursWithInterval(TimeInterval interval) {
+    public List<StatusEntity> getStatusesByParent(long parent) {
 
-        TimeModel model = new TimeModel(0, 0, 0);
-
-        String sqlLong = " select sum(hours) as rt from TimeEntryEntity where " +
-                " TimeEntryEntity.type = ? and TimeEntryEntity.spent_on >= ? and TimeEntryEntity.spent_on <= ?";
+        List<StatusEntity> statusEntities= new ArrayList<>();
 
         try {
-
-            String startDate = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
-            String endDate = DateUtils.stringFromDate(interval.getEnd(), DateUtils.getSimpleFormatter());
-
-            long regular = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.REGULAR.getValue(), startDate, endDate);
-            long fuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.FUCKUP.getValue(), startDate, endDate);
-            long teamFuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.TEAMFUCKUP.getValue(), startDate, endDate);
-
-            model.setRegularTime(regular);
-            model.setFuckupTime(fuckup);
-            model.setTeamFuckupTime(teamFuckup);
+            statusEntities = this.queryBuilder().where().eq("parent_id", parent).query();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return model;
-    }
-
-    public TimeModel getWorkHoursWithDate(Date date) {
-
-        TimeModel model = new TimeModel(0, 0, 0);
-
-        String sqlLong = " select sum(hours) as rt from TimeEntryEntity where " +
-                " TimeEntryEntity.type = ? and TimeEntryEntity.spent_on == ? ";
-
-        try {
-
-            String queryDate = DateUtils.stringFromDate(date, DateUtils.getSimpleFormatter());
-
-            long regular = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.REGULAR.getValue(), queryDate);
-            long fuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.FUCKUP.getValue(), queryDate);
-            long teamFuckup = this.queryRawValue(sqlLong, TimeEntryEntity.TimeType.TEAMFUCKUP.getValue(), queryDate);
-
-            model.setRegularTime(regular);
-            model.setFuckupTime(fuckup);
-            model.setTeamFuckupTime(teamFuckup);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return model;
+        return statusEntities;
     }
 }

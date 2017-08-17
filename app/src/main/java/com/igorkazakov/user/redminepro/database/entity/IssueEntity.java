@@ -87,18 +87,6 @@ public class IssueEntity {
     @DatabaseField(columnName = "estimated_hours")
     private double estimatedHours;
 
-    @ForeignCollectionField(eager = true)
-    private Collection<Long> childrenIds = null;
-
-    @ForeignCollectionField(eager = true)
-    private Collection<Long> attachmentIds = null;
-
-   // @ForeignCollectionField(eager = true)
-   // private Collection<Object> changesets = null;
-
-    @ForeignCollectionField(eager = true)
-    private Collection<Long> journalIds = null;
-
     public double getSpentHours() {
         return spentHours;
     }
@@ -283,48 +271,16 @@ public class IssueEntity {
         this.updatedOn = updatedOn;
     }
 
-    public Collection<Long> getChildrenIds() {
-        return childrenIds;
-    }
-
-    public void setChildrenIds(Collection<Long> childrenIds) {
-        this.childrenIds = childrenIds;
-    }
-
     public void convertChildren(List<Child> children, IssueEntity parent) {
-        this.childrenIds = ChildEntity.concertItems(children, parent);
-    }
-
-    public Collection<Long> getAttachmentIds() {
-        return attachmentIds;
-    }
-
-    public void setAttachmentIds(Collection<Long> attachmentIds) {
-        this.attachmentIds = attachmentIds;
+        ChildEntity.concertItems(children, parent);
     }
 
     public void convertAttachments(List<Attachment> attachments, IssueEntity parent) {
-        this.attachmentIds = AttachmentEntity.convertItems(attachments, parent);
-    }
-
-//    public Collection<Object> getChangesets() {
-//        return changesets;
-//    }
-
-//    public void setChangesets(Collection<Object> changesets) {
-//        this.changesets = changesets;
-//    }
-
-    public Collection<Long> getJournalIds() {
-        return journalIds;
-    }
-
-    public void setJournalIds(Collection<Long> journalIds) {
-        this.journalIds = journalIds;
+        AttachmentEntity.convertItems(attachments, parent);
     }
 
     public void convertJournals(List<Journal> journals, IssueEntity parent) {
-        this.journalIds = JournalEntity.convertItems(journals, parent);
+        JournalEntity.convertItems(journals, parent);
     }
 
     public static IssueEntity convertItem(Issue issue) {

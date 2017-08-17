@@ -310,9 +310,9 @@ public class RedmineRepository {
     }
 
     @NonNull
-    public static Observable<List<VersionEntity>> getVersionsByProject(long projectId) {
+    public static void getVersionsByProject(long projectId) {
 
-        return ApiFactory.getRedmineService()
+        ApiFactory.getRedmineService()
                 .versions(projectId)
                 .flatMap(versionsResponse -> {
 
@@ -328,7 +328,8 @@ public class RedmineRepository {
                     return Observable.just(versionEntities);
                 })
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     @NonNull

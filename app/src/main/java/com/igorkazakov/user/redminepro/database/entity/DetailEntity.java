@@ -32,12 +32,16 @@ public class DetailEntity {
     @DatabaseField(columnName = "old_value")
     private String oldValue;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    protected JournalEntity parent;
+    @DatabaseField(columnName = "parent_id")
+    protected long parent;
 
-    public void setParent(JournalEntity parent) {
+    public void setParent(long parent) {
 
         this.parent = parent;
+    }
+
+    public long getParent() {
+        return parent;
     }
 
     public long getId() {
@@ -80,34 +84,30 @@ public class DetailEntity {
         this.oldValue = oldValue;
     }
 
-    public static Collection<Long> convertItems(List<Detail> detailList, JournalEntity parent) {
+    public static void convertItems(List<Detail> detailList, JournalEntity parent) {
 
         if (detailList == null) {
-            return null;
+            return;
         }
 
         DetailEntityDAO detailEntityDAO = DatabaseManager.getDatabaseHelper().getDetailEntityDAO();
         detailEntityDAO.deleteDetailsByParent(parent.getId());
-
-        List<Long> idsList = new ArrayList<>();
         try {
 
             int idOffset = 0;
             for (Detail detail : detailList) {
                 DetailEntity detailEntity = new DetailEntity();
                 detailEntity.setId(parent.getId() + ++idOffset);
-                detailEntity.setParent(parent);
+                detailEntity.setParent(parent.getId());
                 detailEntity.setName(detail.getName());
                 detailEntity.setNewValue(detail.getNewValue());
                 detailEntity.setOldValue(detail.getOldValue());
                 detailEntity.setProperty(detail.getProperty());
 
                 detailEntityDAO.createOrUpdate(detailEntity);
-                idsList.add(detailEntity.getId());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return idsList;
     }
 }

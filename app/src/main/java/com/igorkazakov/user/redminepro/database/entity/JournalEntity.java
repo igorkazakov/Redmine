@@ -34,17 +34,17 @@ public class JournalEntity {
     @DatabaseField(columnName = "created_on")
     private String createdOn;
 
-    @ForeignCollectionField(eager = true)
-    private Collection<Long> details = null;
+    @DatabaseField(columnName = "parent_id")
+    protected long parent;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    protected IssueEntity parent;
-
-    public void setParent(IssueEntity parent) {
+    public void setParent(long parent) {
 
         this.parent = parent;
     }
 
+    public long getParent() {
+        return parent;
+    }
 
     public String getUserName() {
         return userName;
@@ -86,29 +86,19 @@ public class JournalEntity {
         this.createdOn = createdOn;
     }
 
-    public Collection<Long> getDetails() {
-        return details;
-    }
-
-    public void setDetails(Collection<Long> details) {
-
-        this.details = details;
-    }
-
     public void convertDetails(List<Detail> details, JournalEntity parent) {
 
-        this.details = DetailEntity.convertItems(details, parent);
+        DetailEntity.convertItems(details, parent);
     }
 
-    public static Collection<Long> convertItems(List<Journal> journalList, IssueEntity parent) {
+    public static void convertItems(List<Journal> journalList, IssueEntity parent) {
 
         if (journalList == null) {
-            return null;
+            return;
         }
 
         JournalEntityDAO journalEntityDAO = DatabaseManager.getDatabaseHelper().getJournalEntityDAO();
         journalEntityDAO.deleteExtraEntitiesFromBd(journalList);
-        Collection<Long> idsList = new ArrayList<>();
 
         try {
 
@@ -117,7 +107,7 @@ public class JournalEntity {
             for (Journal journal: journalList) {
 
                 JournalEntity journalEntity = new JournalEntity();
-                journalEntity.setParent(parent);
+                journalEntity.setParent(parent.getId());
                 journalEntity.setId(journal.getId());
                 journalEntity.setCreatedOn(journal.getCreatedOn());
                 journalEntity.convertDetails(journal.getDetails(), journalEntity);
@@ -129,12 +119,9 @@ public class JournalEntity {
                 }
 
                 journalEntityDAO.createOrUpdate(journalEntity);
-                idsList.add(journalEntity.getId());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return idsList;
     }
 }

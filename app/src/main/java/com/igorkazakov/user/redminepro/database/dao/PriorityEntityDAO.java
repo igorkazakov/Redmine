@@ -58,4 +58,18 @@ public class PriorityEntityDAO extends BaseDaoImpl<PriorityEntity, Long> {
             }
         }
     }
+
+    public List<PriorityEntity> getPrioritiesByParent(long parent) {
+
+        List<PriorityEntity> priorityEntities= new ArrayList<>();
+
+        try {
+            priorityEntities = this.queryBuilder().where().eq("parent_id", parent).query();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return priorityEntities;
+    }
 }

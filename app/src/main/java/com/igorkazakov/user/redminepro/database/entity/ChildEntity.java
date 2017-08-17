@@ -25,15 +25,15 @@ public class ChildEntity {
     @DatabaseField(columnName = "subject")
     private String subject;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    protected IssueEntity parent;
+    @DatabaseField(columnName = "parent_id")
+    protected long parent;
 
-    public void setParent(IssueEntity parent) {
+    public void setParent(long parent) {
 
         this.parent = parent;
     }
 
-    public IssueEntity getParent() {
+    public long getParent() {
         return parent;
     }
 
@@ -61,13 +61,12 @@ public class ChildEntity {
         this.subject = subject;
     }
 
-    public static Collection<Long> concertItems(List<Child> childList, IssueEntity parent) {
+    public static void concertItems(List<Child> childList, IssueEntity parent) {
 
         if (childList == null) {
-            return null;
+            return;
         }
 
-        Collection<Long> idsList = new ArrayList<>();
         ChildEntityDAO childEntityDAO = DatabaseManager.getDatabaseHelper().getChildEntityDAO();
         childEntityDAO.deleteExtraEntitiesFromBd(childList);
         try {
@@ -77,21 +76,16 @@ public class ChildEntity {
             for (Child child : childList) {
 
                 ChildEntity childEntity = new ChildEntity();
-                childEntity.setParent(parent);
+                childEntity.setParent(parent.getId());
                 childEntity.setId(child.getId());
                 if (child.getTracker() != null) {
                     childEntity.setTracker(child.getTracker().getName());
                 }
                 childEntity.setSubject(child.getSubject());
-
                 childEntityDAO.createOrUpdate(childEntity);
-
-                idsList.add(childEntity.getId());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return idsList;
     }
 }

@@ -100,28 +100,28 @@ public class DetailEntityDAO extends BaseDaoImpl<DetailEntity, Long> {
         }
     }
 
-//    public List<DetailEntity> getDetailsByJournalId(long id) {
-//
-//        List<DetailEntity> detailEntities = new ArrayList<>();
-//
-//        try {
-//            detailEntities = this.queryBuilder().where().not().in("id", set).query();
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public List<DetailEntity> getDetailsByParent(long parent) {
+
+        List<DetailEntity> detailEntities= new ArrayList<>();
+
+        try {
+            detailEntities = this.queryBuilder().where().eq("parent_id", parent).query();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return detailEntities;
+    }
 
     public void deleteDetailsByParent(long parentId) {
 
         try {
             JournalEntity entity = DatabaseManager.getDatabaseHelper().getJournalEntityDAO().queryForId(parentId);
 
-            for(long id: entity.getDetails()) {
-                DetailEntity detailEntity = queryForId(id);
-                if (detailEntity != null) {
-                    delete(detailEntity);
-                }
+            List<DetailEntity> detailEntities = this.queryBuilder().where().eq("parent_id", parentId).query();
+            if (detailEntities != null) {
+                delete(detailEntities);
             }
 
         } catch (SQLException e) {

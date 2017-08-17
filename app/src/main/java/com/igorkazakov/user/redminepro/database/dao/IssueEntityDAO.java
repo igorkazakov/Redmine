@@ -111,6 +111,20 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
         return issueModels;
     }
 
+    public List<IssueEntity> getChildIssues(long parent) {
+
+        List<IssueEntity> issueEntities= new ArrayList<>();
+
+        try {
+            issueEntities = this.queryBuilder().where().eq("parent_id", parent).query();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return issueEntities;
+    }
+
     public void deleteExtraEntitiesFromBd(Set<Long> set) {
 
         try {

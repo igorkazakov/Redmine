@@ -7,6 +7,7 @@ import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.AttachmentEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.DetailEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
+import com.igorkazakov.user.redminepro.database.dao.JournalEntityDAO;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
@@ -56,14 +57,7 @@ public class IssueDetailPresenter {
         IssueEntityDAO issueDao = DatabaseManager.getDatabaseHelper().getIssueEntityDAO();
 
         try {
-            Set<Long> idsSet = new HashSet<>();
-            for (long id : issueEntity.getChildrenIds()) {
-
-                IssueEntity issue = issueDao.queryForId(id);
-                if (issue != null) {
-                    issueEntityList.add(issue);
-                }
-            }
+            issueEntityList = issueDao.getChildIssues(issueEntity.getId());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,15 +73,9 @@ public class IssueDetailPresenter {
 
         try {
 
-            for (long id : issueEntity.getAttachmentIds()) {
+            attachmentEntities = attachmentEntityDAO.getAttachmentByParent(issueEntity.getId());
 
-                AttachmentEntity attachmentEntity = attachmentEntityDAO.queryForId(id);
-                if (attachmentEntity != null) {
-                    attachmentEntities.add(attachmentEntity);
-                }
-            }
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -97,21 +85,13 @@ public class IssueDetailPresenter {
     public List<JournalEntity> getJournals(IssueEntity issueEntity) {
 
         List<JournalEntity> journalEntities = new ArrayList<>();
+        JournalEntityDAO journalEntityDAO = DatabaseManager.getDatabaseHelper().getJournalEntityDAO();
 
         try {
 
-            for (long id : issueEntity.getJournalIds()) {
-                JournalEntity journalEntity = DatabaseManager.
-                        getDatabaseHelper().
-                        getJournalEntityDAO()
-                        .queryForId(id);
+            journalEntities = journalEntityDAO.getjournalsByParent(issueEntity.getId());
 
-                if (journalEntity != null) {
-                    journalEntities.add(journalEntity);
-                }
-            }
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return journalEntities;
@@ -122,15 +102,9 @@ public class IssueDetailPresenter {
         List<DetailEntity> detailEntities = new ArrayList<>();
         DetailEntityDAO detailEntityDAO = DatabaseManager.getDatabaseHelper().getDetailEntityDAO();
         try {
-            for (long id : journalEntity.getDetails()) {
+            detailEntities = detailEntityDAO.getDetailsByParent(journalEntity.getId());
 
-                DetailEntity detailEntity = detailEntityDAO.queryForId(id);
-                if (detailEntity != null) {
-                    detailEntities.add(detailEntity);
-                }
-            }
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return detailEntities;

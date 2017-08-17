@@ -44,12 +44,16 @@ public class AttachmentEntity {
     @DatabaseField(columnName = "created_on")
     private String createdOn;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    protected IssueEntity parent;
+    @DatabaseField(columnName = "parent_id")
+    protected long parent;
 
-    public void setParent(IssueEntity parent) {
+    public void setParent(long parent) {
 
         this.parent = parent;
+    }
+
+    public long getParent() {
+        return parent;
     }
 
     public String getAuthorName() {
@@ -124,16 +128,14 @@ public class AttachmentEntity {
         this.createdOn = createdOn;
     }
 
-    public static Collection<Long> convertItems(List<Attachment> attachmentList, IssueEntity parent) {
+    public static void convertItems(List<Attachment> attachmentList, IssueEntity parent) {
 
         if (attachmentList == null) {
-            return null;
+            return;
         }
 
         AttachmentEntityDAO attachmentEntityDAO = DatabaseManager.getDatabaseHelper().getAttachmentEntityDAO();
         attachmentEntityDAO.deleteExtraEntitiesFromBd(attachmentList);
-
-        Collection<Long> idsList = new ArrayList<>();
         try {
 
             //attachmentEntityDAO.delete(attachmentEntityDAO.getAll());
@@ -141,7 +143,7 @@ public class AttachmentEntity {
             for (Attachment attachment : attachmentList) {
 
                 AttachmentEntity attachmentEntity = new AttachmentEntity();
-                attachmentEntity.setParent(parent);
+                attachmentEntity.setParent(parent.getId());
                 attachmentEntity.setId(attachment.getId());
                 if (attachment.getAuthor() != null) {
                     attachmentEntity.setAuthor(attachment.getAuthor().getId());
@@ -155,12 +157,9 @@ public class AttachmentEntity {
                 attachmentEntity.setFilesize(attachment.getFilesize());
 
                 attachmentEntityDAO.createOrUpdate(attachmentEntity);
-                idsList.add(attachmentEntity.getId());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return idsList;
     }
 }
