@@ -104,11 +104,16 @@ public class DashboardActivity extends AppCompatActivity
     private void setupStatisticRecyclerView() {
 
         List<StatisticModel> timeModelList = new ArrayList<>();
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForCurrentMonth(), mPresenter.calculateKpiForCurrentMonth(), "Current month"));
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForPreviousWeek(), mPresenter.calculateKpiForPreviousWeek(), "Previous week"));
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForCurrentWeek(), mPresenter.calculateKpiForCurrentWeek(), "Current week"));
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForYesterday(), mPresenter.calculateKpiForDate(DateUtils.getYesterday()), "Yesterday"));
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForToday(), mPresenter.calculateKpiForDate(new Date()), "Today"));
+        timeModelList.add(new StatisticModel(mPresenter.getHoursForCurrentMonth(),
+                mPresenter.calculateKpiForCurrentMonth(), "Current month"));
+        timeModelList.add(new StatisticModel(mPresenter.getHoursForPreviousWeek(),
+                mPresenter.calculateKpiForPreviousWeek(), "Previous week"));
+        timeModelList.add(new StatisticModel(mPresenter.getHoursForCurrentWeek(),
+                mPresenter.calculateKpiForCurrentWeek(), "Current week"));
+        timeModelList.add(new StatisticModel(mPresenter.getHoursForYesterday(),
+                mPresenter.calculateKpiForDate(DateUtils.getYesterday()), "Yesterday"));
+        timeModelList.add(new StatisticModel(mPresenter.getHoursForToday(),
+                mPresenter.calculateKpiForDate(new Date()), "Today"));
 
         mAdapter = new KpiStatisticAdapter(timeModelList);
         mStatisticRecyclerView.setLayoutManager(new LinearLayoutManager(this){
@@ -191,7 +196,7 @@ public class DashboardActivity extends AppCompatActivity
 
         entries.add(new PieEntry(model.getRegularTime(), "REGULAR", null));
         entries.add(new PieEntry(model.getFuckupTime(), "F%CKUP", null));
-        entries.add(new PieEntry(model.getTeamFuckupTime(), "TEAM F%CKUP", null));
+        entries.add(new PieEntry(model.getTeamFuckupTime(), "DUTIES", null));
 
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setSliceSpace(3f);

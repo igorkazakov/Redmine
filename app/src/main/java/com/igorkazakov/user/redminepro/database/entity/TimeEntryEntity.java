@@ -202,7 +202,7 @@ public class TimeEntryEntity {
 
         REGULAR("Regular"),
         FUCKUP("Fuc%up"),
-        TEAMFUCKUP("Team Fuc%up");
+        TEAMFUCKUP("Duties");
 
         private String value;
 

@@ -151,8 +151,12 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                 }
 
                 case "subject":
+                case "due_date":
+                case "start_date":
+                case "done_ratio":
                 case "parent_id":
                 case "category_id":
+                case "estimated_hours":
                 case "description": {
                     if (mDetailEntity.getNewValue() != null) {
                         newValue = mDetailEntity.getNewValue();
@@ -226,13 +230,29 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                     prefixStr = "<b>Category</b> ";
                     break;
 
+                case "estimated_hours":
+                    prefixStr = "<b>Estimated time </b> ";
+                    break;
+
+                case "due_date":
+                    prefixStr = "<b>Due date </b> ";
+                    break;
+
+                case "start_date":
+                    prefixStr = "<b>Start date </b> ";
+                    break;
+
+                case "done_ratio":
+                    prefixStr = "<b>% Done </b> ";
+                    break;
+
                 default:
                     prefixStr = "";
             }
 
             string = string.concat(prefixStr);
 
-            if (mDetailEntity.getName().equalsIgnoreCase("mDetailEntity.getName()")) {
+            if (mDetailEntity.getName().equalsIgnoreCase("category_id")) {
 
                 string = string.concat("changed");
 
@@ -244,8 +264,8 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
 
                 string = string.concat("set to " + "<b>" + newValue + "</b>");
 
-            } else {
-                string = "";
+            } else if (oldValue != null && oldValue.length() > 0) {
+                string = string.concat("deleted " + "<b>" + oldValue + "</b>");
             }
         }
 
