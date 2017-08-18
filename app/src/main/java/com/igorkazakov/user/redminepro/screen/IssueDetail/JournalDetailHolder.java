@@ -152,6 +152,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
 
                 case "subject":
                 case "parent_id":
+                case "category_id":
                 case "description": {
                     if (mDetailEntity.getNewValue() != null) {
                         newValue = mDetailEntity.getNewValue();
@@ -221,13 +222,21 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                     prefixStr = "<b>Priority</b> ";
                     break;
 
+                case "category_id":
+                    prefixStr = "<b>Category</b> ";
+                    break;
+
                 default:
                     prefixStr = "";
             }
 
             string = string.concat(prefixStr);
 
-            if (newValue != null && oldValue != null && newValue.length() > 0 && oldValue.length() > 0) {
+            if (mDetailEntity.getName().equalsIgnoreCase("mDetailEntity.getName()")) {
+
+                string = string.concat("changed");
+
+            } else if (newValue != null && oldValue != null && newValue.length() > 0 && oldValue.length() > 0) {
 
                 string = string.concat("changed from " + "<b>" + oldValue + "</b>" + " to " + "<b>" + newValue + "</b>");
 
