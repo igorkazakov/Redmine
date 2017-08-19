@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
+import com.igorkazakov.user.redminepro.screen.AttachmentScreen.AttachmentActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,15 +22,6 @@ public class AttachmentHolder extends RecyclerView.ViewHolder implements View.On
 
     @BindView(R.id.attachmentNameTextView)
     TextView mTitleTextView;
-
-    @BindView(R.id.dateTextView)
-    TextView mDateTextView;
-
-    @BindView(R.id.authorTextView)
-    TextView mAuthorTextView;
-
-    @BindView(R.id.descriptionTextView)
-    TextView mDescriptionTextView;
 
     private Context mContext;
     private AttachmentEntity mAttachmentEntity;
@@ -45,14 +37,10 @@ public class AttachmentHolder extends RecyclerView.ViewHolder implements View.On
 
         mAttachmentEntity = entity;
         mTitleTextView.setText(entity.getFilename());
-        mDateTextView.setText(entity.getCreatedOn());
-        mAuthorTextView.setText(entity.getAuthorName());
-        mDescriptionTextView.setText(entity.getDescription());
     }
 
     @Override
     public void onClick(View view) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mAttachmentEntity.getContentUrl()));
-        mContext.startActivity(browserIntent);
+        AttachmentActivity.start(mContext, mAttachmentEntity.getContentUrl());
     }
 }

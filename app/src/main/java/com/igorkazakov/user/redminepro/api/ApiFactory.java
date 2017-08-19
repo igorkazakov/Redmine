@@ -72,7 +72,7 @@ public final class ApiFactory {
     }
 
     @NonNull
-    private static OkHttpClient getClient() {
+    public static OkHttpClient getClient() {
 
         OkHttpClient client = sClient;
         if (client == null) {

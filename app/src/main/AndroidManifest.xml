@@ -38,10 +38,15 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".screen.IssueDetail.IssueDetailActivity"
-            android:label="@string/title_activity_issue_detail"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:label="@string/title_activity_issue_detail"
             android:parentActivityName=".screen.issues.IssuesActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".screen.AttachmentScreen.AttachmentActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:label="@string/title_activity_attachment"
+            android:parentActivityName=".screen.IssueDetail.IssueDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
