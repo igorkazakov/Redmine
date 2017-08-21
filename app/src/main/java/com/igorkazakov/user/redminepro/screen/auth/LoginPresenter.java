@@ -17,10 +17,12 @@ public class LoginPresenter {
 
     private final LifecycleHandler mLifecycleHandler;
     private final LoginView mLoginView;
+    private final AuthService mService;
 
     public LoginPresenter(@NonNull LifecycleHandler lifecycleHandler,
-                          @NonNull LoginView loginView) {
+                          @NonNull LoginView loginView, @NonNull AuthService service) {
 
+        mService = service;
         mLifecycleHandler = lifecycleHandler;
         mLoginView = loginView;
     }
@@ -44,14 +46,7 @@ public class LoginPresenter {
 
         } else {
 
-            PreferenceUtils.getInstance().saveUserPassword(password);
-
-            RedmineRepository.auth(login, password)
-                    .doOnSubscribe(mLoginView::showLoading)
-                    .doOnTerminate(mLoginView::hideLoading)
-                    .compose(mLifecycleHandler.reload(R.id.auth_request))
-                    .subscribe(user -> mLoginView.openDashboardScreen(),
-                            throwable -> mLoginView.showPasswordError());
+            mService.login(login, password, mLifecycleHandler, mLoginView);
         }
     }
 

@@ -10,11 +10,20 @@ import android.util.Base64;
 public final class AuthorizationUtils {
 
     private static final String BASIC_AUTHORIZATION = "Basic ";
+    private static AuthorizationUtils sInstanse;
+
+    public static AuthorizationUtils getInstanse() {
+        if (sInstanse == null) {
+            sInstanse = new AuthorizationUtils();
+        }
+
+        return sInstanse;
+    }
 
     private AuthorizationUtils() {}
 
     @NonNull
-    public static String createAuthorizationString(@NonNull String login, @NonNull String password) {
+    public String createAuthorizationString(@NonNull String login, @NonNull String password) {
 
         String str = String.format("%1$s:%2$s", login, password);
         String authString = BASIC_AUTHORIZATION + Base64.encodeToString(str.getBytes(), Base64.DEFAULT);
