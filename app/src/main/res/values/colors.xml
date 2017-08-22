@@ -8,4 +8,8 @@
     <color name="colorTeamFuckup">#F9A825</color>
     <color name="colorRegular">#00695C</color>
 
+    <color name="color_activity_calendar_hospital">#ba0808</color>
+    <color name="color_activity_calendar_vacation">#106f0b</color>
+    <color name="color_activity_calendar_holiday">#c6b713</color>
+
 </resources>

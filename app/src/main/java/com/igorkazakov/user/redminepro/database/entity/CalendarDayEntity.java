@@ -13,6 +13,11 @@ import java.util.List;
 @DatabaseTable(tableName = "CalendarDayEntity")
 public class CalendarDayEntity {
 
+    public static final String WORK = "work";
+    public static final String HOLIDAY = "holiday";
+    public static final String FEAST = "feast";
+    public static final String VACATION = "vacation";
+    public static final String HOSPITAL = "hospital";
 
     @DatabaseField(id = true)
     private Long id;

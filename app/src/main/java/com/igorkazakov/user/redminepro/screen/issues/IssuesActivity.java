@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import com.igorkazakov.user.redminepro.R;
@@ -34,9 +32,6 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
 
     @BindView(R.id.issuesList)
     RecyclerView mIssueList;
-
-    @BindView(R.id.issueFab)
-    FloatingActionButton mIssueFab;
 
     @BindView(R.id.issueSwipeRefresh)
     SwipeRefreshLayout mIssueSwipeRefresh;
@@ -61,23 +56,6 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mIssueList.setLayoutManager(linearLayoutManager);
-
-        mIssueList.addOnScrollListener(new RecyclerView.OnScrollListener(){
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                if (dy > 0 && mIssueFab.isShown()) {
-                    mIssueFab.hide();
-                } else {
-                    mIssueFab.show();
-                }
-            }
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });
-
         mLoadingView = new LoadingFragment(this, mContentView);
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mPresenter = new IssuesPresenter(lifecycleHandler, this);
@@ -108,13 +86,11 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
 
     @Override
     public void showLoading() {
-        mIssueFab.setVisibility(View.GONE);
         mLoadingView.showLoading();
     }
 
     @Override
     public void hideLoading() {
         mLoadingView.hideLoading();
-        mIssueFab.setVisibility(View.VISIBLE);
     }
 }

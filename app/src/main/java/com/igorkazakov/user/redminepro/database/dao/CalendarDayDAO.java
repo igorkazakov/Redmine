@@ -102,27 +102,45 @@ public class CalendarDayDAO extends BaseDaoImpl<CalendarDayEntity, Long> {
         return result;
     }
 
-//    public long getHoursNormForIntervalWithObjects(TimeInterval interval) {
-//
-//        List<CalendarDayEntity> calendarDayEntityList = new ArrayList();
-//        long result = 0;
-//
-//        try {
-//
-//            String startDate = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
-//            String endDate = DateUtils.stringFromDate(interval.getEnd(), DateUtils.getSimpleFormatter());
-//            calendarDayEntityList = this.queryBuilder().where().
-//                    between("date", startDate, endDate).query();
-//
-//            for (int i = 0; i < calendarDayEntityList.size(); i++) {
-//
-//                CalendarDayEntity item = calendarDayEntityList.get(i);
-//                result += item.getHours();
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            return result;
-//        }
-//    }
+    public CalendarDayEntity getCalendarDayWithDate(String date) {
+
+        try {
+            List<CalendarDayEntity> calendarDayEntityList = queryBuilder()
+                    .where()
+                    .eq("date", date)
+                    .query();
+
+            if (calendarDayEntityList != null && calendarDayEntityList.size() > 0) {
+                return calendarDayEntityList.get(0);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<CalendarDayEntity> getCalendarMonthDaysWithDate(TimeInterval timeInterval) {
+
+        String startDate = DateUtils.stringFromDate(timeInterval.getStart(),
+                DateUtils.getSimpleFormatter());
+        String endDate = DateUtils.stringFromDate(timeInterval.getEnd(),
+                DateUtils.getSimpleFormatter());
+        try {
+            List<CalendarDayEntity> calendarDayEntityList = queryBuilder()
+                    .where()
+                    .between("date", startDate, endDate)
+                    .query();
+
+            if (calendarDayEntityList != null) {
+                return calendarDayEntityList;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

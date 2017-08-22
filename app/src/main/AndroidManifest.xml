@@ -42,11 +42,16 @@
             android:label="@string/title_activity_issue_detail"
             android:parentActivityName=".screen.issues.IssuesActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".screen.AttachmentScreen.AttachmentActivity"
+        <activity
+            android:name=".screen.AttachmentScreen.AttachmentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:label="@string/title_activity_attachment"
             android:parentActivityName=".screen.IssueDetail.IssueDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".screen.CalendarScreen.CalendarActivity"
+            android:label="@string/title_activity_calendar"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
