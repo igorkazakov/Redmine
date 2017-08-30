@@ -1,6 +1,9 @@
 package com.igorkazakov.user.redminepro.screen.CalendarScreen;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,11 +21,20 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.arturvasilov.rxloader.LifecycleHandler;
+import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class CalendarActivity extends AppCompatActivity {
+public class CalendarActivity extends AppCompatActivity implements CalendarView {
 
     @BindView(R.id.calendarView)
     MaterialCalendarView mCalendarView;
+
+    private CalendarPresenter mPresenter;
+
+    public static void start(@NonNull Activity activity) {
+        Intent intent = new Intent(activity, CalendarActivity.class);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +42,11 @@ public class CalendarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calendar);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ButterKnife.bind(this);
-
+        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler
+                .create(this, getSupportLoaderManager());
+        mPresenter = new CalendarPresenter(lifecycleHandler, this);
         initCalendarView();
 
     }
@@ -48,7 +63,8 @@ public class CalendarActivity extends AppCompatActivity {
         mCalendarView.setOnMonthChangedListener((widget, date) -> {
 
             List<CalendarDayEntity> calendarDayEntityList = DatabaseManager.getDatabaseHelper()
-                    .getCalendarDayDAO().getCalendarMonthDaysWithDate(DateUtils.getMonthInterval(date.getMonth()));
+                    .getCalendarDayDAO()
+                    .getCalendarMonthDaysWithDate(DateUtils.getMonthInterval(date.getMonth()));
 
             mCalendarView.removeDecorators();
             ArrayList<CalendarDay> listOfHoliday = new ArrayList<>();
@@ -75,14 +91,16 @@ public class CalendarActivity extends AppCompatActivity {
                 }
             }
 
-            int colorHoliday = ContextCompat.getColor(CalendarActivity.this, R.color.color_activity_calendar_holiday);
-            int colorHospital = ContextCompat.getColor(CalendarActivity.this, R.color.color_activity_calendar_hospital);
-            int colorVacation = ContextCompat.getColor(CalendarActivity.this, R.color.color_activity_calendar_vacation);
+            int colorHoliday = ContextCompat.getColor(CalendarActivity.this,
+                    R.color.color_activity_calendar_holiday);
+            int colorHospital = ContextCompat.getColor(CalendarActivity.this,
+                    R.color.color_activity_calendar_hospital);
+            int colorVacation = ContextCompat.getColor(CalendarActivity.this,
+                    R.color.color_activity_calendar_vacation);
 
             mCalendarView.addDecorator(new EventDecorator(colorHoliday, listOfHoliday));
             mCalendarView.addDecorator(new EventDecorator(colorHospital, listOfHospital));
             mCalendarView.addDecorator(new EventDecorator(colorVacation, listOfVacation));
         });
     }
-
 }

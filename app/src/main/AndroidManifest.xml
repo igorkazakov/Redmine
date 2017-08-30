@@ -50,8 +50,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".screen.CalendarScreen.CalendarActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:label="@string/title_activity_calendar"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:parentActivityName=".screen.dashboard.DashboardActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

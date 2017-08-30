@@ -33,6 +33,7 @@ import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeModel;
+import com.igorkazakov.user.redminepro.screen.CalendarScreen.CalendarActivity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 import com.igorkazakov.user.redminepro.screen.issues.IssuesActivity;
@@ -239,7 +240,6 @@ public class DashboardActivity extends AppCompatActivity
             mPresenter.tryLoadDashboardData();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -252,7 +252,8 @@ public class DashboardActivity extends AppCompatActivity
         if (id == R.id.nav_issues) {
             IssuesActivity.start(this);
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_calendar) {
+            CalendarActivity.start(this);
 
         } else if (id == R.id.nav_slideshow) {
 
