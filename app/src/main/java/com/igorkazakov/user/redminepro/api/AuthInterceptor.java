@@ -29,7 +29,7 @@ public class AuthInterceptor implements Interceptor{
 
         String login = PreferenceUtils.getInstance().getUserLogin();
         String password = PreferenceUtils.getInstance().getUserPassword();
-        String authString = AuthorizationUtils.createAuthorizationString(login, password);
+        String authString = AuthorizationUtils.getInstanse().createAuthorizationString(login, password);
 
         if (login.isEmpty() || password.isEmpty()) {
             return chain.proceed(chain.request());

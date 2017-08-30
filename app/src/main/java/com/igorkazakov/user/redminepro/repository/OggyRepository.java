@@ -5,9 +5,9 @@ import android.support.annotation.NonNull;
 import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
+import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
-import java.util.Calendar;
 import java.util.List;
 
 import rx.Observable;
@@ -46,7 +46,7 @@ public class OggyRepository {
     @NonNull
     public static Observable<List<CalendarDayEntity>> getCalendarDaysForYear() {
 
-        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int year = DateUtils.getCurrentYear();
         Observable<List<CalendarDayEntity>> calendarDay1 = OggyRepository.getCalendarDays(1, year);
         Observable<List<CalendarDayEntity>> calendarDay2 = OggyRepository.getCalendarDays(2, year);
         Observable<List<CalendarDayEntity>> calendarDay3 = OggyRepository.getCalendarDays(3, year);

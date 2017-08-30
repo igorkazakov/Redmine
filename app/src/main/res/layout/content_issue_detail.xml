@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/contentView"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.igorkazakov.user.redminepro.screen.IssueDetail.IssueDetailActivity"
+    tools:context="com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailActivity"
     tools:showIn="@layout/activity_issue_detail">
 
     <android.support.v4.widget.NestedScrollView

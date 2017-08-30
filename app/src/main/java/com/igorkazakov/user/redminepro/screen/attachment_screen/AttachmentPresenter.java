@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.AttachmentScreen;
+package com.igorkazakov.user.redminepro.screen.attachment_screen;
 
 import android.support.annotation.NonNull;
 

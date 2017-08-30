@@ -26,10 +26,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     // UI references.
     @BindView(R.id.email)
-    private EditText mEmailView;
+    EditText mEmailView;
 
     @BindView(R.id.password)
-    private EditText mPasswordView;
+    EditText mPasswordView;
 
     private LoadingView mLoadingView;
     private LoginPresenter mPresenter;

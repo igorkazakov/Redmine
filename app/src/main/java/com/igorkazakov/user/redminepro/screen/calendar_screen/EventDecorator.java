@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.CalendarScreen;
+package com.igorkazakov.user.redminepro.screen.calendar_screen;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;

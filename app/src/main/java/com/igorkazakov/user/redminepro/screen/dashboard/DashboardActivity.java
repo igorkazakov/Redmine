@@ -33,7 +33,7 @@ import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.screen.CalendarScreen.CalendarActivity;
+import com.igorkazakov.user.redminepro.screen.calendar_screen.CalendarActivity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 import com.igorkazakov.user.redminepro.screen.issues.IssuesActivity;

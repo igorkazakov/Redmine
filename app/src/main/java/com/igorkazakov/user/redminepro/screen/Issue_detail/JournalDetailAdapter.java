@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.IssueDetail;
+package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +9,7 @@ import android.view.ViewGroup;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
-import com.j256.ormlite.dao.ForeignCollection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

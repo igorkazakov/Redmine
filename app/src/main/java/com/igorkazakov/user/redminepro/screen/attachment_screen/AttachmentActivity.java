@@ -1,6 +1,5 @@
-package com.igorkazakov.user.redminepro.screen.AttachmentScreen;
+package com.igorkazakov.user.redminepro.screen.attachment_screen;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -13,7 +12,6 @@ import android.widget.FrameLayout;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.ApiFactory;
-import com.igorkazakov.user.redminepro.screen.dashboard.DashboardActivity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 import com.jakewharton.picasso.OkHttp3Downloader;

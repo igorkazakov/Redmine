@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.IssueDetail;
+package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;

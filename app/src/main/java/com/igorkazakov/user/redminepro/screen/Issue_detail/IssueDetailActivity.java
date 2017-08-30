@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.IssueDetail;
+package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
 import android.content.Context;
 import android.content.Intent;

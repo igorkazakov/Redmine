@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.IssueDetail;
+package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
 import android.support.annotation.NonNull;
 
@@ -45,12 +45,12 @@ public class IssueDetailPresenter {
                 .doOnSubscribe(mView::showLoading)
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.issue_details_request))
-                .subscribe(issueEntity -> setupView(),
+                .subscribe(issueEntity -> setupView(issueEntity),
                         Throwable::printStackTrace);
     }
 
-    public void setupView() {
-        mView.setupView();
+    public void setupView(IssueEntity issueEntity) {
+        mView.setupView(issueEntity);
     }
 
     public List<IssueEntity> getChildIssues(IssueEntity issueEntity) {

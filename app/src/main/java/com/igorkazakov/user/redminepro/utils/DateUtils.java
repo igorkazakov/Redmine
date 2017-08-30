@@ -44,6 +44,14 @@ public class DateUtils {
         return c.getTime();
     }
 
+    public static int getCurrentYear() {
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
+
+    public static int getCurrentMonth() {
+        return Calendar.getInstance().get(Calendar.MONTH);
+    }
+
     public static Date getMonday(Date date) {
 
         Calendar c = Calendar.getInstance();

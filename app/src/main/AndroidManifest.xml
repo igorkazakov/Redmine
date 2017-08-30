@@ -37,19 +37,19 @@
             android:parentActivityName=".screen.dashboard.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".screen.IssueDetail.IssueDetailActivity"
+            android:name=".screen.Issue_detail.IssueDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:label="@string/title_activity_issue_detail"
             android:parentActivityName=".screen.issues.IssuesActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".screen.AttachmentScreen.AttachmentActivity"
+            android:name=".screen.attachment_screen.AttachmentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:label="@string/title_activity_attachment"
-            android:parentActivityName=".screen.IssueDetail.IssueDetailActivity"
+            android:parentActivityName=".screen.Issue_detail.IssueDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".screen.CalendarScreen.CalendarActivity"
+            android:name=".screen.calendar_screen.CalendarActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:label="@string/title_activity_calendar"
             android:parentActivityName=".screen.dashboard.DashboardActivity"

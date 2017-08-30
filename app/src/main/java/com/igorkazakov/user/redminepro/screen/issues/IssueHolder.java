@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.IssueModel;
-import com.igorkazakov.user.redminepro.screen.IssueDetail.IssueDetailActivity;
+import com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

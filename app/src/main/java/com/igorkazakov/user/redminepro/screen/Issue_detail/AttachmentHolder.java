@@ -1,15 +1,13 @@
-package com.igorkazakov.user.redminepro.screen.IssueDetail;
+package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
-import com.igorkazakov.user.redminepro.screen.AttachmentScreen.AttachmentActivity;
+import com.igorkazakov.user.redminepro.screen.attachment_screen.AttachmentActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
