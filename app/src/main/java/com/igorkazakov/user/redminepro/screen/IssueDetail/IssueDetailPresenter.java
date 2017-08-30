@@ -21,9 +21,7 @@ import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import ru.arturvasilov.rxloader.LifecycleHandler;
 
@@ -47,8 +45,12 @@ public class IssueDetailPresenter {
                 .doOnSubscribe(mView::showLoading)
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.issue_details_request))
-                .subscribe(issueEntity -> mView.setupView(issueEntity),
+                .subscribe(issueEntity -> setupView(),
                         Throwable::printStackTrace);
+    }
+
+    public void setupView() {
+        mView.setupView();
     }
 
     public List<IssueEntity> getChildIssues(IssueEntity issueEntity) {
