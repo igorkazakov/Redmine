@@ -37,10 +37,8 @@ import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 import com.igorkazakov.user.redminepro.screen.issues.IssuesActivity;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
-import com.igorkazakov.user.redminepro.utils.DateUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -101,19 +99,22 @@ public class DashboardActivity extends AppCompatActivity
         mPresenter.tryLoadDashboardData();
     }
 
-    private void setupStatisticRecyclerView() {
+    @Override
+    public void setupCurrentWeekStatistic(float remainHours, float remainDays, float weekHours) {
 
-        List<StatisticModel> timeModelList = new ArrayList<>();
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForCurrentMonth(),
-                mPresenter.calculateKpiForCurrentMonth(), "Current month"));
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForPreviousWeek(),
-                mPresenter.calculateKpiForPreviousWeek(), "Previous week"));
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForCurrentWeek(),
-                mPresenter.calculateKpiForCurrentWeek(), "Current week"));
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForYesterday(),
-                mPresenter.calculateKpiForDate(DateUtils.getYesterday()), "Yesterday"));
-        timeModelList.add(new StatisticModel(mPresenter.getHoursForToday(),
-                mPresenter.calculateKpiForDate(new Date()), "Today"));
+        String text = String.format(getResources().getString(R.string.remain_kpi),
+                String.valueOf(remainHours),
+                String.valueOf(BuildConfig.NORMAL_KPI)).replace(".0", "");
+        mRemainKpiLabel.setText(Html.fromHtml(text));
+
+        text = String.format(getResources().getString(R.string.remain_hours),
+                String.valueOf(remainDays),
+                String.valueOf(weekHours)).replace(".0", "");
+        mRemainHoursLabel.setText(Html.fromHtml(text));
+    }
+
+    @Override
+    public void setupStatisticRecyclerView(List<StatisticModel> timeModelList) {
 
         mAdapter = new KpiStatisticAdapter(timeModelList);
         mStatisticRecyclerView.setLayoutManager(new LinearLayoutManager(this){
@@ -125,21 +126,8 @@ public class DashboardActivity extends AppCompatActivity
         mStatisticRecyclerView.setAdapter(mAdapter);
     }
 
-    public void setupView() {
-        setupChart(mPresenter.getHoursForYear(), mPresenter.calculateKpiForYear());
-        setupStatisticRecyclerView();
-        String text = String.format(getResources().getString(R.string.remain_kpi),
-                String.valueOf(mPresenter.remainHoursForNormalKpi()),
-                String.valueOf(BuildConfig.NORMAL_KPI)).replace(".0", "");
-        mRemainKpiLabel.setText(Html.fromHtml(text));
-
-        text = String.format(getResources().getString(R.string.remain_hours),
-                String.valueOf(mPresenter.remainDaysForWeek()),
-                String.valueOf(mPresenter.getWholeCurrentWeekHoursNorm())).replace(".0", "");
-        mRemainHoursLabel.setText(Html.fromHtml(text));
-    }
-
-    private void setupChart(TimeModel model, float kpi) {
+    @Override
+    public void setupChart(TimeModel model, float kpi) {
 
         mChartWorkTime.getDescription().setEnabled(false);
         mChartWorkTime.setCenterTextSize(16);
@@ -157,16 +145,16 @@ public class DashboardActivity extends AppCompatActivity
         mChartWorkTime.setRotationEnabled(false);
         mChartWorkTime.setHighlightPerTapEnabled(true);
         mChartWorkTime.setOnChartValueSelectedListener(this);
-        Legend l = mChartWorkTime.getLegend();
-        l.setForm(Legend.LegendForm.CIRCLE);
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setTextSize(9);
-        l.setDrawInside(false);
-        l.setXEntrySpace(7f);
-        l.setYEntrySpace(0f);
-        l.setYOffset(0f);
+        Legend legend = mChartWorkTime.getLegend();
+        legend.setForm(Legend.LegendForm.CIRCLE);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setTextSize(9);
+        legend.setDrawInside(false);
+        legend.setXEntrySpace(7f);
+        legend.setYEntrySpace(0f);
+        legend.setYOffset(0f);
 
         setData(model);
         mChartWorkTime.setEntryLabelColor(Color.WHITE);

@@ -103,14 +103,14 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
         long issueId = getIntent().getLongExtra(ISSUE_ID_KEY, 0);
         getSupportActionBar().setSubtitle("#" + String.valueOf(issueId));
 
-        setupChidIssueList();
+        setupChildIssueList();
         setupAttachmentIssueList();
         setupJournalIssueList();
         mPresenter.tryLoadIssueDetailsData(issueId);
     }
 
-    private void setupChidIssueList() {
-        mChildIssuesList.setLayoutManager(new LinearLayoutManager(this){
+    private void setupChildIssueList() {
+        mChildIssuesList.setLayoutManager(new LinearLayoutManager(this) {
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -119,7 +119,7 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     }
 
     private void setupAttachmentIssueList() {
-        mAttachmentList.setLayoutManager(new LinearLayoutManager(this){
+        mAttachmentList.setLayoutManager(new LinearLayoutManager(this) {
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -128,7 +128,7 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     }
 
     private void setupJournalIssueList() {
-        mJournalIssuesList.setLayoutManager(new LinearLayoutManager(this){
+        mJournalIssuesList.setLayoutManager(new LinearLayoutManager(this) {
             @Override
             public boolean canScrollVertically() {
                 return false;

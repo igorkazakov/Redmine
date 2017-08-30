@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.OggyRepository;
@@ -12,8 +13,10 @@ import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import ru.arturvasilov.rxloader.LifecycleHandler;
 
@@ -62,8 +65,32 @@ public class DashboardPresenter {
         RedmineRepository.getTimeEntriesForYear()
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.time_entry_request))
-                .subscribe(response -> mView.setupView(),
+                .subscribe(response -> setupView(),
                         Throwable::printStackTrace);
+    }
+
+    public void setupView() {
+        mView.setupCurrentWeekStatistic(remainHoursForNormalKpi(),
+                remainDaysForWeek(), getWholeCurrentWeekHoursNorm());
+        mView.setupChart(getHoursForYear(), calculateKpiForYear());
+        mView.setupStatisticRecyclerView(getStatistics());
+    }
+
+    public List<StatisticModel> getStatistics() {
+
+        List<StatisticModel> timeModelList = new ArrayList<>();
+        timeModelList.add(new StatisticModel(getHoursForCurrentMonth(),
+                calculateKpiForCurrentMonth(), "Current month"));
+        timeModelList.add(new StatisticModel(getHoursForPreviousWeek(),
+                calculateKpiForPreviousWeek(), "Previous week"));
+        timeModelList.add(new StatisticModel(getHoursForCurrentWeek(),
+                calculateKpiForCurrentWeek(), "Current week"));
+        timeModelList.add(new StatisticModel(getHoursForYesterday(),
+                calculateKpiForDate(DateUtils.getYesterday()), "Yesterday"));
+        timeModelList.add(new StatisticModel(getHoursForToday(),
+                calculateKpiForDate(new Date()), "Today"));
+
+        return timeModelList;
     }
 
     public TimeModel getHoursForYear() {

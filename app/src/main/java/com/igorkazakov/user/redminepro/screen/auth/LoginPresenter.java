@@ -2,8 +2,6 @@ package com.igorkazakov.user.redminepro.screen.auth;
 
 import android.support.annotation.NonNull;
 
-import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.igorkazakov.user.redminepro.utils.TextUtils;
 
