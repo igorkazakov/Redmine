@@ -1,8 +1,7 @@
 package com.igorkazakov.user.redminepro.screen.calendar_screen;
 
-import android.os.Build;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
@@ -14,7 +13,6 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import ru.arturvasilov.rxloader.LifecycleHandler;
 
@@ -26,6 +24,10 @@ public class CalendarPresenter {
 
     private LifecycleHandler mLifecycleHandler;
     private CalendarView mView;
+
+    private ArrayList<CalendarDay> listOfHoliday = new ArrayList<>();
+    private ArrayList<CalendarDay> listOfHospital = new ArrayList<>();
+    private ArrayList<CalendarDay> listOfVacation = new ArrayList<>();
 
     public CalendarPresenter(@NonNull LifecycleHandler lifecycleHandler, CalendarView view) {
         mLifecycleHandler = lifecycleHandler;
@@ -42,17 +44,19 @@ public class CalendarPresenter {
                         Throwable::printStackTrace);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void fetchCalendarDays(int month) {
 
-        ArrayList<CalendarDay> listOfHoliday = new ArrayList<>();
-        ArrayList<CalendarDay> listOfHospital = new ArrayList<>();
-        ArrayList<CalendarDay> listOfVacation = new ArrayList<>();
+        AsyncTask fetch = new FetchCalendarDaysTask();
+        fetch.execute(new Integer[]{month});
+    }
 
-        CompletableFuture.supplyAsync(() -> {
+    private class FetchCalendarDaysTask extends AsyncTask<Integer, Void, Boolean> {
+
+        protected Boolean doInBackground(Integer... month) {
+
             List<CalendarDayEntity> calendarDayEntityList = DatabaseManager.getDatabaseHelper()
                     .getCalendarDayDAO()
-                    .getCalendarMonthDaysWithDate(DateUtils.getMonthInterval(month));
+                    .getCalendarMonthDaysWithDate(DateUtils.getMonthInterval(month[0]));
 
 
             for (CalendarDayEntity day: calendarDayEntityList) {
@@ -75,9 +79,13 @@ public class CalendarPresenter {
                         break;
                 }
             }
-        }).thenApply(() -> {
-            mView.showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
-        });
 
+            return true;
+        }
+
+        protected void onPostExecute(Boolean arg) {
+
+            mView.showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
+        }
     }
 }

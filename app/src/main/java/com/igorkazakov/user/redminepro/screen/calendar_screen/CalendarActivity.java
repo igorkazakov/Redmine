@@ -33,6 +33,10 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
     private CalendarPresenter mPresenter;
     private LoadingView mLoadingView;
 
+    private int colorHoliday;
+    private int colorHospital;
+    private int colorVacation;
+
     public static void start(@NonNull Activity activity) {
         Intent intent = new Intent(activity, CalendarActivity.class);
         activity.startActivity(intent);
@@ -51,7 +55,17 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
         mPresenter = new CalendarPresenter(lifecycleHandler, this);
         mLoadingView = new LoadingFragment(this, mLayoutContainer);
         initCalendarView();
+        initColors();
         mPresenter.loadAllCalendarDays();
+    }
+
+    private void initColors() {
+        colorHoliday = ContextCompat.getColor(CalendarActivity.this,
+                R.color.color_activity_calendar_holiday);
+        colorHospital = ContextCompat.getColor(CalendarActivity.this,
+                R.color.color_activity_calendar_hospital);
+        colorVacation = ContextCompat.getColor(CalendarActivity.this,
+                R.color.color_activity_calendar_vacation);
     }
 
     @Override
@@ -69,12 +83,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
                                     ArrayList<CalendarDay> listOfHospital,
                                     ArrayList<CalendarDay> listOfVacation) {
 
-        int colorHoliday = ContextCompat.getColor(CalendarActivity.this,
-                R.color.color_activity_calendar_holiday);
-        int colorHospital = ContextCompat.getColor(CalendarActivity.this,
-                R.color.color_activity_calendar_hospital);
-        int colorVacation = ContextCompat.getColor(CalendarActivity.this,
-                R.color.color_activity_calendar_vacation);
+
 
         mCalendarView.removeDecorators();
 

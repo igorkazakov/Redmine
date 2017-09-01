@@ -36,18 +36,18 @@ public class DashboardPresenter {
     }
 
     public void loadRedmineData() {
-        RedmineRepository.getStatuses()
-                .compose(mLifecycleHandler.reload(R.id.statuses_request))
-                .subscribe();
-        RedmineRepository.getTrackers()
-                .compose(mLifecycleHandler.reload(R.id.trackers_request))
-                .subscribe();
-        RedmineRepository.getProjectPriorities()
-                .compose(mLifecycleHandler.reload(R.id.priorities_request))
-                .subscribe();
-        RedmineRepository.getProjects()
-                .compose(mLifecycleHandler.reload(R.id.projects_request))
-                .subscribe();
+//        RedmineRepository.getStatuses()
+//                .compose(mLifecycleHandler.reload(R.id.statuses_request))
+//                .subscribe();
+//        RedmineRepository.getTrackers()
+//                .compose(mLifecycleHandler.reload(R.id.trackers_request))
+//                .subscribe();
+//        RedmineRepository.getProjectPriorities()
+//                .compose(mLifecycleHandler.reload(R.id.priorities_request))
+//                .subscribe();
+//        RedmineRepository.getProjects()
+//                .compose(mLifecycleHandler.reload(R.id.projects_request))
+//                .subscribe();
     }
 
     public void tryLoadDashboardData() {
