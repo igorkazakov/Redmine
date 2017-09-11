@@ -6,7 +6,6 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.data_service.DataService;
 import com.igorkazakov.user.redminepro.screen.dashboard.DashboardActivity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingDialog;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
@@ -41,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         ButterKnife.bind(this);
         mLoadingView = LoadingDialog.view(getSupportFragmentManager());
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
-        mPresenter = new LoginPresenter(lifecycleHandler, this, DataService.getInstance());
+        mPresenter = new LoginPresenter(lifecycleHandler, this);
         mPresenter.init();
     }
 

@@ -48,24 +48,27 @@ public class RedmineRepository {
     private static int offset = 0;
     private static final int limit = 100;
 
-//    @NonNull
-//    public static Observable<LoginResponse> auth(@NonNull String login, @NonNull String password) {
-//
-//        String authString = AuthorizationUtils.createAuthorizationString(login, password);
-//        return ApiFactory.getRedmineService()
-//                .login(authString, ContentType.JSON.getValue())
-//                .flatMap(loginResponse -> {
-//
-//                    PreferenceUtils.getInstance().saveUserId(loginResponse.getUser().getId());
-//                    PreferenceUtils.getInstance().saveUserLogin(loginResponse.getUser().getLogin());
-//                    PreferenceUtils.getInstance().saveUserName(loginResponse.getUser().getFirstName() + " " + loginResponse.getUser().getLastName());
-//                    PreferenceUtils.getInstance().saveUserMail(loginResponse.getUser().getMail());
-//                    ApiFactory.recreate();
-//                    return Observable.just(loginResponse);
-//                })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread());
-//    }
+    @NonNull
+    public static Observable<LoginResponse> auth(@NonNull String login, @NonNull String password) {
+
+        String authString = AuthorizationUtils.getInstanse().createAuthorizationString(login, password);
+        return ApiFactory.getRedmineService()
+                .login(authString, ContentType.JSON.getValue())
+                .flatMap(loginResponse -> {
+
+                    PreferenceUtils utils = PreferenceUtils.getInstance();
+                    utils.saveAuthToken(authString);
+                    utils.saveUserId(loginResponse.getUser().getId());
+                    utils.saveUserLogin(loginResponse.getUser().getLogin());
+                    utils.saveUserName(loginResponse.getUser().getFirstName() +
+                            " " + loginResponse.getUser().getLastName());
+                    utils.saveUserMail(loginResponse.getUser().getMail());
+                    ApiFactory.recreate();
+                    return Observable.just(loginResponse);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 
     @NonNull
     public static Observable<List<TimeEntryEntity>> getTimeEntries() {
@@ -402,5 +405,4 @@ public class RedmineRepository {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-
 }

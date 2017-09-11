@@ -19,6 +19,7 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -53,6 +54,8 @@ public class DashboardActivity extends AppCompatActivity
     @BindView(R.id.chartWorkTime)
     PieChart mChartWorkTime;
 
+    @BindView(R.id.scrollView)
+    ScrollView mScrollView;
 
     @BindView(R.id.statisticRecyclerView)
     RecyclerView mStatisticRecyclerView;
@@ -101,17 +104,30 @@ public class DashboardActivity extends AppCompatActivity
     }
 
     @Override
-    public void setupCurrentWeekStatistic(float remainHours, float remainDays, float weekHours) {
+    public void setupCurrentWeekStatistic(float remainHoursForKpi, float remainHoursForWeek, float weekHours) {
 
-        String text = String.format(getResources().getString(R.string.remain_kpi),
-                String.valueOf(remainHours),
-                String.valueOf(BuildConfig.NORMAL_KPI)).replace(".0", "");
-        mRemainKpiLabel.setText(Html.fromHtml(text));
+        String text;
+        if (remainHoursForKpi > 0) {
+            text = String.format(getResources().getString(R.string.remain_kpi),
+                    String.valueOf(remainHoursForKpi),
+                    String.valueOf(BuildConfig.NORMAL_KPI)).replace(".0", "");
+            mRemainKpiLabel.setText(Html.fromHtml(text));
 
-        text = String.format(getResources().getString(R.string.remain_hours),
-                String.valueOf(remainDays),
-                String.valueOf(weekHours)).replace(".0", "");
-        mRemainHoursLabel.setText(Html.fromHtml(text));
+        } else {
+            mRemainKpiLabel.setText(
+                    Html.fromHtml(getResources().getString(R.string.weekly_kpi_complete)));
+        }
+
+        if (remainHoursForWeek > 0) {
+            text = String.format(getResources().getString(R.string.remain_hours),
+                    String.valueOf(remainHoursForWeek),
+                    String.valueOf(weekHours)).replace(".0", "");
+            mRemainHoursLabel.setText(Html.fromHtml(text));
+
+        } else {
+            mRemainHoursLabel.setText(
+                    Html.fromHtml(getResources().getString(R.string.weekly_clock_complete)));
+        }
     }
 
     @Override
@@ -125,6 +141,7 @@ public class DashboardActivity extends AppCompatActivity
             }
         });
         mStatisticRecyclerView.setAdapter(mAdapter);
+        mScrollView.scrollTo(0, 0);
     }
 
     @Override

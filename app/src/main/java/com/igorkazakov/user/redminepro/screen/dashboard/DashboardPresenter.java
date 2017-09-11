@@ -28,6 +28,7 @@ public class DashboardPresenter {
 
     private LifecycleHandler mLifecycleHandler;
     private DashboardView mView;
+    private boolean mIsLoading = false;
 
     public  DashboardPresenter(@NonNull LifecycleHandler lifecycleHandler, @NonNull DashboardView view) {
 
@@ -36,28 +37,32 @@ public class DashboardPresenter {
     }
 
     public void loadRedmineData() {
-//        RedmineRepository.getStatuses()
-//                .compose(mLifecycleHandler.reload(R.id.statuses_request))
-//                .subscribe();
-//        RedmineRepository.getTrackers()
-//                .compose(mLifecycleHandler.reload(R.id.trackers_request))
-//                .subscribe();
-//        RedmineRepository.getProjectPriorities()
-//                .compose(mLifecycleHandler.reload(R.id.priorities_request))
-//                .subscribe();
-//        RedmineRepository.getProjects()
-//                .compose(mLifecycleHandler.reload(R.id.projects_request))
-//                .subscribe();
+        RedmineRepository.getStatuses()
+                .compose(mLifecycleHandler.reload(R.id.statuses_request))
+                .subscribe();
+        RedmineRepository.getTrackers()
+                .compose(mLifecycleHandler.reload(R.id.trackers_request))
+                .subscribe();
+        RedmineRepository.getProjectPriorities()
+                .compose(mLifecycleHandler.reload(R.id.priorities_request))
+                .subscribe();
+        RedmineRepository.getProjects()
+                .compose(mLifecycleHandler.reload(R.id.projects_request))
+                .subscribe();
     }
 
     public void tryLoadDashboardData() {
 
-        OggyRepository.getCalendarDaysForYear()
-                .doOnSubscribe(mView::showLoading)
-                .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
-                .subscribe(response -> loadTimeEntriesData(),
-                        Throwable::printStackTrace);
-
+        if (!mIsLoading) {
+            mIsLoading = true;
+            OggyRepository.getCalendarDaysForYear()
+                    .doOnSubscribe(mView::showLoading)
+                    .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
+                    .subscribe(response -> loadTimeEntriesData(),
+                            throwable -> {
+                                throwable.printStackTrace();
+                            });
+        }
     }
 
     public void loadTimeEntriesData() {
@@ -66,12 +71,15 @@ public class DashboardPresenter {
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.time_entry_request))
                 .subscribe(response -> setupView(),
-                        Throwable::printStackTrace);
+                        throwable -> {
+                            throwable.printStackTrace();
+                        });
     }
 
     public void setupView() {
+        mIsLoading = false;
         mView.setupCurrentWeekStatistic(remainHoursForNormalKpi(),
-                remainDaysForWeek(), getWholeCurrentWeekHoursNorm());
+                remainHoursForWeek(), getWholeCurrentWeekHoursNorm());
         mView.setupChart(getHoursForYear(), calculateKpiForYear());
         mView.setupStatisticRecyclerView(getStatistics());
     }
@@ -178,15 +186,27 @@ public class DashboardPresenter {
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
         float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
+        float remainHours = NumberUtils.round(norm * BuildConfig.NORMAL_KPI -
+                (model.getRegularTime() + model.getTeamFuckupTime()));
+        if (remainHours > 0) {
+            return remainHours;
 
-        return NumberUtils.round(norm * BuildConfig.NORMAL_KPI - (model.getRegularTime() + model.getTeamFuckupTime()));
+        } else {
+            return 0;
+        }
     }
 
-    public float remainDaysForWeek() {
+    public float remainHoursForWeek() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
         float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
-        return norm - (model.getRegularTime() + model.getTeamFuckupTime() + model.getTeamFuckupTime());
+        float remainHours = norm - (model.getRegularTime() + model.getTeamFuckupTime() + model.getTeamFuckupTime());
+        if (remainHours > 0) {
+            return remainHours;
+
+        } else {
+            return 0;
+        }
     }
 }

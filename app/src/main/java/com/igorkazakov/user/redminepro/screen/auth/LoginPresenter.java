@@ -2,6 +2,8 @@ package com.igorkazakov.user.redminepro.screen.auth;
 
 import android.support.annotation.NonNull;
 
+import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.igorkazakov.user.redminepro.utils.TextUtils;
 
@@ -15,12 +17,10 @@ public class LoginPresenter {
 
     private final LifecycleHandler mLifecycleHandler;
     private final LoginView mLoginView;
-    private final AuthService mService;
 
     public LoginPresenter(@NonNull LifecycleHandler lifecycleHandler,
-                          @NonNull LoginView loginView, @NonNull AuthService service) {
+                          @NonNull LoginView loginView) {
 
-        mService = service;
         mLifecycleHandler = lifecycleHandler;
         mLoginView = loginView;
     }
@@ -44,8 +44,19 @@ public class LoginPresenter {
 
         } else {
 
-            mService.login(login, password, mLifecycleHandler, mLoginView);
+            RedmineRepository.auth(login, password)
+            .doOnSubscribe(mLoginView::showLoading)
+            .doOnTerminate(mLoginView::hideLoading)
+            .compose(mLifecycleHandler.reload(R.id.auth_request))
+            .subscribe(loginResponse -> onSuccessLogin(password),
+                    Throwable::printStackTrace);
         }
+    }
+
+    public void onSuccessLogin(String password) {
+
+        PreferenceUtils.getInstance().saveUserPassword(password);
+        mLoginView.openDashboardScreen();
     }
 
     public void saveSwitchState(boolean state) {

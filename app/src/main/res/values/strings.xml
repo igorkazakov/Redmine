@@ -13,7 +13,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="promt_save_password">Remember me</string>
+    <string name="weekly_clock_complete"><![CDATA[weekly <b>clock rate</b> is complete!]]></string>
+    <string name="weekly_kpi_complete"><![CDATA[weekly <b>rate KPI</b> is complete!]]></string>
+    <string name="prompt_save_password">Remember me</string>
     <string name="title_activity_dashboard">Dashboard</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

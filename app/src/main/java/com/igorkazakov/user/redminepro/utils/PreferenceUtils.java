@@ -20,6 +20,7 @@ public class PreferenceUtils {
     private static final String USER_NAME = "USER_NAME";
     private static final String USER_MAIL = "USER_MAIL";
     private static final String SAVE_CREDENTIALS = "SAVE_CREDENTIALS";
+    private static final String USER_TOKEN = "USER_TOKEN";
 
     public PreferenceUtils() {}
 
@@ -62,6 +63,14 @@ public class PreferenceUtils {
         return getStringValue(USER_PASSWORD, "");
     }
 
+    public void saveAuthToken(String value) {
+        setValue(USER_TOKEN, value);
+    }
+
+    public String getAuthToken() {
+        return getStringValue(USER_TOKEN, "");
+    }
+
     public void saveUserName(String value) {
         setValue(USER_NAME, value);
     }
@@ -93,6 +102,7 @@ public class PreferenceUtils {
             sPreferenceUtils.saveUserName("");
             sPreferenceUtils.saveUserId(-1);
             sPreferenceUtils.saveUserPassword("");
+            sPreferenceUtils.saveAuthToken("");
             sPreferenceUtils.saveUserLogin("");
         }
     }

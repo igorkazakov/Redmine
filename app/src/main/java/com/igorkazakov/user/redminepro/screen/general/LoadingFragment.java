@@ -16,6 +16,7 @@ public class LoadingFragment implements LoadingView {
 
     private View loadingView;
     private ViewGroup container;
+    private boolean mIsloading;
 
     public LoadingFragment(Activity activity, ViewGroup container) {
 
@@ -29,11 +30,15 @@ public class LoadingFragment implements LoadingView {
 
     @Override
     public void showLoading() {
-        container.addView(loadingView);
+        if (!mIsloading) {
+            container.addView(loadingView);
+            mIsloading = true;
+        }
     }
 
     @Override
     public void hideLoading() {
         container.removeView(loadingView);
+        mIsloading = false;
     }
 }

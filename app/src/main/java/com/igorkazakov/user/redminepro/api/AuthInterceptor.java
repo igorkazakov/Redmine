@@ -2,7 +2,6 @@ package com.igorkazakov.user.redminepro.api;
 
 import android.support.annotation.NonNull;
 
-import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
 import java.io.IOException;
@@ -27,11 +26,9 @@ public class AuthInterceptor implements Interceptor{
     @Override
     public Response intercept(Interceptor.Chain chain) throws IOException {
 
-        String login = PreferenceUtils.getInstance().getUserLogin();
-        String password = PreferenceUtils.getInstance().getUserPassword();
-        String authString = AuthorizationUtils.getInstanse().createAuthorizationString(login, password);
+        String authString = PreferenceUtils.getInstance().getAuthToken();
 
-        if (login.isEmpty() || password.isEmpty()) {
+        if (authString.isEmpty()) {
             return chain.proceed(chain.request());
         }
 

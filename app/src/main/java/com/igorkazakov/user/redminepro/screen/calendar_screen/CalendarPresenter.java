@@ -54,10 +54,10 @@ public class CalendarPresenter {
 
         protected Boolean doInBackground(Integer... month) {
 
+            mView.showLoading();
             List<CalendarDayEntity> calendarDayEntityList = DatabaseManager.getDatabaseHelper()
                     .getCalendarDayDAO()
                     .getCalendarMonthDaysWithDate(DateUtils.getMonthInterval(month[0]));
-
 
             for (CalendarDayEntity day: calendarDayEntityList) {
 
@@ -86,6 +86,7 @@ public class CalendarPresenter {
         protected void onPostExecute(Boolean arg) {
 
             mView.showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
+            mView.hideLoading();
         }
     }
 }

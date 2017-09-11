@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.igorkazakov.user.redminepro.R;
@@ -83,8 +84,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
                                     ArrayList<CalendarDay> listOfHospital,
                                     ArrayList<CalendarDay> listOfVacation) {
 
-
-
         mCalendarView.removeDecorators();
 
         mCalendarView.addDecorator(new EventDecorator(colorHoliday, listOfHoliday));
@@ -105,5 +104,18 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
 
             mPresenter.fetchCalendarDays(date.getMonth());
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
