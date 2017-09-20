@@ -85,7 +85,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
                                     ArrayList<CalendarDay> listOfVacation) {
 
         mCalendarView.removeDecorators();
-
         mCalendarView.addDecorator(new EventDecorator(colorHoliday, listOfHoliday));
         mCalendarView.addDecorator(new EventDecorator(colorHospital, listOfHospital));
         mCalendarView.addDecorator(new EventDecorator(colorVacation, listOfVacation));
@@ -98,11 +97,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
             // TODO
             //create activity with list time entries
             //with date argument
-        });
-
-        mCalendarView.setOnMonthChangedListener((widget, date) -> {
-
-            mPresenter.fetchCalendarDays(date.getMonth());
         });
     }
 

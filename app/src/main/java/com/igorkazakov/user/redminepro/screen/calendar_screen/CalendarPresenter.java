@@ -1,6 +1,5 @@
 package com.igorkazakov.user.redminepro.screen.calendar_screen;
 
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
@@ -38,55 +37,40 @@ public class CalendarPresenter {
 
         OggyRepository.getCalendarDaysForYear()
                 .doOnSubscribe(mView::showLoading)
-                .doOnTerminate(mView::hideLoading)
+                //.doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
-                .subscribe(response -> fetchCalendarDays(DateUtils.getCurrentMonth()),
+                .subscribe(response -> fetchCalendarDays(),
                         Throwable::printStackTrace);
     }
 
-    public void fetchCalendarDays(int month) {
+    public void fetchCalendarDays() {
 
-        AsyncTask fetch = new FetchCalendarDaysTask();
-        fetch.execute(new Integer[]{month});
-    }
+        List<CalendarDayEntity> calendarDayEntityList = DatabaseManager.getDatabaseHelper()
+                .getCalendarDayDAO()
+                .getAll();
 
-    private class FetchCalendarDaysTask extends AsyncTask<Integer, Void, Boolean> {
+        for (CalendarDayEntity day: calendarDayEntityList) {
 
-        protected Boolean doInBackground(Integer... month) {
+            Date dayDate = DateUtils.dateFromString(day.getDate(),
+                    DateUtils.getSimpleFormatter());
 
-            mView.showLoading();
-            List<CalendarDayEntity> calendarDayEntityList = DatabaseManager.getDatabaseHelper()
-                    .getCalendarDayDAO()
-                    .getCalendarMonthDaysWithDate(DateUtils.getMonthInterval(month[0]));
+            switch (day.getType()) {
+                case CalendarDayEntity.FEAST:
+                case CalendarDayEntity.HOLIDAY:
+                    listOfHoliday.add(CalendarDay.from(dayDate));
+                    break;
 
-            for (CalendarDayEntity day: calendarDayEntityList) {
+                case CalendarDayEntity.HOSPITAL:
+                    listOfHospital.add(CalendarDay.from(dayDate));
+                    break;
 
-                Date dayDate = DateUtils.dateFromString(day.getDate(),
-                        DateUtils.getSimpleFormatter());
-
-                switch (day.getType()) {
-                    case CalendarDayEntity.FEAST:
-                    case CalendarDayEntity.HOLIDAY:
-                        listOfHoliday.add(CalendarDay.from(dayDate));
-                        break;
-
-                    case CalendarDayEntity.HOSPITAL:
-                        listOfHospital.add(CalendarDay.from(dayDate));
-                        break;
-
-                    case CalendarDayEntity.VACATION:
-                        listOfVacation.add(CalendarDay.from(dayDate));
-                        break;
-                }
+                case CalendarDayEntity.VACATION:
+                    listOfVacation.add(CalendarDay.from(dayDate));
+                    break;
             }
-
-            return true;
         }
 
-        protected void onPostExecute(Boolean arg) {
-
-            mView.showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
-            mView.hideLoading();
-        }
+        mView.showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
+        mView.hideLoading();
     }
 }
