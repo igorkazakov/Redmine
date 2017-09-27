@@ -11,10 +11,10 @@ import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.OggyRepository;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
+import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -59,9 +59,7 @@ public class DashboardPresenter {
                     .doOnSubscribe(mView::showLoading)
                     .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
                     .subscribe(response -> loadTimeEntriesData(),
-                            throwable -> {
-                                throwable.printStackTrace();
-                            });
+                            throwable -> throwable.printStackTrace());
         }
     }
 
@@ -71,109 +69,32 @@ public class DashboardPresenter {
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.time_entry_request))
                 .subscribe(response -> setupView(),
-                        throwable -> {
-                            throwable.printStackTrace();
-                        });
+                        throwable -> throwable.printStackTrace());
     }
 
     public void setupView() {
         mIsLoading = false;
         mView.setupCurrentWeekStatistic(remainHoursForNormalKpi(),
                 remainHoursForWeek(), getWholeCurrentWeekHoursNorm());
-        mView.setupChart(getHoursForYear(), calculateKpiForYear());
+        mView.setupChart(KPIUtils.getHoursForYear(), KPIUtils.calculateKpiForYear());
         mView.setupStatisticRecyclerView(getStatistics());
     }
 
     public List<StatisticModel> getStatistics() {
 
         List<StatisticModel> timeModelList = new ArrayList<>();
-        timeModelList.add(new StatisticModel(getHoursForCurrentMonth(),
-                calculateKpiForCurrentMonth(), "Current month"));
-        timeModelList.add(new StatisticModel(getHoursForPreviousWeek(),
-                calculateKpiForPreviousWeek(), "Previous week"));
-        timeModelList.add(new StatisticModel(getHoursForCurrentWeek(),
-                calculateKpiForCurrentWeek(), "Current week"));
-        timeModelList.add(new StatisticModel(getHoursForYesterday(),
-                calculateKpiForDate(DateUtils.getYesterday()), "Yesterday"));
-        timeModelList.add(new StatisticModel(getHoursForToday(),
-                calculateKpiForDate(new Date()), "Today"));
+        timeModelList.add(new StatisticModel(KPIUtils.getHoursForCurrentMonth(),
+                KPIUtils.calculateKpiForCurrentMonth(), "Current month"));
+        timeModelList.add(new StatisticModel(KPIUtils.getHoursForPreviousWeek(),
+                KPIUtils.calculateKpiForPreviousWeek(), "Previous week"));
+        timeModelList.add(new StatisticModel(KPIUtils.getHoursForCurrentWeek(),
+                KPIUtils.calculateKpiForCurrentWeek(), "Current week"));
+        timeModelList.add(new StatisticModel(KPIUtils.getHoursForYesterday(),
+                KPIUtils.calculateKpiForDate(DateUtils.getYesterday()), "Yesterday"));
+        timeModelList.add(new StatisticModel(KPIUtils.getHoursForToday(),
+                KPIUtils.calculateKpiForDate(new Date()), "Today"));
 
         return timeModelList;
-    }
-
-    public TimeModel getHoursForYear() {
-        TimeInterval interval = DateUtils.getIntervalFromStartYear();
-        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-    }
-
-    public TimeModel getHoursForCurrentMonth() {
-        int month = Calendar.getInstance().get(Calendar.MONTH);
-        TimeInterval interval = DateUtils.getMonthInterval(month);
-        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-    }
-
-    public TimeModel getHoursForYesterday() {
-        Date date = DateUtils.getYesterday();
-        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithDate(date);
-    }
-
-    public TimeModel getHoursForToday() {
-        Date date = new Date();
-        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithDate(date);
-    }
-
-    public float calculateKpiForYear() {
-
-        TimeInterval interval = DateUtils.getIntervalFromStartYear();
-        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
-
-        return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
-    }
-
-    public float calculateKpiForCurrentMonth() {
-
-        TimeInterval interval = DateUtils.getCurrentMonthInterval();
-        TimeModel model = getHoursForCurrentMonth();
-        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
-
-        return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
-    }
-
-    public float calculateKpiForDate(Date date) {
-
-        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithDate(date);
-        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForDate(date);
-
-        return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
-    }
-
-    public float calculateKpiForCurrentWeek() {
-
-        TimeInterval interval = DateUtils.getCurrentWeekInterval();
-        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
-
-        return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
-    }
-
-    public TimeModel getHoursForPreviousWeek() {
-        TimeInterval interval = DateUtils.getPreviousWeekInterval();
-        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-    }
-
-    public TimeModel getHoursForCurrentWeek() {
-        TimeInterval interval = DateUtils.getCurrentWeekInterval();
-        return DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-    }
-
-
-    public float calculateKpiForPreviousWeek() {
-        TimeInterval interval = DateUtils.getPreviousWeekInterval();
-        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
-
-        return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
     }
 
     public float getWholeCurrentWeekHoursNorm() {

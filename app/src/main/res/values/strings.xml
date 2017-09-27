@@ -35,4 +35,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_attachment">Attachment</string>
     <string name="title_activity_calendar">CalendarActivity</string>
+    <string name="title_kpi_statistics_calendar">Day statistic</string>
 </resources>

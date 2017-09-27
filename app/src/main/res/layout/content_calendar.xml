@@ -10,12 +10,22 @@
     tools:showIn="@layout/activity_calendar">
 
 
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/calendarView"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:mcv_firstDayOfWeek="monday"
-        app:mcv_selectionColor="@color/colorPrimary"
-        app:mcv_showOtherDates="none" />
+        android:layout_height="match_parent">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="394dp"
+            app:mcv_firstDayOfWeek="monday"
+            app:mcv_selectionColor="@color/colorPrimary"
+            app:mcv_showOtherDates="none" />
+
+        <include layout="@layout/kpi_statistic_item" />
+
+    </LinearLayout>
+
 
 </FrameLayout>

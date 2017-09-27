@@ -3,10 +3,11 @@ package com.igorkazakov.user.redminepro.screen.calendar_screen;
 import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
+import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.OggyRepository;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
+import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
@@ -37,19 +38,14 @@ public class CalendarPresenter {
 
         OggyRepository.getCalendarDaysForYear()
                 .doOnSubscribe(mView::showLoading)
-                //.doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
-                .subscribe(response -> fetchCalendarDays(),
+                .subscribe(response -> createMonthIndicatorArrays(response),
                         Throwable::printStackTrace);
     }
 
-    public void fetchCalendarDays() {
+    public void createMonthIndicatorArrays(List<CalendarDayEntity> response) {
 
-        List<CalendarDayEntity> calendarDayEntityList = DatabaseManager.getDatabaseHelper()
-                .getCalendarDayDAO()
-                .getAll();
-
-        for (CalendarDayEntity day: calendarDayEntityList) {
+        for (CalendarDayEntity day: response) {
 
             Date dayDate = DateUtils.dateFromString(day.getDate(),
                     DateUtils.getSimpleFormatter());
@@ -72,5 +68,12 @@ public class CalendarPresenter {
 
         mView.showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
         mView.hideLoading();
+    }
+
+    public void onDateClick(CalendarDay day) {
+
+        TimeModel model = KPIUtils.getHoursForDate(day.getDate());
+        float kpi = KPIUtils.calculateKpiForDate(day.getDate());
+        mView.showDayWorkHours(kpi, model);
     }
 }

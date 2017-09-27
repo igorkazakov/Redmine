@@ -6,13 +6,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
+import com.igorkazakov.user.redminepro.utils.ColorUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -30,6 +34,21 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
 
     @BindView(R.id.layout_container)
     FrameLayout mLayoutContainer;
+
+    @BindView(R.id.regularHours)
+    TextView mRegularTextView;
+
+    @BindView(R.id.fuckupHours)
+    TextView mFuckupTextView;
+
+    @BindView(R.id.teamFuckupHours)
+    TextView mTeamFuckupTextView;
+
+    @BindView(R.id.rowTitle)
+    TextView mRowTitle;
+
+    @BindView(R.id.contentView)
+    CardView mContentView;
 
     private CalendarPresenter mPresenter;
     private LoadingView mLoadingView;
@@ -90,13 +109,21 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
         mCalendarView.addDecorator(new EventDecorator(colorVacation, listOfVacation));
     }
 
+    @Override
+    public void showDayWorkHours(float kpi, TimeModel model) {
+
+        mRowTitle.setText(getResources().getText(R.string.title_kpi_statistics_calendar));
+        mRegularTextView.setText(String.valueOf(model.getRegularTime()).replace(".0", ""));
+        mFuckupTextView.setText(String.valueOf(model.getFuckupTime()).replace(".0", ""));
+        mTeamFuckupTextView.setText(String.valueOf(model.getTeamFuckupTime()).replace(".0", ""));
+        mContentView.setCardBackgroundColor(ColorUtils.getColorForKpi(kpi, this));
+    }
+
     private void initCalendarView() {
 
         mCalendarView.setOnDateChangedListener((widget, date, selected) -> {
 
-            // TODO
-            //create activity with list time entries
-            //with date argument
+            mPresenter.onDateClick(date);
         });
     }
 
