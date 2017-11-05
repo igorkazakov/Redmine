@@ -21,6 +21,8 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -110,6 +112,13 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
     }
 
     @Override
+    public void showCurrentDay() {
+        Date currentDate = Calendar.getInstance().getTime();
+        mPresenter.onDateClick(currentDate);
+        mCalendarView.setSelectedDate(currentDate);
+    }
+
+    @Override
     public void showDayWorkHours(float kpi, TimeModel model) {
 
         mRowTitle.setText(getResources().getText(R.string.title_kpi_statistics_calendar));
@@ -122,8 +131,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
     private void initCalendarView() {
 
         mCalendarView.setOnDateChangedListener((widget, date, selected) -> {
-
-            mPresenter.onDateClick(date);
+            mPresenter.onDateClick(date.getDate());
         });
     }
 

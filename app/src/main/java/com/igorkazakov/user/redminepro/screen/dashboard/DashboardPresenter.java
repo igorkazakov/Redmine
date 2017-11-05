@@ -13,6 +13,7 @@ import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
+import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,21 +56,47 @@ public class DashboardPresenter {
 
         if (!mIsLoading) {
             mIsLoading = true;
-            OggyRepository.getCalendarDaysForYear()
-                    .doOnSubscribe(mView::showLoading)
-                    .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
-                    .subscribe(response -> loadTimeEntriesData(),
-                            throwable -> throwable.printStackTrace());
+
+            if (PreferenceUtils.getInstance().getCalendarDownloaded()) {
+
+                OggyRepository.getCalendarDays(DateUtils.getCurrentMonth(), DateUtils.getCurrentYear())
+                        .doOnSubscribe(mView::showLoading)
+                        .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
+                        .subscribe(response -> loadTimeEntriesData(),
+                                Throwable::printStackTrace);
+            } else {
+
+                OggyRepository.getCalendarDaysForYear()
+                        .doOnSubscribe(mView::showLoading)
+                        .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
+                        .subscribe(response -> loadTimeEntriesData(),
+                                Throwable::printStackTrace);
+            }
         }
     }
 
     public void loadTimeEntriesData() {
 
-        RedmineRepository.getTimeEntriesForYear()
-                .doOnTerminate(mView::hideLoading)
-                .compose(mLifecycleHandler.reload(R.id.time_entry_request))
-                .subscribe(response -> setupView(),
-                        throwable -> throwable.printStackTrace());
+        if (PreferenceUtils.getInstance().getTimeEntriesDownloaded()) {
+
+            RedmineRepository.getTimeEntriesForYear()
+                    .doOnTerminate(mView::hideLoading)
+                    .compose(mLifecycleHandler.reload(R.id.time_entry_request))
+                    .subscribe(response -> {
+                        setupView();
+                        PreferenceUtils.getInstance().saveTimeEntriesDownloaded(true);
+
+                    }, Throwable::printStackTrace);
+
+        } else {
+
+            RedmineRepository.getTimeEntriesWithInterval(DateUtils.getCurrentMonthInterval(), 0)
+                    .doOnTerminate(mView::hideLoading)
+                    .compose(mLifecycleHandler.reload(R.id.time_entry_request))
+                    .subscribe(response -> setupView(),
+                            throwable -> throwable.printStackTrace());
+        }
+
     }
 
     public void setupView() {

@@ -3,11 +3,13 @@ package com.igorkazakov.user.redminepro.screen.calendar_screen;
 import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.OggyRepository;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
+import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
@@ -36,11 +38,28 @@ public class CalendarPresenter {
 
     public void loadAllCalendarDays() {
 
-        OggyRepository.getCalendarDaysForYear()
-                .doOnSubscribe(mView::showLoading)
-                .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
-                .subscribe(response -> createMonthIndicatorArrays(response),
-                        Throwable::printStackTrace);
+        if (PreferenceUtils.getInstance().getCalendarDownloaded()) {
+
+            OggyRepository.getCalendarDays(DateUtils.getCurrentMonth(), DateUtils.getCurrentYear())
+                    .doOnSubscribe(mView::showLoading)
+                    .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
+                    .subscribe(response -> {
+                                List<CalendarDayEntity> calendarDayEntities = DatabaseManager.
+                                        getDatabaseHelper().getCalendarDayDAO().getAll();
+                                createMonthIndicatorArrays(calendarDayEntities);
+                            },
+                            Throwable::printStackTrace);
+        } else {
+
+            OggyRepository.getCalendarDaysForYear()
+                    .doOnSubscribe(mView::showLoading)
+                    .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
+                    .subscribe(response -> {
+                                createMonthIndicatorArrays(response);
+                                PreferenceUtils.getInstance().saveCalendarDownloaded(true);
+                            },
+                            Throwable::printStackTrace);
+        }
     }
 
     public void createMonthIndicatorArrays(List<CalendarDayEntity> response) {
@@ -67,13 +86,14 @@ public class CalendarPresenter {
         }
 
         mView.showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
+        mView.showCurrentDay();
         mView.hideLoading();
     }
 
-    public void onDateClick(CalendarDay day) {
+    public void onDateClick(Date day) {
 
-        TimeModel model = KPIUtils.getHoursForDate(day.getDate());
-        float kpi = KPIUtils.calculateKpiForDate(day.getDate());
+        TimeModel model = KPIUtils.getHoursForDate(day);
+        float kpi = KPIUtils.calculateKpiForDate(day);
         mView.showDayWorkHours(kpi, model);
     }
 }

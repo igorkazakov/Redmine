@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.igorkazakov.user.redminepro"
@@ -16,9 +16,9 @@ android {
         buildConfigField "String", "OGGY_API_ENDPOINT", '"http://new.oggy.co"'
         buildConfigField "float", "NORMAL_KPI", "0.7f"
 
-        jackOptions {
-            enabled true
-        }
+//        jackOptions {
+//            enabled true
+//        }
     }
     buildTypes {
         release {

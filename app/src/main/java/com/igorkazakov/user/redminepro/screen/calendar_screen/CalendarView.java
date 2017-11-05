@@ -17,4 +17,5 @@ public interface CalendarView extends LoadingView {
                        ArrayList<CalendarDay> listOfVacation);
 
     void showDayWorkHours(float kpi, TimeModel model);
+    void showCurrentDay();
 }

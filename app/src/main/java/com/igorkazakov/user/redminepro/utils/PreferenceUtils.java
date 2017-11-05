@@ -21,6 +21,8 @@ public class PreferenceUtils {
     private static final String USER_MAIL = "USER_MAIL";
     private static final String SAVE_CREDENTIALS = "SAVE_CREDENTIALS";
     private static final String USER_TOKEN = "USER_TOKEN";
+    private static final String CALENDAR_DOWNLOADED = "CALENDAR_DOWNLOADED";
+    private static final String TIME_ENTRIES_DOWNLOADED = "TIME_ENTRIES_DOWNLOADED";
 
     public PreferenceUtils() {}
 
@@ -45,6 +47,22 @@ public class PreferenceUtils {
 
     public long getUserId() {
         return getLongValue(USER_ID, 0);
+    }
+
+    public void saveCalendarDownloaded(Boolean value) {
+        setValue(CALENDAR_DOWNLOADED, value);
+    }
+
+    public Boolean getCalendarDownloaded() {
+        return getBooleanValue(CALENDAR_DOWNLOADED, false);
+    }
+
+    public void saveTimeEntriesDownloaded(Boolean value) {
+        setValue(TIME_ENTRIES_DOWNLOADED, value);
+    }
+
+    public Boolean getTimeEntriesDownloaded() {
+        return getBooleanValue(TIME_ENTRIES_DOWNLOADED, false);
     }
 
     public void saveUserLogin(String value) {
