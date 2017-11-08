@@ -26,21 +26,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".screen.dashboard.DashboardActivity"
+            android:name=".screen.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:label="@string/title_activity_dashboard"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".screen.issues.IssuesActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:label="@string/title_activity_issues"
-            android:parentActivityName=".screen.dashboard.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".screen.Issue_detail.IssueDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:label="@string/title_activity_issue_detail"
-            android:parentActivityName=".screen.issues.IssuesActivity"
+            android:parentActivityName=".screen.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".screen.attachment_screen.AttachmentActivity"
@@ -48,12 +42,6 @@
             android:label="@string/title_activity_attachment"
             android:parentActivityName=".screen.Issue_detail.IssueDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".screen.calendar_screen.CalendarActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:label="@string/title_activity_calendar"
-            android:parentActivityName=".screen.dashboard.DashboardActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

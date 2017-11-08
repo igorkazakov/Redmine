@@ -1,15 +1,13 @@
 package com.igorkazakov.user.redminepro.screen.issues;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.igorkazakov.user.redminepro.R;
@@ -24,7 +22,7 @@ import butterknife.ButterKnife;
 import ru.arturvasilov.rxloader.LifecycleHandler;
 import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class IssuesActivity extends AppCompatActivity implements IssuesView {
+public class IssuesFragment extends Fragment implements IssuesView {
 
 
     @BindView(R.id.contentView)
@@ -39,40 +37,27 @@ public class IssuesActivity extends AppCompatActivity implements IssuesView {
     private IssuesPresenter mPresenter;
     private LoadingFragment mLoadingView;
 
-    public static void start(@NonNull Activity activity) {
-        Intent intent = new Intent(activity, IssuesActivity.class);
-        activity.startActivity(intent);
+    public static IssuesFragment newInstance() {
+        IssuesFragment issuesFragment = new IssuesFragment();
+        return issuesFragment;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_issues);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ButterKnife.bind(this);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.content_issues, container, false);
+        ButterKnife.bind(this, view);
+
         mIssueSwipeRefresh.setOnRefreshListener(() -> mPresenter.tryLoadIssuesData());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mIssueList.setLayoutManager(linearLayoutManager);
-        mLoadingView = new LoadingFragment(this, mContentView);
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
+        mLoadingView = new LoadingFragment(getActivity(), mContentView);
+        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(getActivity(), getActivity().getSupportLoaderManager());
         mPresenter = new IssuesPresenter(lifecycleHandler, this);
         mPresenter.tryLoadIssuesData();
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+        return view;
     }
 
     @Override

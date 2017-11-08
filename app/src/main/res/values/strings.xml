@@ -41,4 +41,8 @@
     <string name="calendar_activity_holiday_text">Holiday</string>
     <string name="calendar_activity_vacation_text">Vacation</string>
     <string name="calendar_activity_hospital_text">Hospital</string>
+    <string name="bottom_menu_dashboard">Dashboard</string>
+    <string name="bottom_menu_calendar">Calendar</string>
+    <string name="bottom_menu_issues">Issues</string>
+
 </resources>

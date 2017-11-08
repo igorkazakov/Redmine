@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_dashboard"
+        android:enabled="true"
+        android:icon="@drawable/ic_dashboard"
+        android:title="@string/bottom_menu_dashboard"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_calendar"
+        android:enabled="true"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/bottom_menu_calendar"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_issues"
+        android:enabled="true"
+        android:icon="@drawable/ic_issues"
+        android:title="@string/bottom_menu_issues"
+        app:showAsAction="ifRoom" />
+</menu>

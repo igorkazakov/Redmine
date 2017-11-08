@@ -1,14 +1,12 @@
 package com.igorkazakov.user.redminepro.screen.calendar_screen;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -29,7 +27,7 @@ import butterknife.ButterKnife;
 import ru.arturvasilov.rxloader.LifecycleHandler;
 import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class CalendarActivity extends AppCompatActivity implements CalendarView {
+public class CalendarFragment extends Fragment implements CalendarView {
 
     @BindView(R.id.calendarView)
     MaterialCalendarView mCalendarView;
@@ -59,34 +57,35 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
     private int colorHospital;
     private int colorVacation;
 
-    public static void start(@NonNull Activity activity) {
-        Intent intent = new Intent(activity, CalendarActivity.class);
-        activity.startActivity(intent);
+
+    public static CalendarFragment newInstance() {
+        CalendarFragment calendarFragment = new CalendarFragment();
+        return calendarFragment;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ButterKnife.bind(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.content_calendar, container, false);
+
+        ButterKnife.bind(this, view);
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler
-                .create(this, getSupportLoaderManager());
+                .create(getActivity(), getActivity().getSupportLoaderManager());
         mPresenter = new CalendarPresenter(lifecycleHandler, this);
-        mLoadingView = new LoadingFragment(this, mLayoutContainer);
+        mLoadingView = new LoadingFragment(getActivity(), mLayoutContainer);
         initCalendarView();
         initColors();
         mPresenter.loadAllCalendarDays();
+
+        return view;
     }
 
     private void initColors() {
-        colorHoliday = ContextCompat.getColor(CalendarActivity.this,
+        colorHoliday = ContextCompat.getColor(getActivity(),
                 R.color.color_activity_calendar_holiday);
-        colorHospital = ContextCompat.getColor(CalendarActivity.this,
+        colorHospital = ContextCompat.getColor(getActivity(),
                 R.color.color_activity_calendar_hospital);
-        colorVacation = ContextCompat.getColor(CalendarActivity.this,
+        colorVacation = ContextCompat.getColor(getActivity(),
                 R.color.color_activity_calendar_vacation);
     }
 
@@ -125,7 +124,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
         mRegularTextView.setText(String.valueOf(model.getRegularTime()).replace(".0", ""));
         mFuckupTextView.setText(String.valueOf(model.getFuckupTime()).replace(".0", ""));
         mTeamFuckupTextView.setText(String.valueOf(model.getTeamFuckupTime()).replace(".0", ""));
-        mContentView.setCardBackgroundColor(ColorUtils.getColorForKpi(kpi, this));
+        mContentView.setCardBackgroundColor(ColorUtils.getColorForKpi(kpi, getActivity()));
     }
 
     private void initCalendarView() {
@@ -133,18 +132,5 @@ public class CalendarActivity extends AppCompatActivity implements CalendarView 
         mCalendarView.setOnDateChangedListener((widget, date, selected) -> {
             mPresenter.onDateClick(date.getDate());
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

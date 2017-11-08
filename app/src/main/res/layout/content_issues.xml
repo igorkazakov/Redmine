@@ -6,8 +6,8 @@
     android:id="@+id/contentView"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.igorkazakov.user.redminepro.screen.issues.IssuesActivity"
-    tools:showIn="@layout/activity_issues">
+    tools:context="com.igorkazakov.user.redminepro.screen.issues.IssuesFragment"
+    tools:showIn="@layout/fragment_issues">
 
     <LinearLayout
         android:orientation="vertical"
