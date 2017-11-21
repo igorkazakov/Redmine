@@ -55,7 +55,7 @@ public class MainActivity extends BaseFragmentActivity {
                                     getResources().getString(R.string.title_activity_issues));
                             break;
                     }
-                    return false;
+                    return true;
                 });
 
         showFragment(DashboardFragment.newInstance(),
