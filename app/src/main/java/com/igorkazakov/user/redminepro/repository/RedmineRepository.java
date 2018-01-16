@@ -162,6 +162,7 @@ public class RedmineRepository {
                     List<Issue> issues = issuesResponse.getIssues();
                     List<IssueEntity> issueEntities = IssueEntity.convertItems(issues);
                     DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntities(issueEntities);
+                    PreferenceUtils.getInstance().saveIssuesDownloaded(true);
                     return Observable.just(issueEntities);
                 })
                 .onErrorResumeNext(throwable -> {
@@ -177,13 +178,10 @@ public class RedmineRepository {
     public static Observable<List<IssueEntity>> getMyIssues() {
 
         return Observable.range(0, Integer.MAX_VALUE - 1)
-                .concatMap(new Func1<Integer, Observable<List<IssueEntity>>>() {
-                    @Override
-                    public Observable<List<IssueEntity>> call(Integer integer) {
+                .concatMap(integer -> {
 
-                        int offset = integer * limit;
-                        return getIssues(offset);
-                    }
+                    int offset = integer * limit;
+                    return getIssues(offset);
                 })
                 .takeUntil(List::isEmpty)
                 .toList()

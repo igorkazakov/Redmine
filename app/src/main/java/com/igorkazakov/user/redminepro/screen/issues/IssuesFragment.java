@@ -11,8 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.DatabaseManager;
-import com.igorkazakov.user.redminepro.models.IssueModel;
+import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 
 import java.util.List;
@@ -61,9 +60,8 @@ public class IssuesFragment extends Fragment implements IssuesView {
     }
 
     @Override
-    public void setupView() {
+    public void setupView(List<IssueEntity> issueModels) {
 
-        List<IssueModel> issueModels = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getMyIssues();
         IssuesAdapter adapter = new IssuesAdapter(issueModels);
         mIssueList.setAdapter(adapter);
         mIssueSwipeRefresh.setRefreshing(false);

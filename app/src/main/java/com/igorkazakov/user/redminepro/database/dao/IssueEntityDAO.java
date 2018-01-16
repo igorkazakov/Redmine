@@ -1,7 +1,6 @@
 package com.igorkazakov.user.redminepro.database.dao;
 
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
-import com.igorkazakov.user.redminepro.models.IssueModel;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
@@ -87,28 +86,28 @@ public class IssueEntityDAO extends BaseDaoImpl<IssueEntity, Long> {
         return issueEntityList;
     }
 
-    public List<IssueModel> getMyIssues() {
+    public List<IssueEntity> getMyIssues() {
 
-        List<IssueEntity> issueEntities;
-        List<IssueModel> issueModels = new ArrayList<>();
+        List<IssueEntity> issueEntities = new ArrayList<>();
+        //List<IssueModel> issueModels = new ArrayList<>();
         long userId = PreferenceUtils.getInstance().getUserId();
 
         try {
             issueEntities = this.queryBuilder().where().eq("assigned_to_id", String.valueOf(userId)).query();
 
-            for(IssueEntity issue: issueEntities) {
-
-                issueModels.add(new IssueModel(issue.getId(),
-                        issue.getProjectName(),
-                        String.valueOf(issue.getId()),
-                        issue.getSubject()));
-            }
+//            for(IssueEntity issue: issueEntities) {
+//
+//                issueModels.add(new IssueModel(issue.getId(),
+//                        issue.getProjectName(),
+//                        String.valueOf(issue.getId()),
+//                        issue.getSubject()));
+//            }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return issueModels;
+        return issueEntities;
     }
 
     public List<IssueEntity> getChildIssues(long parent) {

@@ -59,23 +59,29 @@ public class DashboardPresenter {
 
             if (PreferenceUtils.getInstance().getCalendarDownloaded()) {
 
-                OggyRepository.getCalendarDays(DateUtils.getCurrentMonth(), DateUtils.getCurrentYear())
-                        .doOnSubscribe(mView::showLoading)
-                        .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
-                        .subscribe(response -> loadTimeEntriesData(),
-                                Throwable::printStackTrace);
-            } else {
+                setupView();
 
-                OggyRepository.getCalendarDaysForYear()
-                        .doOnSubscribe(mView::showLoading)
+            } else {
+                mView.showLoading();
+            }
+
+            OggyRepository.getCalendarDaysForYear()
+                        //.doOnSubscribe(mView::showLoading)
                         .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
                         .subscribe(response -> loadTimeEntriesData(),
                                 Throwable::printStackTrace);
-            }
         }
     }
 
+    public void reloadData() {
+        PreferenceUtils.getInstance().saveCalendarDownloaded(false);
+        PreferenceUtils.getInstance().saveTimeEntriesDownloaded(false);
+        tryLoadDashboardData();
+    }
+
     public void loadTimeEntriesData() {
+
+        PreferenceUtils.getInstance().saveCalendarDownloaded(true);
 
         if (PreferenceUtils.getInstance().getTimeEntriesDownloaded()) {
 
@@ -96,10 +102,10 @@ public class DashboardPresenter {
                     .subscribe(response -> setupView(),
                             throwable -> throwable.printStackTrace());
         }
-
     }
 
     public void setupView() {
+
         mIsLoading = false;
         mView.setupCurrentWeekStatistic(remainHoursForNormalKpi(),
                 remainHoursForWeek(), getWholeCurrentWeekHoursNorm());

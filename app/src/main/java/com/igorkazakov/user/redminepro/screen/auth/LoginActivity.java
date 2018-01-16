@@ -1,11 +1,11 @@
 package com.igorkazakov.user.redminepro.screen.auth;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.Switch;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.base_classes.BaseActivity;
 import com.igorkazakov.user.redminepro.screen.general.LoadingDialog;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 import com.igorkazakov.user.redminepro.screen.main.MainActivity;
@@ -21,7 +21,7 @@ import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends BaseActivity implements LoginView {
+public class LoginActivity extends AppCompatActivity implements LoginView {
 
     // UI references.
     @BindView(R.id.email)

@@ -40,31 +40,28 @@ public class CalendarPresenter {
 
         if (PreferenceUtils.getInstance().getCalendarDownloaded()) {
 
-            OggyRepository.getCalendarDays(DateUtils.getCurrentMonth(), DateUtils.getCurrentYear())
-                    .doOnSubscribe(mView::showLoading)
-                    .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
-                    .subscribe(response -> {
-                                List<CalendarDayEntity> calendarDayEntities = DatabaseManager.
-                                        getDatabaseHelper().getCalendarDayDAO().getAll();
-                                createMonthIndicatorArrays(calendarDayEntities);
-                            },
-                            Throwable::printStackTrace);
-        } else {
+            List<CalendarDayEntity> calendarDayEntities = DatabaseManager.
+                    getDatabaseHelper().getCalendarDayDAO().getAll();
+            createMonthIndicatorArrays(calendarDayEntities);
 
-            OggyRepository.getCalendarDaysForYear()
-                    .doOnSubscribe(mView::showLoading)
-                    .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
-                    .subscribe(response -> {
-                                createMonthIndicatorArrays(response);
-                                PreferenceUtils.getInstance().saveCalendarDownloaded(true);
-                            },
-                            Throwable::printStackTrace);
+        } else {
+            mView.showLoading();
         }
+
+        OggyRepository.getCalendarDaysForYear()
+                //.doOnSubscribe(mView::showLoading)
+                .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
+                .subscribe(response -> {
+                            createMonthIndicatorArrays(response);
+                            PreferenceUtils.getInstance().saveCalendarDownloaded(true);
+                        },
+                        Throwable::printStackTrace);
+
     }
 
     public void createMonthIndicatorArrays(List<CalendarDayEntity> response) {
 
-        for (CalendarDayEntity day: response) {
+        for (CalendarDayEntity day : response) {
 
             Date dayDate = DateUtils.dateFromString(day.getDate(),
                     DateUtils.getSimpleFormatter());

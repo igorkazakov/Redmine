@@ -23,6 +23,7 @@ public class PreferenceUtils {
     private static final String USER_TOKEN = "USER_TOKEN";
     private static final String CALENDAR_DOWNLOADED = "CALENDAR_DOWNLOADED";
     private static final String TIME_ENTRIES_DOWNLOADED = "TIME_ENTRIES_DOWNLOADED";
+    private static final String ISSUES_DOWNLOADED = "ISSUES_DOWNLOADED";
 
     public PreferenceUtils() {}
 
@@ -62,6 +63,14 @@ public class PreferenceUtils {
     }
 
     public Boolean getTimeEntriesDownloaded() {
+        return getBooleanValue(TIME_ENTRIES_DOWNLOADED, false);
+    }
+
+    public void saveIssuesDownloaded(Boolean value) {
+        setValue(TIME_ENTRIES_DOWNLOADED, value);
+    }
+
+    public Boolean getIssuesDownloaded() {
         return getBooleanValue(TIME_ENTRIES_DOWNLOADED, false);
     }
 

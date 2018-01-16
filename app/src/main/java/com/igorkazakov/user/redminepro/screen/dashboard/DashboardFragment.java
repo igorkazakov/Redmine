@@ -9,10 +9,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -59,7 +62,7 @@ public class DashboardFragment extends Fragment
     FrameLayout mContentView;
 
 
-
+    private ImageView mReloadImage;
     private DashboardPresenter mPresenter;
     private LoadingView mLoadingView;
     private KpiStatisticAdapter mAdapter;
@@ -74,7 +77,7 @@ public class DashboardFragment extends Fragment
 
         View view = inflater.inflate(R.layout.content_dashboard, container, false);
         ButterKnife.bind(this, view);
-
+        setHasOptionsMenu(true);
         mLoadingView = new LoadingFragment(getActivity(), mContentView);
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(getActivity(), getActivity().getSupportLoaderManager());
         mPresenter = new DashboardPresenter(lifecycleHandler, this);
@@ -191,10 +194,17 @@ public class DashboardFragment extends Fragment
 
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            mPresenter.tryLoadDashboardData();
+            mPresenter.reloadData();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.dashboard, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

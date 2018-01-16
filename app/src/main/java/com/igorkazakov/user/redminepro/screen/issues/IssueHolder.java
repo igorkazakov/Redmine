@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.models.IssueModel;
+import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailActivity;
 
 import butterknife.BindView;
@@ -28,7 +28,7 @@ public class IssueHolder extends RecyclerView.ViewHolder implements View.OnClick
     TextView mIssueSubjectLabel;
 
     private Context mContext;
-    private IssueModel mIssueModel;
+    private IssueEntity mIssueModel;
 
     public IssueHolder(View itemView, Context context) {
         super(itemView);
@@ -37,12 +37,12 @@ public class IssueHolder extends RecyclerView.ViewHolder implements View.OnClick
         mContext = context;
     }
 
-    public void bind(IssueModel model) {
+    public void bind(IssueEntity model) {
 
         mIssueModel = model;
         mProjectNameLabel.setText(model.getProjectName());
-        mIssueNumberLabel.setText(model.getIssueNumber());
-        mIssueSubjectLabel.setText(model.getIssueSubject());
+        mIssueNumberLabel.setText(String.valueOf(model.getId()));
+        mIssueSubjectLabel.setText(model.getSubject());
     }
 
     @Override
