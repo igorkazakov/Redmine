@@ -3,13 +3,11 @@ package com.igorkazakov.user.redminepro.screen.calendar_screen;
 import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.OggyRepository;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
-import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
@@ -38,23 +36,10 @@ public class CalendarPresenter {
 
     public void loadAllCalendarDays() {
 
-        if (PreferenceUtils.getInstance().getCalendarDownloaded()) {
-
-            List<CalendarDayEntity> calendarDayEntities = DatabaseManager.
-                    getDatabaseHelper().getCalendarDayDAO().getAll();
-            createMonthIndicatorArrays(calendarDayEntities);
-
-        } else {
-            mView.showLoading();
-        }
-
         OggyRepository.getCalendarDaysForYear()
-                //.doOnSubscribe(mView::showLoading)
+                .doOnSubscribe(mView::showLoading)
                 .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
-                .subscribe(response -> {
-                            createMonthIndicatorArrays(response);
-                            PreferenceUtils.getInstance().saveCalendarDownloaded(true);
-                        },
+                .subscribe(this::createMonthIndicatorArrays,
                         Throwable::printStackTrace);
 
     }

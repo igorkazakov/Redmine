@@ -88,6 +88,15 @@ public class DashboardFragment extends Fragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mScrollView != null) {
+            mScrollView.smoothScrollTo(0, 0);
+        }
+    }
+
+    @Override
     public void setupCurrentWeekStatistic(float remainHoursForKpi, float remainHoursForWeek, float weekHours) {
 
         String text;
@@ -125,7 +134,6 @@ public class DashboardFragment extends Fragment
             }
         });
         mStatisticRecyclerView.setAdapter(mAdapter);
-        mScrollView.scrollTo(0, 0);
     }
 
     @Override
@@ -194,7 +202,7 @@ public class DashboardFragment extends Fragment
 
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            mPresenter.reloadData();
+            mPresenter.tryLoadDashboardData();
             return true;
         }
         return super.onOptionsItemSelected(item);

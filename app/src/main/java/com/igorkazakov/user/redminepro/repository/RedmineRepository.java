@@ -367,13 +367,10 @@ public class RedmineRepository {
     private static void getPaginatedMemberships(long projectId) {
 
         Observable.range(0, Integer.MAX_VALUE - 1)
-                .concatMap(new Func1<Integer, Observable<List<UserEntity>>>() {
-                    @Override
-                    public Observable<List<UserEntity>> call(Integer integer) {
+                .concatMap(integer -> {
 
-                        int offset = integer * limit;
-                        return getMemberships(offset, projectId);
-                    }
+                    int offset = integer * limit;
+                    return getMemberships(offset, projectId);
                 })
                 .takeUntil(List::isEmpty)
                 .subscribeOn(Schedulers.io())

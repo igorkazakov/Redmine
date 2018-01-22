@@ -13,7 +13,6 @@ import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
-import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,51 +56,21 @@ public class DashboardPresenter {
         if (!mIsLoading) {
             mIsLoading = true;
 
-            if (PreferenceUtils.getInstance().getCalendarDownloaded()) {
-
-                setupView();
-
-            } else {
-                mView.showLoading();
-            }
-
             OggyRepository.getCalendarDaysForYear()
-                        //.doOnSubscribe(mView::showLoading)
+                        .doOnSubscribe(mView::showLoading)
                         .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
                         .subscribe(response -> loadTimeEntriesData(),
                                 Throwable::printStackTrace);
         }
     }
 
-    public void reloadData() {
-        PreferenceUtils.getInstance().saveCalendarDownloaded(false);
-        PreferenceUtils.getInstance().saveTimeEntriesDownloaded(false);
-        tryLoadDashboardData();
-    }
-
     public void loadTimeEntriesData() {
-
-        PreferenceUtils.getInstance().saveCalendarDownloaded(true);
-
-        if (PreferenceUtils.getInstance().getTimeEntriesDownloaded()) {
-
-            RedmineRepository.getTimeEntriesForYear()
-                    .doOnTerminate(mView::hideLoading)
-                    .compose(mLifecycleHandler.reload(R.id.time_entry_request))
-                    .subscribe(response -> {
-                        setupView();
-                        PreferenceUtils.getInstance().saveTimeEntriesDownloaded(true);
-
-                    }, Throwable::printStackTrace);
-
-        } else {
 
             RedmineRepository.getTimeEntriesWithInterval(DateUtils.getCurrentMonthInterval(), 0)
                     .doOnTerminate(mView::hideLoading)
                     .compose(mLifecycleHandler.reload(R.id.time_entry_request))
                     .subscribe(response -> setupView(),
                             throwable -> throwable.printStackTrace());
-        }
     }
 
     public void setupView() {
@@ -155,7 +124,7 @@ public class DashboardPresenter {
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
         float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
-        float remainHours = norm - (model.getRegularTime() + model.getTeamFuckupTime() + model.getTeamFuckupTime());
+        float remainHours = norm - (model.getRegularTime() + model.getFuckupTime() + model.getTeamFuckupTime());
         if (remainHours > 0) {
             return remainHours;
 

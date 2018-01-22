@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.BuildConfig;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -91,6 +93,8 @@ public final class ApiFactory {
     private static OkHttpClient buildClient() {
 
         return new OkHttpClient.Builder()
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100,TimeUnit.SECONDS)
                 .addInterceptor(LoggingInterceptor.create())
                 .addInterceptor(AuthInterceptor.create())
                 .build();
