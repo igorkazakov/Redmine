@@ -4,6 +4,13 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
+    dexOptions {
+
+        jumboMode true
+        javaMaxHeapSize "4g"
+
+    }
+
     defaultConfig {
         applicationId "com.igorkazakov.user.redminepro"
         minSdkVersion 16
@@ -16,6 +23,7 @@ android {
         buildConfigField "String", "OGGY_API_ENDPOINT", '"http://new.oggy.co"'
         buildConfigField "float", "NORMAL_KPI", "0.7f"
 
+        multiDexEnabled true
 //        jackOptions {
 //            enabled true
 //        }

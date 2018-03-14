@@ -28,7 +28,8 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueHolder> {
 
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.issue_item, parent, false);
-        return new IssueHolder(view, context);
+        IssueHolder holder = new IssueHolder(view, context);
+        return holder;
     }
 
     @Override
