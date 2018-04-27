@@ -24,7 +24,7 @@ public interface RedmineService {
 
     @GET("/users/current.json")
     Observable<LoginResponse> login(@Header("Authorization") String authorization,
-                                    @Header("Content-Type") String contentType);
+                                @Header("Content-Type") String contentType);
 
     @GET("/time_entries.json")
     Observable<TimeEntryResponse> timeEntries(@Query("limit") int limit,

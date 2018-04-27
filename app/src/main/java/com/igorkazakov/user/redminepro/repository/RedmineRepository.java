@@ -15,7 +15,6 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Membership;
 import com.igorkazakov.user.redminepro.api.responseEntity.Project;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
-import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.entity.ProjectEntity;
@@ -35,8 +34,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 /**
@@ -54,7 +51,7 @@ public class RedmineRepository {
         String authString = AuthorizationUtils.getInstanse().createAuthorizationString(login, password);
         return ApiFactory.getRedmineService()
                 .login(authString, ContentType.JSON.getValue())
-                .flatMap(loginResponse -> {
+                .map(loginResponse -> {
 
                     PreferenceUtils utils = PreferenceUtils.getInstance();
                     utils.saveAuthToken(authString);
@@ -64,30 +61,7 @@ public class RedmineRepository {
                             " " + loginResponse.getUser().getLastName());
                     utils.saveUserMail(loginResponse.getUser().getMail());
                     ApiFactory.recreate();
-                    return Observable.just(loginResponse);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    @NonNull
-    public static Observable<List<TimeEntryEntity>> getTimeEntries() {
-
-        long userId = PreferenceUtils.getInstance().getUserId();
-        return ApiFactory.getRedmineService()
-                .timeEntries(limit, userId, offset)
-                .flatMap(timeEntryResponse -> {
-
-                    List<TimeEntry> timeEntries = timeEntryResponse.getTimeEntries();
-                    List<TimeEntryEntity> timeEntryEntities = TimeEntryEntity.convertItems(timeEntries);
-                    DatabaseManager.getDatabaseHelper().getTimeEntryDAO().saveTimeEntries(timeEntryEntities);
-
-                    return Observable.just(timeEntryEntities);
-                })
-                .onErrorResumeNext(throwable -> {
-
-                    List<TimeEntryEntity> timeEntryEntities = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getAll();
-                    return Observable.just(timeEntryEntities);
+                    return loginResponse;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -118,38 +92,6 @@ public class RedmineRepository {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    @NonNull
-    public static Observable<List<TimeEntryEntity>> getTimeEntriesForYear() {
-
-        TimeInterval interval = DateUtils.getIntervalFromStartYear();
-        return Observable.range(0, Integer.MAX_VALUE - 1)
-                .concatMap(new Func1<Integer, Observable<List<TimeEntryEntity>>>() {
-                    @Override
-                    public Observable<List<TimeEntryEntity>> call(Integer integer) {
-
-                        int offset = integer * limit;
-                        return getTimeEntriesWithInterval(interval, offset);
-                    }
-                })
-                .takeUntil(List::isEmpty)
-                .toList()
-                .map(superList -> {
-
-                    List<TimeEntryEntity> list = new ArrayList<>();
-
-                    if (superList.size() != 0) {
-                        for (List<TimeEntryEntity> itemList : superList) {
-                            list.addAll(itemList);
-                        }
-
-                    } else {
-                        list = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getAll();
-                    }
-
-                    return list;
-                });
     }
 
     @NonNull
@@ -201,20 +143,6 @@ public class RedmineRepository {
 
                     return list;
                 });
-    }
-
-    @NonNull
-    public static Observable<List<CalendarDayEntity>> loadDashboardScreenData() {
-
-        Observable<List<CalendarDayEntity>> calendarData = OggyRepository.getCalendarDaysForYear();
-        Observable<List<TimeEntryEntity>> timeEntriesData = RedmineRepository.getTimeEntriesForYear();
-
-        return Observable.zip(calendarData, timeEntriesData, new Func2<List<CalendarDayEntity>, List<TimeEntryEntity>, List<CalendarDayEntity>>() {
-            @Override
-            public List<CalendarDayEntity> call(List<CalendarDayEntity> calendarDayEntities, List<TimeEntryEntity> timeEntryEntities) {
-                return null;
-            }
-        });
     }
 
     @NonNull
