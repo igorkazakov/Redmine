@@ -39,14 +39,6 @@ public class OggyRepository {
 
                     return Observable.just(calendarDayEntityList);
                 })
-                .onErrorResumeNext(throwable -> {
-
-                    List<CalendarDayEntity> calendarDayEntities = DatabaseManager.getDatabaseHelper()
-                            .getCalendarDayDAO()
-                            .getAll();
-
-                    return Observable.just(calendarDayEntities);
-                })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -34,6 +34,7 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -95,9 +96,55 @@ public class RedmineRepository {
     }
 
     @NonNull
+    public static Observable<List<TimeEntryEntity>> getTimeEntriesForYear() {
+
+        TimeInterval interval = DateUtils.getIntervalFromStartYear();
+        Observable<List<TimeEntryEntity>> observable;
+
+        Observable<List<TimeEntryEntity>> observableNetwork = Observable
+                .range(0, Integer.MAX_VALUE - 1)
+                .subscribeOn(Schedulers.io())
+                .concatMap( integer -> {
+
+                    int offset = integer * limit;
+                    return getTimeEntriesWithInterval(interval, offset);
+                })
+                .takeUntil(List::isEmpty)
+                .toList()
+                .map(superList -> {
+
+                    List<TimeEntryEntity> list = new ArrayList<>();
+
+                    if (superList.size() != 0) {
+                        for (List<TimeEntryEntity> itemList : superList) {
+                            list.addAll(itemList);
+                        }
+                    }
+
+                    return list;
+                });
+
+        List<TimeEntryEntity> cachedData = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getAll();
+
+        if (cachedData.size() > 0) {
+
+            observable = Observable.just(cachedData)
+                    .concatWith(observableNetwork);
+
+        } else {
+            observable = observableNetwork;
+        }
+
+        return observable.observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+    @NonNull
     public static Observable<List<IssueEntity>> getIssues(int offset) {
 
-        return ApiFactory.getRedmineService()
+        Observable<List<IssueEntity>> observable;
+
+        Observable<List<IssueEntity>> observableNetwork = ApiFactory.getRedmineService()
                 .issues(limit, offset)
                 .flatMap(issuesResponse -> {
 
@@ -107,19 +154,30 @@ public class RedmineRepository {
                     PreferenceUtils.getInstance().saveIssuesDownloaded(true);
                     return Observable.just(issueEntities);
                 })
-                .onErrorResumeNext(throwable -> {
+                .subscribeOn(Schedulers.io());
 
-                    List<IssueEntity> issueEntities = new ArrayList<IssueEntity>();//DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
-                    return Observable.just(issueEntities);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        List<IssueEntity> cachedData = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
+
+        if (cachedData.size() > 0) {
+
+            observable = Observable.just(cachedData)
+                    .concatWith(observableNetwork);
+
+        } else {
+            observable = observableNetwork;
+        }
+
+        return observable.observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull
     public static Observable<List<IssueEntity>> getMyIssues() {
 
-        return Observable.range(0, Integer.MAX_VALUE - 1)
+        Observable<List<IssueEntity>> observable;
+
+        Observable<List<IssueEntity>> observableNetwork = Observable
+                .range(0, Integer.MAX_VALUE - 1)
+                .subscribeOn(Schedulers.io())
                 .concatMap(integer -> {
 
                     int offset = integer * limit;
@@ -131,10 +189,7 @@ public class RedmineRepository {
 
                     List<IssueEntity> list = new ArrayList<>();
 
-                    if (superList.size() == 0) {
-                        list = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
-
-                    } else {
+                    if (superList.size() > 0) {
 
                         for (List<IssueEntity> itemList : superList) {
                             list.addAll(itemList);
@@ -143,6 +198,19 @@ public class RedmineRepository {
 
                     return list;
                 });
+
+        List<IssueEntity> cachedData = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
+
+        if (cachedData.size() > 0) {
+
+            observable = Observable.just(cachedData)
+                    .concatWith(observableNetwork);
+
+        } else {
+            observable = observableNetwork;
+        }
+
+        return observable.observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull

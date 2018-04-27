@@ -66,8 +66,9 @@ public class DashboardPresenter {
 
     public void loadTimeEntriesData() {
 
-            RedmineRepository.getTimeEntriesWithInterval(DateUtils.getCurrentMonthInterval(), 0)
+            RedmineRepository.getTimeEntriesForYear()
                     .doOnTerminate(mView::hideLoading)
+                    .doOnNext(__ -> mView.hideLoading())
                     .compose(mLifecycleHandler.reload(R.id.time_entry_request))
                     .subscribe(response -> setupView(),
                             throwable -> throwable.printStackTrace());
