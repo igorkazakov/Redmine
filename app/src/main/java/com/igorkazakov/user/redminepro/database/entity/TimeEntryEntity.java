@@ -188,9 +188,9 @@ public class TimeEntryEntity {
             timeEntryEntity.setActivityName(item.getActivity().getName());
             timeEntryEntity.setHours(item.getHours());
             timeEntryEntity.setComments(item.getComments());
-            timeEntryEntity.setSpentOn(item.getSpentOn());
-            timeEntryEntity.setUpdatedOn(item.getUpdatedOn());
-            timeEntryEntity.setCreatedOn(item.getCreatedOn());
+           // timeEntryEntity.setSpentOn(item.getSpentOn());
+           // timeEntryEntity.setUpdatedOn(item.getUpdatedOn());
+           // timeEntryEntity.setCreatedOn(item.getCreatedOn());
             timeEntryEntity.setType(item.getCustomFields().get(0).getValue());
             times.add(timeEntryEntity);
         }

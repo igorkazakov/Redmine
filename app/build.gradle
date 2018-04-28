@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 26
@@ -65,8 +66,8 @@ dependencies {
     compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
 
-    compile "io.reactivex:rxandroid:$rxandroidVersion"
-    compile "io.reactivex:rxjava:$rxjavaVersion"
+    compile "io.reactivex.rxjava2:rxandroid:$rxandroidVersion"
+    compile "io.reactivex.rxjava2:rxjava:$rxjavaVersion"
     compile "ru.arturvasilov:rx-loader:$rxLoaderVersion"
 
     compile "com.jakewharton:butterknife:$butterKnifeVersion"

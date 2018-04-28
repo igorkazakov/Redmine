@@ -1,6 +1,6 @@
 package com.igorkazakov.user.redminepro.api;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.CalendarDay;
+import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ import rx.Observable;
 public interface OggyService {
 
     @GET("/api/user_calendar")
-    Observable<List<CalendarDay>> getCalendarDays(@Query("login") String login,
-                                                  @Query("password") String password,
-                                                  @Query("month") Integer month,
-                                                  @Query("year") Integer year);
+    Observable<List<OggyCalendarDay>> getCalendarDays(@Query("login") String login,
+                                                      @Query("password") String password,
+                                                      @Query("month") Integer month,
+                                                      @Query("year") Integer year);
 }

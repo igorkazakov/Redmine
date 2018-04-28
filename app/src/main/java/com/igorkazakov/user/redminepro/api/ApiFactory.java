@@ -2,8 +2,11 @@ package com.igorkazakov.user.redminepro.api;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.igorkazakov.user.redminepro.BuildConfig;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -65,10 +68,14 @@ public final class ApiFactory {
     @NonNull
     private static Retrofit buildRetrofit(String baseUrl) {
 
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Date.class, new DateDeserializer());
+        Gson gson = builder.create();
+
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(getClient())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }

@@ -4,7 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.DatabaseManager;
+import com.igorkazakov.user.redminepro.database.realm.CalendarDayRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.TimeEntryRealmDAO;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
@@ -60,7 +61,7 @@ public class DashboardPresenter {
                         .doOnSubscribe(mView::showLoading)
                         .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
                         .subscribe(response -> loadTimeEntriesData(),
-                                Throwable::printStackTrace);
+                                throwable -> throwable.printStackTrace());
         }
     }
 
@@ -102,14 +103,14 @@ public class DashboardPresenter {
 
     public float getWholeCurrentWeekHoursNorm() {
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        return DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
+        return CalendarDayRealmDAO.getHoursNormForInterval(interval);
     }
 
     public float remainHoursForNormalKpi() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
+        TimeModel model = TimeEntryRealmDAO.getWorkHoursWithInterval(interval);
+        float norm = CalendarDayRealmDAO.getHoursNormForInterval(interval);
         float remainHours = NumberUtils.round(norm * BuildConfig.NORMAL_KPI -
                 (model.getRegularTime() + model.getTeamFuckupTime()));
         if (remainHours > 0) {
@@ -123,8 +124,8 @@ public class DashboardPresenter {
     public float remainHoursForWeek() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        TimeModel model = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getWorkHoursWithInterval(interval);
-        float norm = DatabaseManager.getDatabaseHelper().getCalendarDayDAO().getHoursNormForInterval(interval);
+        TimeModel model = TimeEntryRealmDAO.getWorkHoursWithInterval(interval);
+        float norm = CalendarDayRealmDAO.getHoursNormForInterval(interval);
         float remainHours = norm - (model.getRegularTime() + model.getFuckupTime() + model.getTeamFuckupTime());
         if (remainHours > 0) {
             return remainHours;

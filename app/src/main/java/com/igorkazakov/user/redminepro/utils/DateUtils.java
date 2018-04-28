@@ -40,6 +40,7 @@ public class DateUtils {
 
     public static Date getYesterday() {
         Calendar c = Calendar.getInstance();
+        removeTime(c);
         c.add(Calendar.DATE, -1);
         return c.getTime();
     }
@@ -57,6 +58,7 @@ public class DateUtils {
         Calendar c = Calendar.getInstance();
         c.setFirstDayOfWeek(Calendar.MONDAY);
         c.setTime(date);
+        removeTime(c);
         int today = c.get(Calendar.DAY_OF_WEEK);
         c.add(Calendar.DAY_OF_WEEK, -today + Calendar.MONDAY);
         return c.getTime();
@@ -69,6 +71,7 @@ public class DateUtils {
 
         Calendar c = Calendar.getInstance();
         c.setTime(DateUtils.getMonday(new Date()));
+        removeTime(c);
         c.add(Calendar.DATE, daysForPreviousSunday);
         Date end = c.getTime();
         c.add(Calendar.DATE, daysForPreviousMonday);
@@ -81,8 +84,9 @@ public class DateUtils {
 
         Calendar c = Calendar.getInstance();
         c.setTime(DateUtils.getMonday(new Date()));
+        removeTime(c);
         Date start = c.getTime();
-        Date end = new Date();
+        Date end = getCurrentDateWithoutTime();
 
         return new TimeInterval(start, end);
     }
@@ -91,13 +95,14 @@ public class DateUtils {
 
         Date start, end;
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
+        calendar.setTime(getCurrentDateWithoutTime());
+        removeTime(calendar);
         calendar.set(Calendar.DAY_OF_MONTH,
                 calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
 
         start = calendar.getTime();
 
-        end = new Date();
+        end = getCurrentDateWithoutTime();
         return new TimeInterval(start, end);
     }
 
@@ -105,6 +110,7 @@ public class DateUtils {
 
         Calendar c = Calendar.getInstance();
         c.setTime(DateUtils.getMonday(new Date()));
+        removeTime(c);
         Date start = c.getTime();
         c.add(Calendar.DAY_OF_WEEK, 6);
         Date end = c.getTime();
@@ -116,6 +122,7 @@ public class DateUtils {
         Date start, end;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
+        removeTime(calendar);
         calendar.set(Calendar.MONTH, month);
 
         calendar.set(Calendar.DAY_OF_MONTH,
@@ -131,15 +138,31 @@ public class DateUtils {
 
     public static TimeInterval getIntervalFromStartYear() {
 
-        Date currentDate = new Date();
+        Date currentDate = getCurrentDateWithoutTime();
+
         int year = Calendar.getInstance().get(Calendar.YEAR);
         Calendar calendarStart = Calendar.getInstance();
         calendarStart.set(Calendar.YEAR,year);
         calendarStart.set(Calendar.MONTH,0);
         calendarStart.set(Calendar.DAY_OF_MONTH,1);
+        removeTime(calendarStart);
         Date startDate = calendarStart.getTime();
 
         return new TimeInterval(startDate, currentDate);
+    }
+
+    private static void removeTime(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    private static Date getCurrentDateWithoutTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        removeTime(cal);
+        return cal.getTime();
     }
 
     public static String timeDifference(Date oldDate) {

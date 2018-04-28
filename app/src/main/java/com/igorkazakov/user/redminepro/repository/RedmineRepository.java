@@ -19,10 +19,10 @@ import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.entity.ProjectEntity;
 import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
-import com.igorkazakov.user.redminepro.database.entity.TimeEntryEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
 import com.igorkazakov.user.redminepro.database.entity.UserEntity;
 import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
+import com.igorkazakov.user.redminepro.database.realm.TimeEntryRealmDAO;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
@@ -34,7 +34,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -69,7 +68,7 @@ public class RedmineRepository {
     }
 
     @NonNull
-    public static Observable<List<TimeEntryEntity>> getTimeEntriesWithInterval(TimeInterval interval, int offset) {
+    public static Observable<List<TimeEntry>> getTimeEntriesWithInterval(TimeInterval interval, int offset) {
 
         long userId = PreferenceUtils.getInstance().getUserId();
         String startDateString = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
@@ -78,30 +77,27 @@ public class RedmineRepository {
 
         return ApiFactory.getRedmineService()
                 .timeEntriesForYear(limit, userId, offset, strInterval)
-                .flatMap(timeEntryResponse -> {
+                .map(timeEntryResponse -> {
 
                     List<TimeEntry> timeEntries = timeEntryResponse.getTimeEntries();
-                    List<TimeEntryEntity> timeEntryEntities = TimeEntryEntity.convertItems(timeEntries);
-                    DatabaseManager.getDatabaseHelper().getTimeEntryDAO().saveTimeEntries(timeEntryEntities);
-
-                    return Observable.just(timeEntryEntities);
+                    TimeEntryRealmDAO.saveTimeEntries(timeEntries);
+                    return timeEntries;
                 })
                 .onErrorResumeNext(throwable -> {
 
-                    List<TimeEntryEntity> timeEntryEntities = new ArrayList<TimeEntryEntity>();//DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getAll();
-                    return Observable.just(timeEntryEntities);
+                    return Observable.just(TimeEntryRealmDAO.getAll());
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull
-    public static Observable<List<TimeEntryEntity>> getTimeEntriesForYear() {
+    public static Observable<List<TimeEntry>> getTimeEntriesForYear() {
 
         TimeInterval interval = DateUtils.getIntervalFromStartYear();
-        Observable<List<TimeEntryEntity>> observable;
+        Observable<List<TimeEntry>> observable;
 
-        Observable<List<TimeEntryEntity>> observableNetwork = Observable
+        Observable<List<TimeEntry>> observableNetwork = Observable
                 .range(0, Integer.MAX_VALUE - 1)
                 .subscribeOn(Schedulers.io())
                 .concatMap( integer -> {
@@ -113,10 +109,10 @@ public class RedmineRepository {
                 .toList()
                 .map(superList -> {
 
-                    List<TimeEntryEntity> list = new ArrayList<>();
+                    List<TimeEntry> list = new ArrayList<>();
 
                     if (superList.size() != 0) {
-                        for (List<TimeEntryEntity> itemList : superList) {
+                        for (List<TimeEntry> itemList : superList) {
                             list.addAll(itemList);
                         }
                     }
@@ -124,7 +120,7 @@ public class RedmineRepository {
                     return list;
                 });
 
-        List<TimeEntryEntity> cachedData = DatabaseManager.getDatabaseHelper().getTimeEntryDAO().getAll();
+        List<TimeEntry> cachedData = TimeEntryRealmDAO.getAll();
 
         if (cachedData.size() > 0) {
 

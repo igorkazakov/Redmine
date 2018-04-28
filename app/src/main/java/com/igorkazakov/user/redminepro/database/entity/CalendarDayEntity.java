@@ -1,11 +1,7 @@
 package com.igorkazakov.user.redminepro.database.entity;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.CalendarDay;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by user on 14.07.17.
@@ -13,11 +9,11 @@ import java.util.List;
 @DatabaseTable(tableName = "CalendarDayEntity")
 public class CalendarDayEntity {
 
-    public static final String WORK = "work";
-    public static final String HOLIDAY = "holiday";
-    public static final String FEAST = "feast";
-    public static final String VACATION = "vacation";
-    public static final String HOSPITAL = "hospital";
+//    public static final String WORK = "work";
+//    public static final String HOLIDAY = "holiday";
+//    public static final String FEAST = "feast";
+//    public static final String VACATION = "vacation";
+//    public static final String HOSPITAL = "hospital";
 
     @DatabaseField(id = true)
     private Long id;
@@ -87,26 +83,26 @@ public class CalendarDayEntity {
 
 
 
-    public static List<CalendarDayEntity> convertItems(List<CalendarDay> items) {
-
-        if (items == null) {
-            return null;
-        }
-
-        ArrayList<CalendarDayEntity> times = new ArrayList<>();
-        for (CalendarDay item : items) {
-
-            CalendarDayEntity entity = new CalendarDayEntity();
-            entity.setId(item.getId());
-            entity.setUserId(item.getUserId());
-            entity.setDate(item.getDate());
-            entity.setType(item.getType());
-            entity.setHours(item.getHours());
-            entity.setComment(item.getComment());
-
-            times.add(entity);
-        }
-
-        return times;
-    }
+//    public static List<CalendarDayEntity> convertItems(List<CalendarDay> items) {
+//
+//        if (items == null) {
+//            return null;
+//        }
+//
+//        ArrayList<CalendarDayEntity> times = new ArrayList<>();
+//        for (CalendarDay item : items) {
+//
+//            CalendarDayEntity entity = new CalendarDayEntity();
+//            entity.setId(item.getId());
+//            entity.setUserId(item.getUserId());
+//            //entity.setDate(item.getDate());
+//            entity.setType(item.getType());
+//            entity.setHours(item.getHours());
+//            entity.setComment(item.getComment());
+//
+//            times.add(entity);
+//        }
+//
+//        return times;
+//    }
 }
