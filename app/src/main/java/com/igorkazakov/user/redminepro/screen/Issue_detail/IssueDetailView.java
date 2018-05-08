@@ -1,6 +1,6 @@
 package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
-import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 
 /**
@@ -9,5 +9,5 @@ import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 
 public interface IssueDetailView extends LoadingView {
 
-    void setupView(IssueEntity issueEntity);
+    void setupView(Issue issueEntity);
 }

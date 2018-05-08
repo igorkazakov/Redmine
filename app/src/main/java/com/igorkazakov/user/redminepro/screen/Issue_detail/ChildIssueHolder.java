@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +30,7 @@ public class ChildIssueHolder extends RecyclerView.ViewHolder implements View.On
     TextView mStatusTextView;
 
     private Context mContext;
-    private IssueEntity mIssueEntity;
+    private Issue mIssueEntity;
 
     public ChildIssueHolder(View itemView, Context context) {
         super(itemView);
@@ -39,13 +39,13 @@ public class ChildIssueHolder extends RecyclerView.ViewHolder implements View.On
         mContext = context;
     }
 
-    public void bind(IssueEntity entity) {
+    public void bind(Issue entity) {
 
         mIssueEntity = entity;
         mTitleTextView.setText(entity.getSubject());
-        mTrackerTextView.setText(entity.getTrackerName());
-        mAssignedToTextView.setText(entity.getAssignedToName());
-        mStatusTextView.setText(entity.getStatusName());
+        mTrackerTextView.setText(entity.getTracker().getName());
+        mAssignedToTextView.setText(entity.getAssignedTo().getName());
+        mStatusTextView.setText(entity.getStatus().getName());
     }
 
     @Override

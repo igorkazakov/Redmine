@@ -3,9 +3,9 @@ package com.igorkazakov.user.redminepro.screen.Issue_detail;
 import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.AttachmentEntityDAO;
-import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
@@ -13,6 +13,7 @@ import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
 import com.igorkazakov.user.redminepro.database.entity.UserEntity;
 import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
+import com.igorkazakov.user.redminepro.database.realm.IssueRealmDAO;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
 import java.sql.SQLException;
@@ -49,19 +50,9 @@ public class IssueDetailPresenter {
         mView.setupView(issueEntity);
     }
 
-    public List<IssueEntity> getChildIssues(IssueEntity issueEntity) {
+    public List<Issue> getChildIssues(long parentId) {
 
-        List<IssueEntity> issueEntityList = new ArrayList<>();
-        IssueEntityDAO issueDao = DatabaseManager.getDatabaseHelper().getIssueEntityDAO();
-
-        try {
-            issueEntityList = issueDao.getChildIssues(issueEntity.getId());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return issueEntityList;
+        return IssueRealmDAO.getChildIssues(parentId);
     }
 
     public List<AttachmentEntity> getAttachments(IssueEntity issueEntity) {

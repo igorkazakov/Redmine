@@ -22,4 +22,12 @@ public class IssueRealmDAO {
                 .where(Issue.class)
                 .findAll();
     }
+
+    public static List<Issue> getChildIssues(long parentId) {
+
+        return Realm.getDefaultInstance()
+                .where(Issue.class)
+                .equalTo("parentId", parentId)
+                .findAll();
+    }
 }

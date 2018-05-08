@@ -8,6 +8,7 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Au
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Parent;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortProject;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
@@ -30,6 +31,9 @@ public class Issue extends RealmObject {
     @SerializedName("project")
     @Expose
     private ShortProject project;
+    @SerializedName("parent")
+    @Expose
+    private Parent parent;
     @SerializedName("tracker")
     @Expose
     private Tracker tracker;
@@ -131,6 +135,14 @@ public class Issue extends RealmObject {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Parent getParent() {
+        return parent;
+    }
+
+    public void setParent(Parent parent) {
+        this.parent = parent;
     }
 
     public Priority getPriority() {

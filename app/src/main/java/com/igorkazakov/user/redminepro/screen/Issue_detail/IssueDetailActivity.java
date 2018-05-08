@@ -159,7 +159,7 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
         mSpentHoursTextView.setText(String.valueOf(issueEntity.getSpentHours()));
         mIssueNameTextView.setText(issueEntity.getSubject());
 
-        List<Issue> issueEntities = issueEntity.getChildren();//mPresenter.getChildIssues(issueEntity);
+        List<Issue> issueEntities = mPresenter.getChildIssues(issueEntity.getParent().getId());
         if (issueEntities.size() == 0) {
             mChildIssueListView.setVisibility(View.GONE);
         }
