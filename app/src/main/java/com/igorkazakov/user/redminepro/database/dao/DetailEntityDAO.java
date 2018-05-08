@@ -3,7 +3,7 @@ package com.igorkazakov.user.redminepro.database.dao;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
-import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.database.entity.Journal;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -117,7 +117,7 @@ public class DetailEntityDAO extends BaseDaoImpl<DetailEntity, Long> {
     public void deleteDetailsByParent(long parentId) {
 
         try {
-            JournalEntity entity = DatabaseManager.getDatabaseHelper().getJournalEntityDAO().queryForId(parentId);
+            Journal entity = DatabaseManager.getDatabaseHelper().getJournalEntityDAO().queryForId(parentId);
 
             List<DetailEntity> detailEntities = this.queryBuilder().where().eq("parent_id", parentId).query();
             if (detailEntities != null) {

@@ -1,7 +1,6 @@
 package com.igorkazakov.user.redminepro.database.dao;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
-import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.database.entity.Journal;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -15,14 +14,14 @@ import java.util.Set;
  * Created by user on 31.07.17.
  */
 
-public class JournalEntityDAO extends BaseDaoImpl<JournalEntity, Long> {
+public class JournalEntityDAO extends BaseDaoImpl<Journal, Long> {
 
-    public JournalEntityDAO(ConnectionSource connectionSource, Class<JournalEntity> dataClass) throws SQLException {
+    public JournalEntityDAO(ConnectionSource connectionSource, Class<Journal> dataClass) throws SQLException {
         super(connectionSource, dataClass);
     }
 
-    public List<JournalEntity> getAll() {
-        List<JournalEntity> entityList = new ArrayList();
+    public List<Journal> getAll() {
+        List<Journal> entityList = new ArrayList();
         try {
             entityList = this.queryForAll();
         } catch (SQLException e) {
@@ -32,7 +31,7 @@ public class JournalEntityDAO extends BaseDaoImpl<JournalEntity, Long> {
         }
     }
 
-    public void saveJournalEntity(JournalEntity entity) {
+    public void saveJournalEntity(Journal entity) {
 
         if (entity == null) {
             return;
@@ -47,13 +46,13 @@ public class JournalEntityDAO extends BaseDaoImpl<JournalEntity, Long> {
 
     }
 
-    public void saveJournalEntities(List<JournalEntity> entityList) {
+    public void saveJournalEntities(List<Journal> entityList) {
 
         if (entityList == null) {
             return;
         }
 
-        for (JournalEntity item : entityList) {
+        for (Journal item : entityList) {
             try {
                 this.createOrUpdate(item);
             } catch (SQLException e) {
@@ -62,15 +61,15 @@ public class JournalEntityDAO extends BaseDaoImpl<JournalEntity, Long> {
         }
     }
 
-    public void deleteExtraEntitiesFromBd(List<Journal> journalList) {
+    public void deleteExtraEntitiesFromBd(List<com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal> journalList) {
 
         Set<Long> set = new HashSet<>();
-        for (Journal journal: journalList) {
+        for (com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal journal: journalList) {
             set.add(journal.getId());
         }
 
         try {
-            List<JournalEntity> journalEntities = this.queryBuilder().where().not().in("id", set).query();
+            List<Journal> journalEntities = this.queryBuilder().where().not().in("id", set).query();
             delete(journalEntities);
 
         } catch (SQLException e) {
@@ -78,9 +77,9 @@ public class JournalEntityDAO extends BaseDaoImpl<JournalEntity, Long> {
         }
     }
 
-    public List<JournalEntity> getjournalsByParent(long parent) {
+    public List<Journal> getjournalsByParent(long parent) {
 
-        List<JournalEntity> journalEntities= new ArrayList<>();
+        List<Journal> journalEntities= new ArrayList<>();
 
         try {
             journalEntities = this.queryBuilder().where().eq("parent_id", parent).query();

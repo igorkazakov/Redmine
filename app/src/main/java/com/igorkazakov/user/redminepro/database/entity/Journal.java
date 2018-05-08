@@ -1,23 +1,19 @@
 package com.igorkazakov.user.redminepro.database.entity;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.JournalEntityDAO;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * Created by user on 31.07.17.
  */
-@DatabaseTable(tableName = "JournalEntity")
-public class JournalEntity {
+@DatabaseTable(tableName = "Journal")
+public class Journal {
 
     @DatabaseField(id = true)
     private Long id;
@@ -86,12 +82,12 @@ public class JournalEntity {
         this.createdOn = createdOn;
     }
 
-    public void convertDetails(List<Detail> details, JournalEntity parent) {
+    public void convertDetails(List<Detail> details, Journal parent) {
 
         DetailEntity.convertItems(details, parent);
     }
 
-    public static void convertItems(List<Journal> journalList, IssueEntity parent) {
+    public static void convertItems(List<com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal> journalList, IssueEntity parent) {
 
         if (journalList == null) {
             return;
@@ -104,9 +100,9 @@ public class JournalEntity {
 
             //journalEntityDAO.delete(journalEntityDAO.getAll());
 
-            for (Journal journal: journalList) {
+            for (com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal journal: journalList) {
 
-                JournalEntity journalEntity = new JournalEntity();
+                Journal journalEntity = new Journal();
                 journalEntity.setParent(parent.getId());
                 journalEntity.setId(journal.getId());
                 journalEntity.setCreatedOn(journal.getCreatedOn());

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 
 import java.util.List;
@@ -17,9 +18,9 @@ import java.util.List;
 
 public class IssuesAdapter extends RecyclerView.Adapter<IssueHolder> {
 
-    private List<IssueEntity> issueModels;
+    private List<Issue> issueModels;
 
-    public IssuesAdapter(List<IssueEntity> issueModels) {
+    public IssuesAdapter(List<Issue> issueModels) {
         this.issueModels = issueModels;
     }
 

@@ -21,7 +21,7 @@ import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
 import com.igorkazakov.user.redminepro.database.entity.ChildEntity;
 import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
-import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.database.entity.Journal;
 import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.entity.ProjectEntity;
 import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
@@ -71,7 +71,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, AttachmentEntity.class);
             TableUtils.createTable(connectionSource, ChildEntity.class);
             TableUtils.createTable(connectionSource, DetailEntity.class);
-            TableUtils.createTable(connectionSource, JournalEntity.class);
+            TableUtils.createTable(connectionSource, Journal.class);
             TableUtils.createTable(connectionSource, StatusEntity.class);
             TableUtils.createTable(connectionSource, TrackerEntity.class);
             TableUtils.createTable(connectionSource, UserEntity.class);
@@ -93,7 +93,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, AttachmentEntity.class, true);
             TableUtils.dropTable(connectionSource, ChildEntity.class, true);
             TableUtils.dropTable(connectionSource, DetailEntity.class, true);
-            TableUtils.dropTable(connectionSource, JournalEntity.class, true);
+            TableUtils.dropTable(connectionSource, Journal.class, true);
             TableUtils.dropTable(connectionSource, StatusEntity.class, true);
             TableUtils.dropTable(connectionSource, TrackerEntity.class, true);
             TableUtils.dropTable(connectionSource, UserEntity.class, true);
@@ -228,7 +228,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         if (mJournalEntityDAO == null) {
             try {
-                mJournalEntityDAO = new JournalEntityDAO(getConnectionSource(), JournalEntity.class);
+                mJournalEntityDAO = new JournalEntityDAO(getConnectionSource(), Journal.class);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

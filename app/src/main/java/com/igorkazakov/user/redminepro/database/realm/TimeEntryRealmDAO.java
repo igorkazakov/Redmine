@@ -30,8 +30,16 @@ public class TimeEntryRealmDAO {
 
     public static void saveTimeEntries(List<TimeEntry> timeEntries) {
 
+        for (TimeEntry timeEntry: timeEntries) {
+            if (timeEntry.getCustomFields().size() > 0) {
+                String type = timeEntry.getCustomFields().get(0).getValue();
+                timeEntry.setType(type != null ? type : "");
+            }
+        }
+
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
+
         realm.insertOrUpdate(timeEntries);
         realm.commitTransaction();
     }
@@ -47,9 +55,9 @@ public class TimeEntryRealmDAO {
 
         return Realm.getDefaultInstance()
                 .where(TimeEntry.class)
-                .greaterThanOrEqualTo("spent_on", interval.getStart())
+                .greaterThanOrEqualTo("spentOn", interval.getStart())
                 .and()
-                .lessThanOrEqualTo("spent_on", interval.getEnd())
+                .lessThanOrEqualTo("spentOn", interval.getEnd())
                 .and()
                 .equalTo("type", timeType.getValue())
                 .findAll()
@@ -61,7 +69,7 @@ public class TimeEntryRealmDAO {
 
         return Realm.getDefaultInstance()
                 .where(TimeEntry.class)
-                .equalTo("spent_on", date)
+                .equalTo("spentOn", date)
                 .and()
                 .equalTo("type", timeType.getValue())
                 .findAll()

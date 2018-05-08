@@ -14,9 +14,9 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
-import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
-import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
 
 import java.util.List;
@@ -147,33 +147,33 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     }
 
     @Override
-    public void setupView(IssueEntity issueEntity) {
+    public void setupView(Issue issueEntity) {
 
-        mStatusTextView.setText(issueEntity.getStatusName());
-        mPriorityTextView.setText(issueEntity.getPriorityName());
-        mAssignedToTextView.setText(issueEntity.getAssignedToName());
-        mTrackerTextView.setText(issueEntity.getTrackerName());
-        mFixedVersionTextView.setText(issueEntity.getFixedVersionName());
+        mStatusTextView.setText(issueEntity.getStatus().getName());
+        mPriorityTextView.setText(issueEntity.getPriority().getName());
+        mAssignedToTextView.setText(issueEntity.getAssignedTo().getName());
+        mTrackerTextView.setText(issueEntity.getTracker().getName());
+        mFixedVersionTextView.setText(issueEntity.getFixedVersion().getName());
         mStartDateTextView.setText(issueEntity.getStartDate());
         mEstimatedHoursTextView.setText(String.valueOf(issueEntity.getEstimatedHours()));
         mSpentHoursTextView.setText(String.valueOf(issueEntity.getSpentHours()));
         mIssueNameTextView.setText(issueEntity.getSubject());
 
-        List<IssueEntity> issueEntities = mPresenter.getChildIssues(issueEntity);
+        List<Issue> issueEntities = issueEntity.getChildren();//mPresenter.getChildIssues(issueEntity);
         if (issueEntities.size() == 0) {
             mChildIssueListView.setVisibility(View.GONE);
         }
         ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
         mChildIssuesList.setAdapter(adapter);
 
-        List<AttachmentEntity> attachmentEntities = mPresenter.getAttachments(issueEntity);
+        List<Attachment> attachmentEntities = issueEntity.getAttachments();//mPresenter.getAttachments(issueEntity);
         if (attachmentEntities.size() == 0) {
             mAttachmentListView.setVisibility(View.GONE);
         }
         AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
         mAttachmentList.setAdapter(attachmentAdapter);
 
-        List<JournalEntity> journalEntities = mPresenter.getJournals(issueEntity);
+        List<Journal> journalEntities = issueEntity.getJournals();//mPresenter.getJournals(issueEntity);
         if (journalEntities.size() == 0) {
             mJournalListView.setVisibility(View.GONE);
         }

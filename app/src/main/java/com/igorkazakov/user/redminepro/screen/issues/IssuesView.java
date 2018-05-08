@@ -1,6 +1,6 @@
 package com.igorkazakov.user.redminepro.screen.issues;
 
-import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.screen.general.LoadingView;
 
 import java.util.List;
@@ -11,5 +11,5 @@ import java.util.List;
 
 public interface IssuesView extends LoadingView {
 
-    void setupView(List<IssueEntity> issueModels);
+    void setupView(List<Issue> issueModels);
 }

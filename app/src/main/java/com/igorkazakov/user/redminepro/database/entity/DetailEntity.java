@@ -7,8 +7,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -84,7 +82,7 @@ public class DetailEntity {
         this.oldValue = oldValue;
     }
 
-    public static void convertItems(List<Detail> detailList, JournalEntity parent) {
+    public static void convertItems(List<Detail> detailList, Journal parent) {
 
         if (detailList == null) {
             return;

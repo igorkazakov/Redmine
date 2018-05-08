@@ -22,6 +22,7 @@ import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
 import com.igorkazakov.user.redminepro.database.entity.UserEntity;
 import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
+import com.igorkazakov.user.redminepro.database.realm.IssueRealmDAO;
 import com.igorkazakov.user.redminepro.database.realm.TimeEntryRealmDAO;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
@@ -136,23 +137,24 @@ public class RedmineRepository {
 
 
     @NonNull
-    public static Observable<List<IssueEntity>> getIssues(int offset) {
+    public static Observable<List<Issue>> getIssues(int offset) {
 
-        Observable<List<IssueEntity>> observable;
+        Observable<List<Issue>> observable;
 
-        Observable<List<IssueEntity>> observableNetwork = ApiFactory.getRedmineService()
+        Observable<List<Issue>> observableNetwork = ApiFactory.getRedmineService()
                 .issues(limit, offset)
-                .flatMap(issuesResponse -> {
+                .map(issuesResponse -> {
 
                     List<Issue> issues = issuesResponse.getIssues();
-                    List<IssueEntity> issueEntities = IssueEntity.convertItems(issues);
-                    DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntities(issueEntities);
-                    PreferenceUtils.getInstance().saveIssuesDownloaded(true);
-                    return Observable.just(issueEntities);
+                    IssueRealmDAO.saveIssues(issues);
+//                    List<IssueEntity> issueEntities = IssueEntity.convertItems(issues);
+//                    DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntities(issueEntities);
+//                    PreferenceUtils.getInstance().saveIssuesDownloaded(true);
+                    return issues;
                 })
                 .subscribeOn(Schedulers.io());
 
-        List<IssueEntity> cachedData = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
+        List<Issue> cachedData = IssueRealmDAO.getAll();
 
         if (cachedData.size() > 0) {
 
@@ -167,11 +169,11 @@ public class RedmineRepository {
     }
 
     @NonNull
-    public static Observable<List<IssueEntity>> getMyIssues() {
+    public static Observable<List<Issue>> getMyIssues() {
 
-        Observable<List<IssueEntity>> observable;
+        Observable<List<Issue>> observable;
 
-        Observable<List<IssueEntity>> observableNetwork = Observable
+        Observable<List<Issue>> observableNetwork = Observable
                 .range(0, Integer.MAX_VALUE - 1)
                 .subscribeOn(Schedulers.io())
                 .concatMap(integer -> {
@@ -183,11 +185,11 @@ public class RedmineRepository {
                 .toList()
                 .map(superList -> {
 
-                    List<IssueEntity> list = new ArrayList<>();
+                    List<Issue> list = new ArrayList<>();
 
                     if (superList.size() > 0) {
 
-                        for (List<IssueEntity> itemList : superList) {
+                        for (List<Issue> itemList : superList) {
                             list.addAll(itemList);
                         }
                     }
@@ -195,7 +197,7 @@ public class RedmineRepository {
                     return list;
                 });
 
-        List<IssueEntity> cachedData = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().getAll();
+        List<Issue> cachedData = IssueRealmDAO.getAll();
 
         if (cachedData.size() > 0) {
 

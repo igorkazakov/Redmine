@@ -3,13 +3,10 @@ package com.igorkazakov.user.redminepro.database.entity;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -279,8 +276,8 @@ public class IssueEntity {
         AttachmentEntity.convertItems(attachments, parent);
     }
 
-    public void convertJournals(List<Journal> journals, IssueEntity parent) {
-        JournalEntity.convertItems(journals, parent);
+    public void convertJournals(List<com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal> journals, IssueEntity parent) {
+        Journal.convertItems(journals, parent);
     }
 
     public static IssueEntity convertItem(Issue issue) {

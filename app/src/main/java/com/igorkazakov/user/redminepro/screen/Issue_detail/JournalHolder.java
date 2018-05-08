@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 
 import butterknife.BindView;
@@ -30,7 +30,7 @@ public class JournalHolder extends RecyclerView.ViewHolder {
     RecyclerView mDetailJournalList;
 
     private Context mContext;
-    private JournalEntity mJournalEntity;
+    private Journal mJournalEntity;
 
     public JournalHolder(View itemView, Context context) {
         super(itemView);
@@ -38,13 +38,15 @@ public class JournalHolder extends RecyclerView.ViewHolder {
         mContext = context;
     }
 
-    public void bind(JournalEntity entity, IssueDetailPresenter issueDetailPresenter) {
+    public void bind(Journal entity, IssueDetailPresenter issueDetailPresenter) {
 
         mJournalEntity = entity;
 
         String text = String.format(mContext.getResources().getString(R.string.title_journal_issue_detail),
-                String.valueOf(mJournalEntity.getUserName()),
-                String.valueOf(DateUtils.timeDifference(DateUtils.dateFromString(mJournalEntity.getCreatedOn(), DateUtils.getDateFormatterWithTime()))));
+                String.valueOf(mJournalEntity.getUser().getName()),
+                String.valueOf(DateUtils.timeDifference(
+                        DateUtils.dateFromString(mJournalEntity.getCreatedOn(),
+                                DateUtils.getDateFormatterWithTime()))));
         mTitleTextView.setText(Html.fromHtml(text));
 
         mDetailJournalList.setLayoutManager(new LinearLayoutManager(mContext){

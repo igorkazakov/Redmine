@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
@@ -27,7 +27,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
     TextView mDetailTextView;
 
     private Context mContext;
-    private DetailEntity mDetailEntity;
+    private Detail mDetailEntity;
 
     public JournalDetailHolder(View itemView, Context context) {
         super(itemView);
@@ -35,7 +35,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
         mContext = context;
     }
 
-    public void bind(DetailEntity entity, IssueDetailPresenter issueDetailPresenter) {
+    public void bind(Detail entity, IssueDetailPresenter issueDetailPresenter) {
 
         mDetailEntity = entity;
         String string = "";

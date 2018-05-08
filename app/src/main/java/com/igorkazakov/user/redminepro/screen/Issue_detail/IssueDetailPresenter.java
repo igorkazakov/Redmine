@@ -5,13 +5,9 @@ import android.support.annotation.NonNull;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.AttachmentEntityDAO;
-import com.igorkazakov.user.redminepro.database.dao.DetailEntityDAO;
 import com.igorkazakov.user.redminepro.database.dao.IssueEntityDAO;
-import com.igorkazakov.user.redminepro.database.dao.JournalEntityDAO;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
-import com.igorkazakov.user.redminepro.database.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
-import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
 import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
@@ -84,33 +80,33 @@ public class IssueDetailPresenter {
         return attachmentEntities;
     }
 
-    public List<JournalEntity> getJournals(IssueEntity issueEntity) {
+//    public List<Journal> getJournals(IssueEntity issueEntity) {
+//
+//        List<Journal> journalEntities = new ArrayList<>();
+//        JournalEntityDAO journalEntityDAO = DatabaseManager.getDatabaseHelper().getJournalEntityDAO();
+//
+//        try {
+//
+//            journalEntities = journalEntityDAO.getjournalsByParent(issueEntity.getId());
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return journalEntities;
+//    }
 
-        List<JournalEntity> journalEntities = new ArrayList<>();
-        JournalEntityDAO journalEntityDAO = DatabaseManager.getDatabaseHelper().getJournalEntityDAO();
-
-        try {
-
-            journalEntities = journalEntityDAO.getjournalsByParent(issueEntity.getId());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return journalEntities;
-    }
-
-    public List<DetailEntity> getJournalDetails(JournalEntity journalEntity) {
-
-        List<DetailEntity> detailEntities = new ArrayList<>();
-        DetailEntityDAO detailEntityDAO = DatabaseManager.getDatabaseHelper().getDetailEntityDAO();
-        try {
-            detailEntities = detailEntityDAO.getDetailsByParent(journalEntity.getId());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return detailEntities;
-    }
+//    public List<Detail> getJournalDetails(Journal journalEntity) {
+//
+//        List<DetailEntity> detailEntities = new ArrayList<>();
+//        DetailEntityDAO detailEntityDAO = DatabaseManager.getDatabaseHelper().getDetailEntityDAO();
+//        try {
+//            detailEntities = detailEntityDAO.getDetailsByParent(journalEntity.getId());
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return detailEntities;
+//    }
 
     public UserEntity getUserById(long id) {
         UserEntity entity = null;
