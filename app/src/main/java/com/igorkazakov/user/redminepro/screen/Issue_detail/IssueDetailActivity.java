@@ -149,8 +149,8 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     @Override
     public void setupView(Issue issueEntity) {
 
-        mStatusTextView.setText(issueEntity.getStatus().getName());
-        mPriorityTextView.setText(issueEntity.getPriority().getName());
+        mStatusTextView.setText(issueEntity.getStatus() != null ? issueEntity.getStatus().getName() : "");
+        mPriorityTextView.setText(issueEntity.getPriority().getName(): "");
         mAssignedToTextView.setText(issueEntity.getAssignedTo().getName());
         mTrackerTextView.setText(issueEntity.getTracker().getName());
         mFixedVersionTextView.setText(issueEntity.getFixedVersion().getName());
@@ -159,12 +159,15 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
         mSpentHoursTextView.setText(String.valueOf(issueEntity.getSpentHours()));
         mIssueNameTextView.setText(issueEntity.getSubject());
 
-        List<Issue> issueEntities = mPresenter.getChildIssues(issueEntity.getParent().getId());
-        if (issueEntities.size() == 0) {
-            mChildIssueListView.setVisibility(View.GONE);
+        if (issueEntity.getParent() != null) {
+            List<Issue> issueEntities = mPresenter.getChildIssues(issueEntity.getChildren());
+            if (issueEntities.size() == 0) {
+                mChildIssueListView.setVisibility(View.GONE);
+            }
+
+            ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
+            mChildIssuesList.setAdapter(adapter);
         }
-        ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
-        mChildIssuesList.setAdapter(adapter);
 
         List<Attachment> attachmentEntities = issueEntity.getAttachments();//mPresenter.getAttachments(issueEntity);
         if (attachmentEntities.size() == 0) {

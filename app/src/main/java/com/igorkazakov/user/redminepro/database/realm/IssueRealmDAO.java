@@ -1,7 +1,10 @@
 package com.igorkazakov.user.redminepro.database.realm;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Parent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -16,6 +19,14 @@ public class IssueRealmDAO {
         realm.commitTransaction();
     }
 
+    public static void saveIssue(Issue issue) {
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.insertOrUpdate(issue);
+        realm.commitTransaction();
+    }
+
     public static List<Issue> getAll() {
 
         return Realm.getDefaultInstance()
@@ -23,11 +34,16 @@ public class IssueRealmDAO {
                 .findAll();
     }
 
-    public static List<Issue> getChildIssues(long parentId) {
+    public static List<Issue> getChildIssues(List<Child> children) {
+
+        Long[] childIssueIds = new Long[children.size()];
+        for (Child child: children) {
+            childIssueIds[children.indexOf(child)] = child.getId();
+        }
 
         return Realm.getDefaultInstance()
                 .where(Issue.class)
-                .equalTo("parentId", parentId)
+                .in("id", childIssueIds)
                 .findAll();
     }
 }

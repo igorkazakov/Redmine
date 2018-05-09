@@ -8,28 +8,25 @@ import com.igorkazakov.user.redminepro.api.response.LoginResponse;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 import com.igorkazakov.user.redminepro.api.responseEntity.Membership;
-import com.igorkazakov.user.redminepro.api.responseEntity.Project;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
-import com.igorkazakov.user.redminepro.database.DatabaseManager;
-import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
-import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
-import com.igorkazakov.user.redminepro.database.entity.ProjectEntity;
-import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
-import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
-import com.igorkazakov.user.redminepro.database.entity.UserEntity;
-import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
+import com.igorkazakov.user.redminepro.database.realm.FixedVersionRealmDAO;
 import com.igorkazakov.user.redminepro.database.realm.IssueRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.ProjectRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.ShortUserRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.StatusRealmDAO;
 import com.igorkazakov.user.redminepro.database.realm.TimeEntryRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.TrackerRealmDAO;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -212,93 +209,73 @@ public class RedmineRepository {
     }
 
     @NonNull
-    public static Observable<IssueEntity> getIssueDetails(long issueId) {
+    public static Observable<Issue> getIssueDetails(long issueId) {
 
         return ApiFactory.getRedmineService()
                 .issueDetails(issueId)
-                .flatMap(issuesResponse -> {
+                .map(issuesResponse -> {
 
-                    IssueEntity issueEntity = IssueEntity.convertItem(issuesResponse.getIssue());
-                    DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntity(issueEntity);
-                    return Observable.just(issueEntity);
-                })
-                .onErrorResumeNext(throwable -> {
-
-                    IssueEntity issueEntity = null;
-                    try {
-                        issueEntity = DatabaseManager.getDatabaseHelper().getIssueEntityDAO().queryForId(issueId);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    return Observable.just(issueEntity);
+                    // IssueEntity issueEntity = IssueEntity.convertItem(issuesResponse.getIssue());
+                    //DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntity(issueEntity);
+                    Issue issue = issuesResponse.getIssue();
+                    IssueRealmDAO.saveIssue(issue);
+                    return issue;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull
-    public static Observable<List<ProjectEntity>> getProjects() {
+    public static Observable<List<Project>> getProjects() {
 
         return ApiFactory.getRedmineService()
                 .projects()
-                .flatMap(projectsResponse -> {
+                .map(projectsResponse -> {
 
                     List<Project> projects = projectsResponse.getProjects();
-                    List<ProjectEntity> projectEntities = ProjectEntity.convertItems(projects);
-                    DatabaseManager.getDatabaseHelper().getProjectEntityDAO().saveProjectEntities(projectEntities);
+                    ProjectRealmDAO.saveIssues(projects);
+//                    List<ProjectEntity> projectEntities = ProjectEntity.convertItems(projects);
+//                    DatabaseManager.getDatabaseHelper().getProjectEntityDAO().saveProjectEntities(projectEntities);
 
-                    loadUsers(projectEntities);
+                    loadUsers(projects);
 
-                    return Observable.just(projectEntities);
-                })
-                .onErrorResumeNext(throwable -> {
-
-                    List<ProjectEntity> projectEntities = DatabaseManager.getDatabaseHelper().getProjectEntityDAO().getAll();
-                    return Observable.just(projectEntities);
+                    return projects;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull
-    public static Observable<List<TrackerEntity>> getTrackers() {
+    public static Observable<List<Tracker>> getTrackers() {
 
         return ApiFactory.getRedmineService()
                 .trackers()
-                .flatMap(trackersResponse -> {
+                .map(trackersResponse -> {
 
                     List<Tracker> trackers = trackersResponse.getTrackers();
-                    List<TrackerEntity> trackerEntities = TrackerEntity.convertItems(trackers);
-                    DatabaseManager.getDatabaseHelper().getTrackerEntityDAO().saveTrackerEntities(trackerEntities);
+                    TrackerRealmDAO.saveIssues(trackers);
+//                    List<TrackerEntity> trackerEntities = TrackerEntity.convertItems(trackers);
+//                    DatabaseManager.getDatabaseHelper().getTrackerEntityDAO().saveTrackerEntities(trackerEntities);
 
-                    return Observable.just(trackerEntities);
-                })
-                .onErrorResumeNext(throwable -> {
-
-                    List<TrackerEntity> trackerEntities = DatabaseManager.getDatabaseHelper().getTrackerEntityDAO().getAll();
-                    return Observable.just(trackerEntities);
+                    return trackers;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull
-    public static Observable<List<StatusEntity>> getStatuses() {
+    public static Observable<List<Status>> getStatuses() {
 
         return ApiFactory.getRedmineService()
                 .statuses()
-                .flatMap(statusesResponse -> {
+                .map(statusesResponse -> {
 
                     List<Status> statuses = statusesResponse.getStatuses();
-                    List<StatusEntity> statusEntities = StatusEntity.convertItems(statuses);
-                    DatabaseManager.getDatabaseHelper().getStatusEntityDAO().saveStatusEntities(statusEntities);
+                    StatusRealmDAO.saveIssues(statuses);
+//                    List<StatusEntity> statusEntities = StatusEntity.convertItems(statuses);
+//                    DatabaseManager.getDatabaseHelper().getStatusEntityDAO().saveStatusEntities(statusEntities);
 
-                    return Observable.just(statusEntities);
-                })
-                .onErrorResumeNext(throwable -> {
-
-                    List<StatusEntity> statusEntities = DatabaseManager.getDatabaseHelper().getStatusEntityDAO().getAll();
-                    return Observable.just(statusEntities);
+                    return statuses;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -309,18 +286,14 @@ public class RedmineRepository {
 
         ApiFactory.getRedmineService()
                 .versions(projectId)
-                .flatMap(versionsResponse -> {
+                .map(versionsResponse -> {
 
                     List<FixedVersion> fixedVersions = versionsResponse.getFixedVersions();
-                    List<VersionEntity> versionEntities = VersionEntity.convertItems(fixedVersions);
-                    DatabaseManager.getDatabaseHelper().getVersionEntityDAO().saveVersionEntities(versionEntities);
+                    FixedVersionRealmDAO.saveIssues(fixedVersions);
+//                    List<VersionEntity> versionEntities = VersionEntity.convertItems(fixedVersions);
+//                    DatabaseManager.getDatabaseHelper().getVersionEntityDAO().saveVersionEntities(versionEntities);
 
-                    return Observable.just(versionEntities);
-                })
-                .onErrorResumeNext(throwable -> {
-
-                    List<VersionEntity> versionEntities = DatabaseManager.getDatabaseHelper().getVersionEntityDAO().getAll();
-                    return Observable.just(versionEntities);
+                    return fixedVersions;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -328,30 +301,26 @@ public class RedmineRepository {
     }
 
     @NonNull
-    public static Observable<List<PriorityEntity>> getProjectPriorities() {
+    public static Observable<List<Priority>> getProjectPriorities() {
 
         return ApiFactory.getRedmineService()
                 .priorities()
-                .flatMap(prioritiesResponse -> {
+                .map(prioritiesResponse -> {
 
                     List<Priority> priorities = prioritiesResponse.getPriorities();
-                    List<PriorityEntity> priorityEntities = PriorityEntity.convertItems(priorities);
-                    DatabaseManager.getDatabaseHelper().getPriorityEntityDAO().savePriorityEntities(priorityEntities);
+                    ProjectPriorityRealmDAO.saveIssues(priorities);
+//                    List<PriorityEntity> priorityEntities = PriorityEntity.convertItems(priorities);
+//                    DatabaseManager.getDatabaseHelper().getPriorityEntityDAO().savePriorityEntities(priorityEntities);
 
-                    return Observable.just(priorityEntities);
-                })
-                .onErrorResumeNext(throwable -> {
-
-                    List<PriorityEntity> priorityEntities = DatabaseManager.getDatabaseHelper().getPriorityEntityDAO().getAll();
-                    return Observable.just(priorityEntities);
+                    return priorities;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private static void loadUsers(@NonNull List<ProjectEntity> projectEntities) {
+    private static void loadUsers(@NonNull List<Project> projects) {
 
-        for (ProjectEntity projectEntity: projectEntities) {
+        for (Project projectEntity: projects) {
 
             getPaginatedMemberships(projectEntity.getId());
             getVersionsByProject(projectEntity.getId());
@@ -373,11 +342,11 @@ public class RedmineRepository {
     }
 
     @NonNull
-    private static  Observable<List<UserEntity>> getMemberships(int offset, long projectId) {
+    private static  Observable<List<ShortUser>> getMemberships(int offset, long projectId) {
 
         return ApiFactory.getRedmineService()
                 .memberships(projectId, limit, offset)
-                .flatMap(membershipsResponse -> {
+                .map(membershipsResponse -> {
 
                     List<Membership> memberships = membershipsResponse.getMemberships();
                     List<ShortUser> shortUsers = new ArrayList<>();
@@ -386,10 +355,12 @@ public class RedmineRepository {
                             shortUsers.add(membership.getUser());
                         }
                     }
-                    List<UserEntity> userEntities = UserEntity.convertItems(shortUsers);
-                    DatabaseManager.getDatabaseHelper().getUserEntityDAO().saveTimeEntries(userEntities);
 
-                    return Observable.just(userEntities);
+                    ShortUserRealmDAO.saveIssues(shortUsers);
+//                    List<UserEntity> userEntities = UserEntity.convertItems(shortUsers);
+//                    DatabaseManager.getDatabaseHelper().getUserEntityDAO().saveTimeEntries(userEntities);
+
+                    return shortUsers;
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());

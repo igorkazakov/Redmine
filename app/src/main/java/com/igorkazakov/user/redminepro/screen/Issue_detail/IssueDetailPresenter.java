@@ -4,6 +4,12 @@ import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.database.dao.AttachmentEntityDAO;
 import com.igorkazakov.user.redminepro.database.entity.AttachmentEntity;
@@ -13,7 +19,12 @@ import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
 import com.igorkazakov.user.redminepro.database.entity.UserEntity;
 import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
+import com.igorkazakov.user.redminepro.database.realm.FixedVersionRealmDAO;
 import com.igorkazakov.user.redminepro.database.realm.IssueRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.ShortUserRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.StatusRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.TrackerRealmDAO;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
 import java.sql.SQLException;
@@ -43,16 +54,16 @@ public class IssueDetailPresenter {
                 .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.issue_details_request))
                 .subscribe(issueEntity -> setupView(issueEntity),
-                        Throwable::printStackTrace);
+                        throwable -> throwable.printStackTrace());
     }
 
-    public void setupView(IssueEntity issueEntity) {
+    public void setupView(Issue issueEntity) {
         mView.setupView(issueEntity);
     }
 
-    public List<Issue> getChildIssues(long parentId) {
+    public List<Issue> getChildIssues(List<Child> children) {
 
-        return IssueRealmDAO.getChildIssues(parentId);
+        return IssueRealmDAO.getChildIssues(children);
     }
 
     public List<AttachmentEntity> getAttachments(IssueEntity issueEntity) {
@@ -99,58 +110,28 @@ public class IssueDetailPresenter {
 //        return detailEntities;
 //    }
 
-    public UserEntity getUserById(long id) {
-        UserEntity entity = null;
-        try {
-            entity = DatabaseManager.getDatabaseHelper().getUserEntityDAO().queryForId(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public ShortUser getUserById(long id) {
 
-        return entity;
+        return ShortUserRealmDAO.getUserById(id);
     }
 
-    public StatusEntity getStatusById(long id) {
-        StatusEntity entity = null;
-        try {
-            entity = DatabaseManager.getDatabaseHelper().getStatusEntityDAO().queryForId(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public Status getStatusById(long id) {
 
-        return entity;
+        return StatusRealmDAO.getStatusById(id);
     }
 
-    public TrackerEntity getTrackerById(long id) {
-        TrackerEntity entity = null;
-        try {
-            entity = DatabaseManager.getDatabaseHelper().getTrackerEntityDAO().queryForId(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public Tracker getTrackerById(long id) {
 
-        return entity;
+        return TrackerRealmDAO.getTrackerById(id);
     }
 
-    public VersionEntity getVersionById(long id) {
-        VersionEntity entity = null;
-        try {
-            entity = DatabaseManager.getDatabaseHelper().getVersionEntityDAO().queryForId(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public FixedVersion getVersionById(long id) {
 
-        return entity;
+        return FixedVersionRealmDAO.getFixedVersionById(id);
     }
 
-    public PriorityEntity getPriorityById(long id) {
-        PriorityEntity entity = null;
-        try {
-            entity = DatabaseManager.getDatabaseHelper().getPriorityEntityDAO().queryForId(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public Priority getPriorityById(long id) {
 
-        return entity;
+        return ProjectPriorityRealmDAO.getPriorityById(id);
     }
 }

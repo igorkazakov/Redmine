@@ -1,6 +1,6 @@
 package com.igorkazakov.user.redminepro.database.entity;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.Project;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 

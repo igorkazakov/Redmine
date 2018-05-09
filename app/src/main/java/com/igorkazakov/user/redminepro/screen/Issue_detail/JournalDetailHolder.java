@@ -8,6 +8,11 @@ import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
@@ -47,7 +52,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
             switch (mDetailEntity.getName()) {
                 case "assigned_to_id": {
                     if (mDetailEntity.getNewValue() != null) {
-                        UserEntity user = issueDetailPresenter.
+                        ShortUser user = issueDetailPresenter.
                                 getUserById(Long.valueOf(mDetailEntity.getNewValue()));
 
                         if (user != null) {
@@ -56,7 +61,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                     }
 
                     if (mDetailEntity.getOldValue() != null) {
-                        UserEntity user = issueDetailPresenter.
+                        ShortUser user = issueDetailPresenter.
                                 getUserById(Long.valueOf(mDetailEntity.getOldValue()));
 
                         if (user != null) {
@@ -68,7 +73,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
 
                 case "fixed_version_id": {
                     if (mDetailEntity.getNewValue() != null) {
-                        VersionEntity version = issueDetailPresenter.
+                        FixedVersion version = issueDetailPresenter.
                                 getVersionById(Long.valueOf(mDetailEntity.getNewValue()));
 
                         if (version != null) {
@@ -77,7 +82,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                     }
 
                     if (mDetailEntity.getOldValue() != null) {
-                        VersionEntity version = issueDetailPresenter.
+                        FixedVersion version = issueDetailPresenter.
                                 getVersionById(Long.valueOf(mDetailEntity.getOldValue()));
 
                         if (version != null) {
@@ -89,7 +94,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
 
                 case "status_id": {
                     if (mDetailEntity.getNewValue() != null) {
-                        StatusEntity status = issueDetailPresenter.
+                        Status status = issueDetailPresenter.
                                 getStatusById(Long.valueOf(mDetailEntity.getNewValue()));
 
                         if (status != null) {
@@ -98,7 +103,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                     }
 
                     if (mDetailEntity.getOldValue() != null) {
-                        StatusEntity status = issueDetailPresenter.
+                        Status status = issueDetailPresenter.
                                 getStatusById(Long.valueOf(mDetailEntity.getOldValue()));
 
                         if (status != null) {
@@ -110,7 +115,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
 
                 case "tracker_id": {
                     if (mDetailEntity.getNewValue() != null) {
-                        TrackerEntity tracker = issueDetailPresenter.
+                        Tracker tracker = issueDetailPresenter.
                                 getTrackerById(Long.valueOf(mDetailEntity.getNewValue()));
 
                         if (tracker != null) {
@@ -119,7 +124,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                     }
 
                     if (mDetailEntity.getOldValue() != null) {
-                        TrackerEntity tracker = issueDetailPresenter.
+                        Tracker tracker = issueDetailPresenter.
                                 getTrackerById(Long.valueOf(mDetailEntity.getOldValue()));
 
                         if (tracker != null) {
@@ -131,7 +136,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
 
                 case "priority_id": {
                     if (mDetailEntity.getNewValue() != null) {
-                        PriorityEntity priority = issueDetailPresenter.
+                        Priority priority = issueDetailPresenter.
                                 getPriorityById(Long.valueOf(mDetailEntity.getNewValue()));
 
                         if (priority != null) {
@@ -140,7 +145,7 @@ public class JournalDetailHolder extends RecyclerView.ViewHolder {
                     }
 
                     if (mDetailEntity.getOldValue() != null) {
-                        PriorityEntity priority = issueDetailPresenter.
+                        Priority priority = issueDetailPresenter.
                                 getPriorityById(Long.valueOf(mDetailEntity.getOldValue()));
 
                         if (priority != null) {
