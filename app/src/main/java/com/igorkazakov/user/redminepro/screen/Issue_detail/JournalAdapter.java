@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.entity.JournalEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ import java.util.List;
 
 public class JournalAdapter extends RecyclerView.Adapter<JournalHolder> {
 
-    private List<JournalEntity> journalEntities;
+    private List<Journal> journalEntities;
     private IssueDetailPresenter issueDetailPresenter;
 
-    public JournalAdapter(List<JournalEntity> journalEntities, IssueDetailPresenter issueDetailPresenter) {
+    public JournalAdapter(List<Journal> journalEntities, IssueDetailPresenter issueDetailPresenter) {
         this.journalEntities = journalEntities;
         this.issueDetailPresenter = issueDetailPresenter;
     }

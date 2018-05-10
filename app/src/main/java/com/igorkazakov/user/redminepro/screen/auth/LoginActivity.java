@@ -1,13 +1,14 @@
 package com.igorkazakov.user.redminepro.screen.auth;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import com.arellomobile.mvp.MvpAppCompatActivity;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.screen.general.LoadingDialog;
-import com.igorkazakov.user.redminepro.screen.general.LoadingView;
+import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
+import com.igorkazakov.user.redminepro.screen.base.LoadingDialog;
 import com.igorkazakov.user.redminepro.screen.main.MainActivity;
 import com.igorkazakov.user.redminepro.utils.KeyboardUtils;
 
@@ -15,23 +16,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoginView {
+public class LoginActivity extends MvpAppCompatActivity implements LoginView {
 
-    // UI references.
     @BindView(R.id.email)
     EditText mEmailView;
 
     @BindView(R.id.password)
     EditText mPasswordView;
 
-    private LoadingView mLoadingView;
-    private LoginPresenter mPresenter;
+    private BaseViewInterface mLoadingView;
+
+    @InjectPresenter
+    public LoginPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +39,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mLoadingView = LoadingDialog.view(getSupportFragmentManager());
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
-        mPresenter = new LoginPresenter(lifecycleHandler, this);
         mPresenter.init();
     }
 

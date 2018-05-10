@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by user on 14.07.17.
@@ -25,12 +27,15 @@ public class DateUtils {
 
     public static Date dateFromString(String string, SimpleDateFormat format) {
 
+        Date date = new Date();
+
         try {
-            return format.parse(string);
+            date = format.parse(string);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+
+        return date;
     }
 
     public static String stringFromDate(Date date, SimpleDateFormat format) {
@@ -40,6 +45,7 @@ public class DateUtils {
 
     public static Date getYesterday() {
         Calendar c = Calendar.getInstance();
+        removeTime(c);
         c.add(Calendar.DATE, -1);
         return c.getTime();
     }
@@ -57,6 +63,7 @@ public class DateUtils {
         Calendar c = Calendar.getInstance();
         c.setFirstDayOfWeek(Calendar.MONDAY);
         c.setTime(date);
+        removeTime(c);
         int today = c.get(Calendar.DAY_OF_WEEK);
         c.add(Calendar.DAY_OF_WEEK, -today + Calendar.MONDAY);
         return c.getTime();
@@ -69,6 +76,7 @@ public class DateUtils {
 
         Calendar c = Calendar.getInstance();
         c.setTime(DateUtils.getMonday(new Date()));
+        removeTime(c);
         c.add(Calendar.DATE, daysForPreviousSunday);
         Date end = c.getTime();
         c.add(Calendar.DATE, daysForPreviousMonday);
@@ -81,8 +89,9 @@ public class DateUtils {
 
         Calendar c = Calendar.getInstance();
         c.setTime(DateUtils.getMonday(new Date()));
+        removeTime(c);
         Date start = c.getTime();
-        Date end = new Date();
+        Date end = getCurrentDateWithoutTime();
 
         return new TimeInterval(start, end);
     }
@@ -91,13 +100,14 @@ public class DateUtils {
 
         Date start, end;
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
+        calendar.setTime(getCurrentDateWithoutTime());
+        removeTime(calendar);
         calendar.set(Calendar.DAY_OF_MONTH,
                 calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
 
         start = calendar.getTime();
 
-        end = new Date();
+        end = getCurrentDateWithoutTime();
         return new TimeInterval(start, end);
     }
 
@@ -105,6 +115,7 @@ public class DateUtils {
 
         Calendar c = Calendar.getInstance();
         c.setTime(DateUtils.getMonday(new Date()));
+        removeTime(c);
         Date start = c.getTime();
         c.add(Calendar.DAY_OF_WEEK, 6);
         Date end = c.getTime();
@@ -116,6 +127,7 @@ public class DateUtils {
         Date start, end;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
+        removeTime(calendar);
         calendar.set(Calendar.MONTH, month);
 
         calendar.set(Calendar.DAY_OF_MONTH,
@@ -131,15 +143,31 @@ public class DateUtils {
 
     public static TimeInterval getIntervalFromStartYear() {
 
-        Date currentDate = new Date();
+        Date currentDate = getCurrentDateWithoutTime();
+
         int year = Calendar.getInstance().get(Calendar.YEAR);
         Calendar calendarStart = Calendar.getInstance();
         calendarStart.set(Calendar.YEAR,year);
         calendarStart.set(Calendar.MONTH,0);
         calendarStart.set(Calendar.DAY_OF_MONTH,1);
+        removeTime(calendarStart);
         Date startDate = calendarStart.getTime();
 
         return new TimeInterval(startDate, currentDate);
+    }
+
+    private static void removeTime(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    private static Date getCurrentDateWithoutTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        removeTime(cal);
+        return cal.getTime();
     }
 
     public static String timeDifference(Date oldDate) {
@@ -148,40 +176,38 @@ public class DateUtils {
 
         long diff = nowDate.getTime() - oldDate.getTime();
 
-        if (diff / 1000 < 1) {
-            return String.format("%s %s", 1, "second");
+        Calendar startCalendar = new GregorianCalendar();
+        startCalendar.setTime(nowDate);
+        Calendar endCalendar = new GregorianCalendar();
+        endCalendar.setTime(oldDate);
+
+        int diffYears = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+        int years = Math.abs(diffYears);
+        int months = Math.abs(diffYears * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH));
+        long days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+        long minutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+        long seconds = TimeUnit.SECONDS.convert(diff, TimeUnit.MILLISECONDS);
+
+        if (years > 0) {
+
+            return String.format("%s %s", years, TextUtils.getPluralForm(years, "year"));
+
+        } else if (months > 0) {
+
+            return String.format("%s %s", months, TextUtils.getPluralForm(months, "month"));
+
+        } else if (days > 0) {
+
+            return String.format("%s %s", days, TextUtils.getPluralForm(days, "day"));
+
+        } if (minutes > 0) {
+            return String.format("%s %s", minutes, TextUtils.getPluralForm(minutes, "minute"));
+
+        } if (seconds > 0) {
+            return String.format("%s %s", seconds, TextUtils.getPluralForm(seconds, "second"));
+
+        } else {
+            return "";
         }
-
-        double rez = diff / 1000;
-
-        if (rez / 60 < 1) {
-            int roundRez = (int)Math.ceil(rez);
-            String timeString = roundRez == 1 ? "second" : "seconds";
-            return String.format("%s %s", roundRez, timeString);
-        }
-        rez = rez / 60;
-
-        if (rez / 60 < 1) {
-            int roundRez = (int)Math.ceil(rez);
-            String timeString = roundRez == 1 ? "minute" : "minutes";
-            return String.format("%s %s", roundRez, timeString);
-        }
-
-        rez = rez / 60;
-
-        if (rez / 24 < 1) {
-            int roundRez = (int)Math.ceil(rez);
-            String timeString = roundRez == 1 ? "hour" : "hours";
-            return String.format("%s %s", roundRez, timeString);
-        }
-
-        rez = rez / 24;
-        if (rez / 24 < 1) {
-            int roundRez = (int)Math.ceil(rez);
-            String timeString = roundRez == 1 ? "day" : "days";
-            return String.format("%s %s", roundRez, timeString);
-        }
-
-        return "";
     }
 }

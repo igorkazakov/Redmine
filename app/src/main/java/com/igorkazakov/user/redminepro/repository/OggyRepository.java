@@ -3,8 +3,8 @@ package com.igorkazakov.user.redminepro.repository;
 import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.api.ApiFactory;
-import com.igorkazakov.user.redminepro.database.DatabaseManager;
-import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
+import com.igorkazakov.user.redminepro.database.realm.CalendarDayDAO;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
@@ -21,30 +21,25 @@ import rx.schedulers.Schedulers;
 
 public class OggyRepository {
 
-    public static Observable<List<CalendarDayEntity>> getCalendarDays(int month, int year) {
+    public static Observable<List<OggyCalendarDay>> getCalendarDays(int month, int year) {
 
         String login = PreferenceUtils.getInstance().getUserLogin();
         String password = PreferenceUtils.getInstance().getUserPassword();
 
         return ApiFactory.getOggyService()
                 .getCalendarDays(login, password, month, year)
-                .flatMap(calendarDays -> {
+                .map(calendarDays -> {
 
-                    List<CalendarDayEntity> calendarDayEntityList = CalendarDayEntity
-                            .convertItems(calendarDays);
+                    CalendarDayDAO.saveCalendarDays(calendarDays);
 
-                    DatabaseManager.getDatabaseHelper()
-                            .getCalendarDayDAO()
-                            .saveCalendarDays(calendarDayEntityList);
-
-                    return Observable.just(calendarDayEntityList);
+                    return calendarDays;
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull
-    public static Observable<List<CalendarDayEntity>> getCalendarDaysForYear() {
+    public static Observable<List<OggyCalendarDay>> getCalendarDaysForYear() {
 
         int year = DateUtils.getCurrentYear();
 
@@ -64,10 +59,11 @@ public class OggyRepository {
 
         return Observable.zip(observables, args -> {
 
-            List<CalendarDayEntity> list1 = new ArrayList<>();
+            List<OggyCalendarDay> list1 = new ArrayList<>();
             for (Object arg : args) {
-                list1.addAll((List<CalendarDayEntity>) arg);
+                list1.addAll((List<OggyCalendarDay>) arg);
             }
+
             return list1;
         });
     }

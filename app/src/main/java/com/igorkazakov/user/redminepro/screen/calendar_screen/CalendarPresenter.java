@@ -3,10 +3,9 @@ package com.igorkazakov.user.redminepro.screen.calendar_screen;
 import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.entity.CalendarDayEntity;
+import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.OggyRepository;
-import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
@@ -38,31 +37,29 @@ public class CalendarPresenter {
 
         OggyRepository.getCalendarDaysForYear()
                 .doOnSubscribe(mView::showLoading)
+                .doOnTerminate(mView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
-                .subscribe(this::createMonthIndicatorArrays,
+                .subscribe(response -> createMonthIndicatorArrays(response),
                         Throwable::printStackTrace);
 
     }
 
-    public void createMonthIndicatorArrays(List<CalendarDayEntity> response) {
+    public void createMonthIndicatorArrays(List<OggyCalendarDay> response) {
 
-        for (CalendarDayEntity day : response) {
-
-            Date dayDate = DateUtils.dateFromString(day.getDate(),
-                    DateUtils.getSimpleFormatter());
+        for (OggyCalendarDay day : response) {
 
             switch (day.getType()) {
-                case CalendarDayEntity.FEAST:
-                case CalendarDayEntity.HOLIDAY:
-                    listOfHoliday.add(CalendarDay.from(dayDate));
+                case OggyCalendarDay.FEAST:
+                case OggyCalendarDay.HOLIDAY:
+                    listOfHoliday.add(CalendarDay.from(day.getDate()));
                     break;
 
-                case CalendarDayEntity.HOSPITAL:
-                    listOfHospital.add(CalendarDay.from(dayDate));
+                case OggyCalendarDay.HOSPITAL:
+                    listOfHospital.add(CalendarDay.from(day.getDate()));
                     break;
 
-                case CalendarDayEntity.VACATION:
-                    listOfVacation.add(CalendarDay.from(dayDate));
+                case OggyCalendarDay.VACATION:
+                    listOfVacation.add(CalendarDay.from(day.getDate()));
                     break;
             }
         }

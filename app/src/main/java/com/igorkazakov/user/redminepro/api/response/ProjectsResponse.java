@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.igorkazakov.user.redminepro.api.responseEntity.Project;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
 
 import java.util.List;
 

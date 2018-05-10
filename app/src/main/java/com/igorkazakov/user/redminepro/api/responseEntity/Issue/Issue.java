@@ -8,25 +8,32 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Au
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Parent;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortProject;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 
-import java.util.List;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by user on 13.07.17.
  */
 
-public class Issue {
+public class Issue extends RealmObject {
 
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Long id;
     @SerializedName("project")
     @Expose
     private ShortProject project;
+    @SerializedName("parent")
+    @Expose
+    private Parent parent;
     @SerializedName("tracker")
     @Expose
     private Tracker tracker;
@@ -51,16 +58,12 @@ public class Issue {
     @SerializedName("description")
     @Expose
     private String description;
-
     @SerializedName("spent_hours")
     @Expose
     private double spentHours;
-
     @SerializedName("estimated_hours")
     @Expose
     private double estimatedHours;
-
-
     @SerializedName("start_date")
     @Expose
     private String startDate;
@@ -75,16 +78,16 @@ public class Issue {
     private String updatedOn;
     @SerializedName("children")
     @Expose
-    private List<Child> children = null;
+    private RealmList<Child> children;
     @SerializedName("attachments")
     @Expose
-    private List<Attachment> attachments = null;
-    @SerializedName("changesets")
-    @Expose
-    private List<Object> changesets = null;
+    private RealmList<Attachment> attachments;
+//    @SerializedName("changesets")
+//    @Expose
+//    private RealmList<Object> changesets;
     @SerializedName("journals")
     @Expose
-    private List<Journal> journals = null;
+    private RealmList<Journal> journals;
 
     public double getSpentHours() {
         return spentHours;
@@ -132,6 +135,14 @@ public class Issue {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Parent getParent() {
+        return parent;
+    }
+
+    public void setParent(Parent parent) {
+        this.parent = parent;
     }
 
     public Priority getPriority() {
@@ -214,35 +225,35 @@ public class Issue {
         this.updatedOn = updatedOn;
     }
 
-    public List<Child> getChildren() {
+    public RealmList<Child> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Child> children) {
+    public void setChildren(RealmList<Child> children) {
         this.children = children;
     }
 
-    public List<Attachment> getAttachments() {
+    public RealmList<Attachment> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(List<Attachment> attachments) {
+    public void setAttachments(RealmList<Attachment> attachments) {
         this.attachments = attachments;
     }
 
-    public List<Object> getChangesets() {
-        return changesets;
-    }
+//    public RealmList<Object> getChangesets() {
+//        return changesets;
+//    }
+//
+//    public void setChangesets(RealmList<Object> changesets) {
+//        this.changesets = changesets;
+//    }
 
-    public void setChangesets(List<Object> changesets) {
-        this.changesets = changesets;
-    }
-
-    public List<Journal> getJournals() {
+    public RealmList<Journal> getJournals() {
         return journals;
     }
 
-    public void setJournals(List<Journal> journals) {
+    public void setJournals(RealmList<Journal> journals) {
         this.journals = journals;
     }
 }

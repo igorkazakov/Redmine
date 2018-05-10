@@ -8,10 +8,15 @@ import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.nestedObject
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.nestedObjects.TimeEntryProject;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.nestedObjects.TimeEntryUser;
 
-import java.util.List;
+import java.util.Date;
 
-public class TimeEntry {
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
+public class TimeEntry extends RealmObject {
+
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -35,16 +40,26 @@ public class TimeEntry {
     private String comments;
     @SerializedName("spent_on")
     @Expose
-    private String spentOn;
+    private Date spentOn;
     @SerializedName("created_on")
     @Expose
-    private String createdOn;
+    private Date createdOn;
     @SerializedName("updated_on")
     @Expose
-    private String updatedOn;
+    private Date updatedOn;
     @SerializedName("custom_fields")
     @Expose
-    private List<TimeEntryCustomField> customFields = null;
+    private RealmList<TimeEntryCustomField> customFields;
+
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Integer getId() {
         return id;
@@ -102,35 +117,35 @@ public class TimeEntry {
         this.comments = comments;
     }
 
-    public String getSpentOn() {
+    public Date getSpentOn() {
         return spentOn;
     }
 
-    public void setSpentOn(String spentOn) {
+    public void setSpentOn(Date spentOn) {
         this.spentOn = spentOn;
     }
 
-    public String getCreatedOn() {
+    public Date getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(String createdOn) {
+    public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
     }
 
-    public String getUpdatedOn() {
+    public Date getUpdatedOn() {
         return updatedOn;
     }
 
-    public void setUpdatedOn(String updatedOn) {
+    public void setUpdatedOn(Date updatedOn) {
         this.updatedOn = updatedOn;
     }
 
-    public List<TimeEntryCustomField> getCustomFields() {
+    public RealmList<TimeEntryCustomField> getCustomFields() {
         return customFields;
     }
 
-    public void setCustomFields(List<TimeEntryCustomField> customFields) {
+    public void setCustomFields(RealmList<TimeEntryCustomField> customFields) {
         this.customFields = customFields;
     }
 }

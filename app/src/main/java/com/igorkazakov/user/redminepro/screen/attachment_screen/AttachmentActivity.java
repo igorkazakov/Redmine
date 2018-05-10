@@ -12,8 +12,8 @@ import android.widget.FrameLayout;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.ApiFactory;
-import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
-import com.igorkazakov.user.redminepro.screen.general.LoadingView;
+import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -31,7 +31,7 @@ public class AttachmentActivity extends AppCompatActivity implements AttachmentV
     FrameLayout attachmentContainer;
 
     private AttachmentPresenter mPresenter;
-    private LoadingView mLoadingView;
+    private BaseViewInterface mLoadingView;
     private static String IMAGE_URL_KEY = "IMAGE_URL_KEY";
 
     public static void start(@NonNull Context context, @NonNull String imageUrl) {

@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
-import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class IssuesFragment extends Fragment implements IssuesView {
     }
 
     @Override
-    public void setupView(List<IssueEntity> issueModels) {
+    public void setupView(List<Issue> issueModels) {
 
         IssuesAdapter adapter = new IssuesAdapter(issueModels);
         mIssueList.setAdapter(adapter);

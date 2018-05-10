@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.general;
+package com.igorkazakov.user.redminepro.screen.base;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import com.igorkazakov.user.redminepro.R;
  * Created by user on 21.07.17.
  */
 
-public class LoadingFragment implements LoadingView {
+public class LoadingFragment implements BaseViewInterface {
 
     private View loadingView;
     private ViewGroup container;
