@@ -3,7 +3,6 @@ package com.igorkazakov.user.redminepro.screen.dashboard;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
@@ -28,8 +29,8 @@ import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
-import com.igorkazakov.user.redminepro.screen.general.LoadingView;
+import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
+import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 
 import java.util.ArrayList;
@@ -37,10 +38,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class DashboardFragment extends Fragment
+public class DashboardFragment extends MvpAppCompatFragment
         implements DashboardView {
 
     @BindView(R.id.chartWorkTime)
@@ -63,8 +62,10 @@ public class DashboardFragment extends Fragment
 
 
     private ImageView mReloadImage;
-    private DashboardPresenter mPresenter;
-    private LoadingView mLoadingView;
+
+    @InjectPresenter
+    public DashboardPresenter mPresenter;
+    private BaseViewInterface mLoadingView;
     private KpiStatisticAdapter mAdapter;
 
     public static DashboardFragment newInstance() {
@@ -79,10 +80,6 @@ public class DashboardFragment extends Fragment
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
         mLoadingView = new LoadingFragment(getActivity(), mContentView);
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(getActivity(), getActivity().getSupportLoaderManager());
-        mPresenter = new DashboardPresenter(lifecycleHandler, this);
-        mPresenter.loadRedmineData();
-        mPresenter.tryLoadDashboardData();
 
         return view;
     }
@@ -154,7 +151,7 @@ public class DashboardFragment extends Fragment
         mChartWorkTime.setRotationAngle(0);
         mChartWorkTime.setRotationEnabled(false);
         mChartWorkTime.setHighlightPerTapEnabled(true);
-//        mChartWorkTime.setOnChartValueSelectedListener(getActivity());
+
         Legend legend = mChartWorkTime.getLegend();
         legend.setForm(Legend.LegendForm.CIRCLE);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);

@@ -1,15 +1,14 @@
 package com.igorkazakov.user.redminepro.database.realm;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 
 import java.util.List;
 
 import io.realm.Realm;
 
-public class ShortUserRealmDAO {
+public class ShortUserDAO {
 
-    public static void saveIssues(List<ShortUser> shortUsers) {
+    public static void saveShortUsers(List<ShortUser> shortUsers) {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

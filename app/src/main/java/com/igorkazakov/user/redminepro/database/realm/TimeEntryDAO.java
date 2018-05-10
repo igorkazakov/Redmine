@@ -9,7 +9,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class TimeEntryRealmDAO {
+public class TimeEntryDAO {
 
     public enum TimeType {
 

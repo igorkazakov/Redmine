@@ -41,4 +41,9 @@ public class TextUtils {
 
         return 0;
     }
+
+    public static String getPluralForm(long number, String string) {
+
+        return number > 1 ? string + "s" : string;
+    }
 }

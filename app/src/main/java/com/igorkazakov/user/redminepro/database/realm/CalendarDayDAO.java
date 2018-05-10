@@ -8,7 +8,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class CalendarDayRealmDAO {
+public class CalendarDayDAO {
 
     public static void saveCalendarDays(List<OggyCalendarDay> calendarDays) {
 
@@ -20,9 +20,7 @@ public class CalendarDayRealmDAO {
 
     public static long getHoursNormForInterval(TimeInterval interval) {
 
-        long result = 0;
-
-        result = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(OggyCalendarDay.class)
                 .greaterThanOrEqualTo("date", interval.getStart())
                 .and()
@@ -30,8 +28,6 @@ public class CalendarDayRealmDAO {
                 .findAll()
                 .sum("hours")
                 .longValue();
-
-        return result;
     }
 
     public static long getHoursNormForDate(Date date) {

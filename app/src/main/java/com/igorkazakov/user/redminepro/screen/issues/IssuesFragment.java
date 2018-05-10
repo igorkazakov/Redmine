@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
-import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
 
 import java.util.List;
 

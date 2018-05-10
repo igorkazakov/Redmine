@@ -2,14 +2,12 @@ package com.igorkazakov.user.redminepro.database.realm;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Parent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 
-public class IssueRealmDAO {
+public class IssueDAO {
 
     public static void saveIssues(List<Issue> issues) {
 

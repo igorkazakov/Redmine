@@ -17,7 +17,7 @@ import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
-import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
 
 import java.util.List;
 
@@ -76,7 +76,8 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     @BindView(R.id.journalListView)
     View mJournalListView;
 
-
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
 
     private IssueDetailPresenter mPresenter;
     private LoadingFragment mLoadingView;
@@ -92,10 +93,11 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_issue_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mLoadingView = new LoadingFragment(this, mContentView);
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
@@ -149,17 +151,17 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     @Override
     public void setupView(Issue issueEntity) {
 
-        mStatusTextView.setText(issueEntity.getStatus() != null ? issueEntity.getStatus().getName() : "");
-        mPriorityTextView.setText(issueEntity.getPriority().getName(): "");
-        mAssignedToTextView.setText(issueEntity.getAssignedTo().getName());
-        mTrackerTextView.setText(issueEntity.getTracker().getName());
-        mFixedVersionTextView.setText(issueEntity.getFixedVersion().getName());
+        mStatusTextView.setText(mPresenter.getSafeName(issueEntity.getStatus()));
+        mPriorityTextView.setText(mPresenter.getSafeName(issueEntity.getPriority()));
+        mAssignedToTextView.setText(mPresenter.getSafeName(issueEntity.getAssignedTo()));
+        mTrackerTextView.setText(mPresenter.getSafeName(issueEntity.getTracker()));
+        mFixedVersionTextView.setText(mPresenter.getSafeName(issueEntity.getFixedVersion()));
         mStartDateTextView.setText(issueEntity.getStartDate());
         mEstimatedHoursTextView.setText(String.valueOf(issueEntity.getEstimatedHours()));
         mSpentHoursTextView.setText(String.valueOf(issueEntity.getSpentHours()));
         mIssueNameTextView.setText(issueEntity.getSubject());
 
-        if (issueEntity.getParent() != null) {
+        if (issueEntity.getChildren() != null) {
             List<Issue> issueEntities = mPresenter.getChildIssues(issueEntity.getChildren());
             if (issueEntities.size() == 0) {
                 mChildIssueListView.setVisibility(View.GONE);
@@ -167,16 +169,19 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
 
             ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
             mChildIssuesList.setAdapter(adapter);
+
+        } else {
+            mChildIssueListView.setVisibility(View.GONE);
         }
 
-        List<Attachment> attachmentEntities = issueEntity.getAttachments();//mPresenter.getAttachments(issueEntity);
+        List<Attachment> attachmentEntities = issueEntity.getAttachments();
         if (attachmentEntities.size() == 0) {
             mAttachmentListView.setVisibility(View.GONE);
         }
         AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
         mAttachmentList.setAdapter(attachmentAdapter);
 
-        List<Journal> journalEntities = issueEntity.getJournals();//mPresenter.getJournals(issueEntity);
+        List<Journal> journalEntities = issueEntity.getJournals();
         if (journalEntities.size() == 0) {
             mJournalListView.setVisibility(View.GONE);
         }

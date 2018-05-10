@@ -10,7 +10,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by user on 25.07.17.
  */
 
-public class Status extends RealmObject {
+public class Status extends RealmObject implements Namable {
 
     @PrimaryKey
     @SerializedName("id")
@@ -28,10 +28,12 @@ public class Status extends RealmObject {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

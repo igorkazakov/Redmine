@@ -2,52 +2,42 @@ package com.igorkazakov.user.redminepro.screen.auth;
 
 import android.support.annotation.NonNull;
 
-import com.igorkazakov.user.redminepro.R;
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.igorkazakov.user.redminepro.utils.TextUtils;
 
-import ru.arturvasilov.rxloader.LifecycleHandler;
-
 /**
  * Created by user on 12.07.17.
  */
+@InjectViewState
+public class LoginPresenter extends MvpPresenter<LoginView> {
 
-public class LoginPresenter {
-
-    private final LifecycleHandler mLifecycleHandler;
-    private final LoginView mLoginView;
-
-    public LoginPresenter(@NonNull LifecycleHandler lifecycleHandler,
-                          @NonNull LoginView loginView) {
-
-        mLifecycleHandler = lifecycleHandler;
-        mLoginView = loginView;
-    }
+    public LoginPresenter() {}
 
     public void init() {
 
         String login = PreferenceUtils.getInstance().getUserLogin();
         boolean saveCredentials = PreferenceUtils.getInstance().getUserCredentials();
         if (!login.isEmpty() && saveCredentials) {
-            mLoginView.openDashboardScreen();
+            getViewState().openDashboardScreen();
         }
     }
 
     public void tryLogin(@NonNull String login, @NonNull String password) {
 
         if (TextUtils.validateEmail(login)) {
-            mLoginView.showLoginError();
+            getViewState().showLoginError();
 
         } else if (TextUtils.validatePassword(password)) {
-            mLoginView.showPasswordError();
+            getViewState().showPasswordError();
 
         } else {
 
             RedmineRepository.auth(login, password)
-            .doOnSubscribe(mLoginView::showLoading)
-            .doOnTerminate(mLoginView::hideLoading)
-            .compose(mLifecycleHandler.reload(R.id.auth_request))
+            .doOnSubscribe(getViewState()::showLoading)
+            .doOnTerminate(getViewState()::hideLoading)
             .subscribe(loginResponse -> onSuccessLogin(password),
                     Throwable::printStackTrace);
         }
@@ -56,7 +46,7 @@ public class LoginPresenter {
     public void onSuccessLogin(String password) {
 
         PreferenceUtils.getInstance().saveUserPassword(password);
-        mLoginView.openDashboardScreen();
+        getViewState().openDashboardScreen();
     }
 
     public void saveSwitchState(boolean state) {

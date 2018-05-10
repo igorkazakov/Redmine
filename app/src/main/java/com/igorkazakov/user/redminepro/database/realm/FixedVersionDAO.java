@@ -1,15 +1,14 @@
 package com.igorkazakov.user.redminepro.database.realm;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
 
 import java.util.List;
 
 import io.realm.Realm;
 
-public class FixedVersionRealmDAO {
+public class FixedVersionDAO {
 
-    public static void saveIssues(List<FixedVersion> fixedVersions) {
+    public static void saveFixedVersions(List<FixedVersion> fixedVersions) {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

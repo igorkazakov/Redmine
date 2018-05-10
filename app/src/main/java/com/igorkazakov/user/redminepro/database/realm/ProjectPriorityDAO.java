@@ -1,15 +1,14 @@
 package com.igorkazakov.user.redminepro.database.realm;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 
 import java.util.List;
 
 import io.realm.Realm;
 
-public class ProjectPriorityRealmDAO {
+public class ProjectPriorityDAO {
 
-    public static void saveIssues(List<Priority> priorities) {
+    public static void saveIProjectPriorities(List<Priority> priorities) {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

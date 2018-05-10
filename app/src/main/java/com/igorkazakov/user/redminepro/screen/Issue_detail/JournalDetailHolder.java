@@ -13,11 +13,6 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Pr
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
-import com.igorkazakov.user.redminepro.database.entity.PriorityEntity;
-import com.igorkazakov.user.redminepro.database.entity.StatusEntity;
-import com.igorkazakov.user.redminepro.database.entity.TrackerEntity;
-import com.igorkazakov.user.redminepro.database.entity.UserEntity;
-import com.igorkazakov.user.redminepro.database.entity.VersionEntity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

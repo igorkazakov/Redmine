@@ -1,15 +1,14 @@
 package com.igorkazakov.user.redminepro.database.realm;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
 
 import java.util.List;
 
 import io.realm.Realm;
 
-public class ProjectRealmDAO {
+public class ProjectDAO {
 
-    public static void saveIssues(List<Project> projects) {
+    public static void saveProjects(List<Project> projects) {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

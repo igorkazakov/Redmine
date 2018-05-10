@@ -1,11 +1,10 @@
 package com.igorkazakov.user.redminepro.screen.dashboard;
 
-import android.support.annotation.NonNull;
-
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.BuildConfig;
-import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.database.realm.CalendarDayRealmDAO;
-import com.igorkazakov.user.redminepro.database.realm.TimeEntryRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.CalendarDayDAO;
+import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
@@ -19,37 +18,33 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ru.arturvasilov.rxloader.LifecycleHandler;
-
 /**
  * Created by user on 12.07.17.
  */
 
-public class DashboardPresenter {
+@InjectViewState
+public class DashboardPresenter extends MvpPresenter<DashboardView> {
 
-    private LifecycleHandler mLifecycleHandler;
-    private DashboardView mView;
     private boolean mIsLoading = false;
 
-    public  DashboardPresenter(@NonNull LifecycleHandler lifecycleHandler, @NonNull DashboardView view) {
+    public DashboardPresenter() {
 
-        mLifecycleHandler = lifecycleHandler;
-        mView = view;
+
+    }
+
+    @Override
+    protected void onFirstViewAttach() {
+        super.onFirstViewAttach();
+
+        loadRedmineData();
+        tryLoadDashboardData();
     }
 
     public void loadRedmineData() {
-        RedmineRepository.getStatuses()
-                .compose(mLifecycleHandler.reload(R.id.statuses_request))
-                .subscribe();
-        RedmineRepository.getTrackers()
-                .compose(mLifecycleHandler.reload(R.id.trackers_request))
-                .subscribe();
-        RedmineRepository.getProjectPriorities()
-                .compose(mLifecycleHandler.reload(R.id.priorities_request))
-                .subscribe();
-        RedmineRepository.getProjects()
-                .compose(mLifecycleHandler.reload(R.id.projects_request))
-                .subscribe();
+        RedmineRepository.getStatuses().subscribe();
+        RedmineRepository.getTrackers().subscribe();
+        RedmineRepository.getProjectPriorities().subscribe();
+        RedmineRepository.getProjects().subscribe();
     }
 
     public void tryLoadDashboardData() {
@@ -58,8 +53,7 @@ public class DashboardPresenter {
             mIsLoading = true;
 
             OggyRepository.getCalendarDaysForYear()
-                        .doOnSubscribe(mView::showLoading)
-                        .compose(mLifecycleHandler.reload(R.id.calendar_days_request))
+                        .doOnSubscribe(getViewState()::showLoading)
                         .subscribe(response -> loadTimeEntriesData(),
                                 throwable -> throwable.printStackTrace());
         }
@@ -68,9 +62,8 @@ public class DashboardPresenter {
     public void loadTimeEntriesData() {
 
             RedmineRepository.getTimeEntriesForYear()
-                    .doOnTerminate(mView::hideLoading)
-                    .doOnNext(__ -> mView.hideLoading())
-                    .compose(mLifecycleHandler.reload(R.id.time_entry_request))
+                    .doOnTerminate(getViewState()::hideLoading)
+                    .doOnNext(__ -> getViewState().hideLoading())
                     .subscribe(response -> setupView(),
                             throwable -> throwable.printStackTrace());
     }
@@ -78,10 +71,10 @@ public class DashboardPresenter {
     public void setupView() {
 
         mIsLoading = false;
-        mView.setupCurrentWeekStatistic(remainHoursForNormalKpi(),
+        getViewState().setupCurrentWeekStatistic(remainHoursForNormalKpi(),
                 remainHoursForWeek(), getWholeCurrentWeekHoursNorm());
-        mView.setupChart(KPIUtils.getHoursForYear(), KPIUtils.calculateKpiForYear());
-        mView.setupStatisticRecyclerView(getStatistics());
+        getViewState().setupChart(KPIUtils.getHoursForYear(), KPIUtils.calculateKpiForYear());
+        getViewState().setupStatisticRecyclerView(getStatistics());
     }
 
     public List<StatisticModel> getStatistics() {
@@ -103,14 +96,14 @@ public class DashboardPresenter {
 
     public float getWholeCurrentWeekHoursNorm() {
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        return CalendarDayRealmDAO.getHoursNormForInterval(interval);
+        return CalendarDayDAO.getHoursNormForInterval(interval);
     }
 
     public float remainHoursForNormalKpi() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        TimeModel model = TimeEntryRealmDAO.getWorkHoursWithInterval(interval);
-        float norm = CalendarDayRealmDAO.getHoursNormForInterval(interval);
+        TimeModel model = TimeEntryDAO.getWorkHoursWithInterval(interval);
+        float norm = CalendarDayDAO.getHoursNormForInterval(interval);
         float remainHours = NumberUtils.round(norm * BuildConfig.NORMAL_KPI -
                 (model.getRegularTime() + model.getTeamFuckupTime()));
         if (remainHours > 0) {
@@ -124,8 +117,8 @@ public class DashboardPresenter {
     public float remainHoursForWeek() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        TimeModel model = TimeEntryRealmDAO.getWorkHoursWithInterval(interval);
-        float norm = CalendarDayRealmDAO.getHoursNormForInterval(interval);
+        TimeModel model = TimeEntryDAO.getWorkHoursWithInterval(interval);
+        float norm = CalendarDayDAO.getHoursNormForInterval(interval);
         float remainHours = norm - (model.getRegularTime() + model.getFuckupTime() + model.getTeamFuckupTime());
         if (remainHours > 0) {
             return remainHours;

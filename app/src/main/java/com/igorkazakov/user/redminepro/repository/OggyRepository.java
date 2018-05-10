@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
-import com.igorkazakov.user.redminepro.database.realm.CalendarDayRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.CalendarDayDAO;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
@@ -30,7 +30,7 @@ public class OggyRepository {
                 .getCalendarDays(login, password, month, year)
                 .map(calendarDays -> {
 
-                    CalendarDayRealmDAO.saveCalendarDays(calendarDays);
+                    CalendarDayDAO.saveCalendarDays(calendarDays);
 
                     return calendarDays;
                 })

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
-import com.igorkazakov.user.redminepro.database.entity.IssueEntity;
 
 import java.util.List;
 

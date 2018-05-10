@@ -2,7 +2,6 @@ package com.igorkazakov.user.redminepro.application;
 
 import android.support.multidex.MultiDexApplication;
 
-import com.igorkazakov.user.redminepro.database.DatabaseManager;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
 import io.realm.Realm;
@@ -19,13 +18,11 @@ public class RedmineApplication extends MultiDexApplication {
 
         Realm.init(this);
         PreferenceUtils.createPreferenceUtils(this);
-        DatabaseManager.createDatabaseHelper(this);
     }
 
     @Override
     public void onTerminate() {
         PreferenceUtils.releasePreferenceUtils();
-        DatabaseManager.releaseDatabaseHelper();
         super.onTerminate();
     }
 }

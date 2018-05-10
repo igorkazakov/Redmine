@@ -14,14 +14,14 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.St
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 import com.igorkazakov.user.redminepro.api.responseEntity.Membership;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
-import com.igorkazakov.user.redminepro.database.realm.FixedVersionRealmDAO;
-import com.igorkazakov.user.redminepro.database.realm.IssueRealmDAO;
-import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityRealmDAO;
-import com.igorkazakov.user.redminepro.database.realm.ProjectRealmDAO;
-import com.igorkazakov.user.redminepro.database.realm.ShortUserRealmDAO;
-import com.igorkazakov.user.redminepro.database.realm.StatusRealmDAO;
-import com.igorkazakov.user.redminepro.database.realm.TimeEntryRealmDAO;
-import com.igorkazakov.user.redminepro.database.realm.TrackerRealmDAO;
+import com.igorkazakov.user.redminepro.database.realm.FixedVersionDAO;
+import com.igorkazakov.user.redminepro.database.realm.IssueDAO;
+import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
+import com.igorkazakov.user.redminepro.database.realm.ProjectDAO;
+import com.igorkazakov.user.redminepro.database.realm.ShortUserDAO;
+import com.igorkazakov.user.redminepro.database.realm.StatusDAO;
+import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
+import com.igorkazakov.user.redminepro.database.realm.TrackerDAO;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
@@ -78,12 +78,12 @@ public class RedmineRepository {
                 .map(timeEntryResponse -> {
 
                     List<TimeEntry> timeEntries = timeEntryResponse.getTimeEntries();
-                    TimeEntryRealmDAO.saveTimeEntries(timeEntries);
+                    TimeEntryDAO.saveTimeEntries(timeEntries);
                     return timeEntries;
                 })
                 .onErrorResumeNext(throwable -> {
 
-                    return Observable.just(TimeEntryRealmDAO.getAll());
+                    return Observable.just(TimeEntryDAO.getAll());
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -118,7 +118,7 @@ public class RedmineRepository {
                     return list;
                 });
 
-        List<TimeEntry> cachedData = TimeEntryRealmDAO.getAll();
+        List<TimeEntry> cachedData = TimeEntryDAO.getAll();
 
         if (cachedData.size() > 0) {
 
@@ -143,15 +143,12 @@ public class RedmineRepository {
                 .map(issuesResponse -> {
 
                     List<Issue> issues = issuesResponse.getIssues();
-                    IssueRealmDAO.saveIssues(issues);
-//                    List<IssueEntity> issueEntities = IssueEntity.convertItems(issues);
-//                    DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntities(issueEntities);
-//                    PreferenceUtils.getInstance().saveIssuesDownloaded(true);
+                    IssueDAO.saveIssues(issues);
                     return issues;
                 })
                 .subscribeOn(Schedulers.io());
 
-        List<Issue> cachedData = IssueRealmDAO.getAll();
+        List<Issue> cachedData = IssueDAO.getAll();
 
         if (cachedData.size() > 0) {
 
@@ -194,7 +191,7 @@ public class RedmineRepository {
                     return list;
                 });
 
-        List<Issue> cachedData = IssueRealmDAO.getAll();
+        List<Issue> cachedData = IssueDAO.getAll();
 
         if (cachedData.size() > 0) {
 
@@ -215,10 +212,8 @@ public class RedmineRepository {
                 .issueDetails(issueId)
                 .map(issuesResponse -> {
 
-                    // IssueEntity issueEntity = IssueEntity.convertItem(issuesResponse.getIssue());
-                    //DatabaseManager.getDatabaseHelper().getIssueEntityDAO().saveIssueEntity(issueEntity);
                     Issue issue = issuesResponse.getIssue();
-                    IssueRealmDAO.saveIssue(issue);
+                    IssueDAO.saveIssue(issue);
                     return issue;
                 })
                 .subscribeOn(Schedulers.io())
@@ -233,9 +228,7 @@ public class RedmineRepository {
                 .map(projectsResponse -> {
 
                     List<Project> projects = projectsResponse.getProjects();
-                    ProjectRealmDAO.saveIssues(projects);
-//                    List<ProjectEntity> projectEntities = ProjectEntity.convertItems(projects);
-//                    DatabaseManager.getDatabaseHelper().getProjectEntityDAO().saveProjectEntities(projectEntities);
+                    ProjectDAO.saveProjects(projects);
 
                     loadUsers(projects);
 
@@ -253,9 +246,7 @@ public class RedmineRepository {
                 .map(trackersResponse -> {
 
                     List<Tracker> trackers = trackersResponse.getTrackers();
-                    TrackerRealmDAO.saveIssues(trackers);
-//                    List<TrackerEntity> trackerEntities = TrackerEntity.convertItems(trackers);
-//                    DatabaseManager.getDatabaseHelper().getTrackerEntityDAO().saveTrackerEntities(trackerEntities);
+                    TrackerDAO.saveTrackers(trackers);
 
                     return trackers;
                 })
@@ -271,9 +262,7 @@ public class RedmineRepository {
                 .map(statusesResponse -> {
 
                     List<Status> statuses = statusesResponse.getStatuses();
-                    StatusRealmDAO.saveIssues(statuses);
-//                    List<StatusEntity> statusEntities = StatusEntity.convertItems(statuses);
-//                    DatabaseManager.getDatabaseHelper().getStatusEntityDAO().saveStatusEntities(statusEntities);
+                    StatusDAO.saveStatuses(statuses);
 
                     return statuses;
                 })
@@ -289,9 +278,7 @@ public class RedmineRepository {
                 .map(versionsResponse -> {
 
                     List<FixedVersion> fixedVersions = versionsResponse.getFixedVersions();
-                    FixedVersionRealmDAO.saveIssues(fixedVersions);
-//                    List<VersionEntity> versionEntities = VersionEntity.convertItems(fixedVersions);
-//                    DatabaseManager.getDatabaseHelper().getVersionEntityDAO().saveVersionEntities(versionEntities);
+                    FixedVersionDAO.saveFixedVersions(fixedVersions);
 
                     return fixedVersions;
                 })
@@ -308,9 +295,7 @@ public class RedmineRepository {
                 .map(prioritiesResponse -> {
 
                     List<Priority> priorities = prioritiesResponse.getPriorities();
-                    ProjectPriorityRealmDAO.saveIssues(priorities);
-//                    List<PriorityEntity> priorityEntities = PriorityEntity.convertItems(priorities);
-//                    DatabaseManager.getDatabaseHelper().getPriorityEntityDAO().savePriorityEntities(priorityEntities);
+                    ProjectPriorityDAO.saveIProjectPriorities(priorities);
 
                     return priorities;
                 })
@@ -356,9 +341,7 @@ public class RedmineRepository {
                         }
                     }
 
-                    ShortUserRealmDAO.saveIssues(shortUsers);
-//                    List<UserEntity> userEntities = UserEntity.convertItems(shortUsers);
-//                    DatabaseManager.getDatabaseHelper().getUserEntityDAO().saveTimeEntries(userEntities);
+                    ShortUserDAO.saveShortUsers(shortUsers);
 
                     return shortUsers;
                 })

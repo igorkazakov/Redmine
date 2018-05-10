@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.screen.general.LoadingFragment;
-import com.igorkazakov.user.redminepro.screen.general.LoadingView;
+import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -51,7 +51,7 @@ public class CalendarFragment extends Fragment implements CalendarView {
     CardView mContentView;
 
     private CalendarPresenter mPresenter;
-    private LoadingView mLoadingView;
+    private BaseViewInterface mLoadingView;
 
     private int colorHoliday;
     private int colorHospital;

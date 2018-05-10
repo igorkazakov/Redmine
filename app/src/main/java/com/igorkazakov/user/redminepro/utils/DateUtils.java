@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by user on 14.07.17.
@@ -25,12 +27,15 @@ public class DateUtils {
 
     public static Date dateFromString(String string, SimpleDateFormat format) {
 
+        Date date = new Date();
+
         try {
-            return format.parse(string);
+            date = format.parse(string);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+
+        return date;
     }
 
     public static String stringFromDate(Date date, SimpleDateFormat format) {
@@ -171,40 +176,38 @@ public class DateUtils {
 
         long diff = nowDate.getTime() - oldDate.getTime();
 
-        if (diff / 1000 < 1) {
-            return String.format("%s %s", 1, "second");
+        Calendar startCalendar = new GregorianCalendar();
+        startCalendar.setTime(nowDate);
+        Calendar endCalendar = new GregorianCalendar();
+        endCalendar.setTime(oldDate);
+
+        int diffYears = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+        int years = Math.abs(diffYears);
+        int months = Math.abs(diffYears * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH));
+        long days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+        long minutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+        long seconds = TimeUnit.SECONDS.convert(diff, TimeUnit.MILLISECONDS);
+
+        if (years > 0) {
+
+            return String.format("%s %s", years, TextUtils.getPluralForm(years, "year"));
+
+        } else if (months > 0) {
+
+            return String.format("%s %s", months, TextUtils.getPluralForm(months, "month"));
+
+        } else if (days > 0) {
+
+            return String.format("%s %s", days, TextUtils.getPluralForm(days, "day"));
+
+        } if (minutes > 0) {
+            return String.format("%s %s", minutes, TextUtils.getPluralForm(minutes, "minute"));
+
+        } if (seconds > 0) {
+            return String.format("%s %s", seconds, TextUtils.getPluralForm(seconds, "second"));
+
+        } else {
+            return "";
         }
-
-        double rez = diff / 1000;
-
-        if (rez / 60 < 1) {
-            int roundRez = (int)Math.ceil(rez);
-            String timeString = roundRez == 1 ? "second" : "seconds";
-            return String.format("%s %s", roundRez, timeString);
-        }
-        rez = rez / 60;
-
-        if (rez / 60 < 1) {
-            int roundRez = (int)Math.ceil(rez);
-            String timeString = roundRez == 1 ? "minute" : "minutes";
-            return String.format("%s %s", roundRez, timeString);
-        }
-
-        rez = rez / 60;
-
-        if (rez / 24 < 1) {
-            int roundRez = (int)Math.ceil(rez);
-            String timeString = roundRez == 1 ? "hour" : "hours";
-            return String.format("%s %s", roundRez, timeString);
-        }
-
-        rez = rez / 24;
-        if (rez / 24 < 1) {
-            int roundRez = (int)Math.ceil(rez);
-            String timeString = roundRez == 1 ? "day" : "days";
-            return String.format("%s %s", roundRez, timeString);
-        }
-
-        return "";
     }
 }

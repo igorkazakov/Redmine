@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.general;
+package com.igorkazakov.user.redminepro.screen.base;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -26,12 +26,12 @@ public class LoadingDialog extends DialogFragment {
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
     @NonNull
-    public static LoadingView view(@NonNull FragmentManager fm) {
+    public static BaseViewInterface view(@NonNull FragmentManager fm) {
         return new LoadingDialogView(fm);
     }
 
     @NonNull
-    public static LoadingView view(@NonNull Fragment fragment) {
+    public static BaseViewInterface view(@NonNull Fragment fragment) {
         return view(fragment.getFragmentManager());
     }
 
@@ -50,7 +50,7 @@ public class LoadingDialog extends DialogFragment {
                 .create();
     }
 
-    private static class LoadingDialogView implements LoadingView {
+    private static class LoadingDialogView implements BaseViewInterface {
 
         private final FragmentManager mFm;
 
