@@ -10,11 +10,12 @@ import com.igorkazakov.user.redminepro.api.response.TimeEntryResponse;
 import com.igorkazakov.user.redminepro.api.response.TrackersResponse;
 import com.igorkazakov.user.redminepro.api.response.VersionsResponse;
 
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import rx.Observable;
+
 
 /**
  * Created by user on 11.07.17.
@@ -24,7 +25,7 @@ public interface RedmineService {
 
     @GET("/users/current.json")
     Observable<LoginResponse> login(@Header("Authorization") String authorization,
-                                @Header("Content-Type") String contentType);
+                                    @Header("Content-Type") String contentType);
 
     @GET("/time_entries.json")
     Observable<TimeEntryResponse> timeEntries(@Query("limit") int limit,

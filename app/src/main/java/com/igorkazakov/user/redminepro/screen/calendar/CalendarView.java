@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.calendar_screen;
+package com.igorkazakov.user.redminepro.screen.calendar;
 
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;

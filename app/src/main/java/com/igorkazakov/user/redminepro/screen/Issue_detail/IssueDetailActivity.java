@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +12,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpAppCompatActivity;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
@@ -23,10 +24,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class IssueDetailActivity extends AppCompatActivity implements IssueDetailView {
+public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDetailView {
 
     @BindView(R.id.contentView)
     FrameLayout mContentView;
@@ -79,7 +78,8 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    private IssueDetailPresenter mPresenter;
+    @InjectPresenter
+    public IssueDetailPresenter mPresenter;
     private LoadingFragment mLoadingView;
     public static final String ISSUE_ID_KEY = "ISSUE_ID_KEY";
 
@@ -100,8 +100,7 @@ public class IssueDetailActivity extends AppCompatActivity implements IssueDetai
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mLoadingView = new LoadingFragment(this, mContentView);
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
-        mPresenter = new IssueDetailPresenter(lifecycleHandler, this);
+
         long issueId = getIntent().getLongExtra(ISSUE_ID_KEY, 0);
         getSupportActionBar().setSubtitle("#" + String.valueOf(issueId));
 

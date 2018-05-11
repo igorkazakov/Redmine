@@ -1,34 +1,28 @@
 package com.igorkazakov.user.redminepro.screen.issues;
 
-import android.support.annotation.NonNull;
-
-import com.igorkazakov.user.redminepro.R;
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
-
-import ru.arturvasilov.rxloader.LifecycleHandler;
 
 /**
  * Created by user on 25.07.17.
  */
 
-public class IssuesPresenter {
+@InjectViewState
+public class IssuesPresenter extends MvpPresenter<IssuesView> {
 
-    private LifecycleHandler mLifecycleHandler;
-    private IssuesView mView;
-
-    public IssuesPresenter(@NonNull LifecycleHandler lifecycleHandler, @NonNull IssuesView view) {
-
-        mLifecycleHandler = lifecycleHandler;
-        mView = view;
+    @Override
+    protected void onFirstViewAttach() {
+        super.onFirstViewAttach();
+        tryLoadIssuesData();
     }
 
     public void tryLoadIssuesData() {
 
         RedmineRepository.getMyIssues()
-                .doOnSubscribe(mView::showLoading)
-                .doOnTerminate(mView::hideLoading)
-                .compose(mLifecycleHandler.reload(R.id.issues_request))
-                .subscribe(response -> mView.setupView(response),
+                .doOnSubscribe(getViewState()::showLoading)
+                .doOnTerminate(getViewState()::hideLoading)
+                .subscribe(response -> getViewState().setupView(response),
                         throwable -> throwable.printStackTrace());
     }
 }

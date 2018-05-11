@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
-import com.igorkazakov.user.redminepro.screen.attachment_screen.AttachmentActivity;
+import com.igorkazakov.user.redminepro.screen.attachment.AttachmentActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

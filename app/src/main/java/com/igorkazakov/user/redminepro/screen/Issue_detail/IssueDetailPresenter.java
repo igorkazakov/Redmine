@@ -1,8 +1,7 @@
 package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
-import android.support.annotation.NonNull;
-
-import com.igorkazakov.user.redminepro.R;
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
@@ -21,35 +20,24 @@ import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
 import java.util.List;
 
-import ru.arturvasilov.rxloader.LifecycleHandler;
-
 /**
  * Created by user on 28.07.17.
  */
 
-public class IssueDetailPresenter {
-
-    private LifecycleHandler mLifecycleHandler;
-    private IssueDetailView mView;
-
-    public IssueDetailPresenter(@NonNull LifecycleHandler lifecycleHandler,
-                                @NonNull IssueDetailView issueDetailView) {
-        mLifecycleHandler = lifecycleHandler;
-        mView = issueDetailView;
-    }
+@InjectViewState
+public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
     public void tryLoadIssueDetailsData(long issueId) {
 
         RedmineRepository.getIssueDetails(issueId)
-                .doOnSubscribe(mView::showLoading)
-                .doOnTerminate(mView::hideLoading)
-                .compose(mLifecycleHandler.reload(R.id.issue_details_request))
+                .doOnSubscribe(getViewState()::showLoading)
+                .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(issueEntity -> setupView(issueEntity),
                         throwable -> throwable.printStackTrace());
     }
 
     public void setupView(Issue issueEntity) {
-        mView.setupView(issueEntity);
+        getViewState().setupView(issueEntity);
     }
 
     public String getSafeName(Namable object) {

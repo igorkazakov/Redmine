@@ -13,8 +13,19 @@ import java.util.Date;
 
 public final class DateDeserializer implements JsonDeserializer<Date> {
 
-    private static DateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private static DateFormat sDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private ThreadLocal<DateFormat> mDateFormat = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd");
+        }
+    };
+
+    private ThreadLocal<DateFormat> mDateTimeFormat = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        }
+    };
 
     @Override
     public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -25,13 +36,13 @@ public final class DateDeserializer implements JsonDeserializer<Date> {
             Date date = null;
 
             try {
-                date = sDateFormat.parse(element);
+                date = mDateFormat.get().parse(element);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
         try {
-            date = sDateTimeFormat.parse(element);
+            date = mDateTimeFormat.get().parse(element);
         } catch (ParseException e) {
             e.printStackTrace();
         }

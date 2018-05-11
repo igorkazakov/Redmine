@@ -1,8 +1,7 @@
-package com.igorkazakov.user.redminepro.screen.calendar_screen;
+package com.igorkazakov.user.redminepro.screen.calendar;
 
-import android.support.annotation.NonNull;
-
-import com.igorkazakov.user.redminepro.R;
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.OggyRepository;
@@ -13,34 +12,30 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ru.arturvasilov.rxloader.LifecycleHandler;
-
 /**
  * Created by Igor on 29.08.2017.
  */
 
-public class CalendarPresenter {
-
-    private LifecycleHandler mLifecycleHandler;
-    private CalendarView mView;
+@InjectViewState
+public class CalendarPresenter extends MvpPresenter<CalendarView> {
 
     private ArrayList<CalendarDay> listOfHoliday = new ArrayList<>();
     private ArrayList<CalendarDay> listOfHospital = new ArrayList<>();
     private ArrayList<CalendarDay> listOfVacation = new ArrayList<>();
 
-    public CalendarPresenter(@NonNull LifecycleHandler lifecycleHandler, CalendarView view) {
-        mLifecycleHandler = lifecycleHandler;
-        mView = view;
+    @Override
+    protected void onFirstViewAttach() {
+        super.onFirstViewAttach();
+        loadAllCalendarDays();
     }
 
     public void loadAllCalendarDays() {
 
         OggyRepository.getCalendarDaysForYear()
-                .doOnSubscribe(mView::showLoading)
-                .doOnTerminate(mView::hideLoading)
-                .compose(mLifecycleHandler.reload(R.id.calendar_month_days_request))
+                .doOnSubscribe(getViewState()::showLoading)
+                .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(response -> createMonthIndicatorArrays(response),
-                        Throwable::printStackTrace);
+                        throwable -> throwable.printStackTrace());
 
     }
 
@@ -64,15 +59,15 @@ public class CalendarPresenter {
             }
         }
 
-        mView.showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
-        mView.showCurrentDay();
-        mView.hideLoading();
+        getViewState().showMonthIndicators(listOfHoliday, listOfHospital, listOfVacation);
+        getViewState().showCurrentDay();
+        getViewState().hideLoading();
     }
 
     public void onDateClick(Date day) {
 
         TimeModel model = KPIUtils.getHoursForDate(day);
         float kpi = KPIUtils.calculateKpiForDate(day);
-        mView.showDayWorkHours(kpi, model);
+        getViewState().showDayWorkHours(kpi, model);
     }
 }

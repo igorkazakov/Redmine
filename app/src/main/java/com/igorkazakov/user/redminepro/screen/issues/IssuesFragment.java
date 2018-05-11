@@ -1,7 +1,6 @@
 package com.igorkazakov.user.redminepro.screen.issues;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
@@ -18,10 +19,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class IssuesFragment extends Fragment implements IssuesView {
+
+public class IssuesFragment extends MvpAppCompatFragment implements IssuesView {
 
 
     @BindView(R.id.contentView)
@@ -33,7 +33,8 @@ public class IssuesFragment extends Fragment implements IssuesView {
     @BindView(R.id.issueSwipeRefresh)
     SwipeRefreshLayout mIssueSwipeRefresh;
 
-    private IssuesPresenter mPresenter;
+    @InjectPresenter
+    public IssuesPresenter mPresenter;
     private LoadingFragment mLoadingView;
 
     public static IssuesFragment newInstance() {
@@ -52,9 +53,6 @@ public class IssuesFragment extends Fragment implements IssuesView {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mIssueList.setLayoutManager(linearLayoutManager);
         mLoadingView = new LoadingFragment(getActivity(), mContentView);
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(getActivity(), getActivity().getSupportLoaderManager());
-        mPresenter = new IssuesPresenter(lifecycleHandler, this);
-        mPresenter.tryLoadIssuesData();
 
         return view;
     }

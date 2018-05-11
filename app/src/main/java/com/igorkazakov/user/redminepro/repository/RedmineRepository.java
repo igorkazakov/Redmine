@@ -16,8 +16,8 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Membership;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 import com.igorkazakov.user.redminepro.database.realm.FixedVersionDAO;
 import com.igorkazakov.user.redminepro.database.realm.IssueDAO;
-import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
 import com.igorkazakov.user.redminepro.database.realm.ProjectDAO;
+import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
 import com.igorkazakov.user.redminepro.database.realm.ShortUserDAO;
 import com.igorkazakov.user.redminepro.database.realm.StatusDAO;
 import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
@@ -30,9 +30,11 @@ import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import rx.functions.Func1;
+
 
 /**
  * Created by user on 11.07.17.
@@ -175,7 +177,7 @@ public class RedmineRepository {
                     int offset = integer * limit;
                     return getIssues(offset);
                 })
-                .takeUntil(List::isEmpty)
+                .takeUntil()
                 .toList()
                 .map(superList -> {
 

@@ -1,7 +1,6 @@
-package com.igorkazakov.user.redminepro.screen.calendar_screen;
+package com.igorkazakov.user.redminepro.screen.calendar;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -10,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
 import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
+import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -24,10 +25,8 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class CalendarFragment extends Fragment implements CalendarView {
+public class CalendarFragment extends MvpAppCompatFragment implements CalendarView {
 
     @BindView(R.id.calendarView)
     MaterialCalendarView mCalendarView;
@@ -50,7 +49,8 @@ public class CalendarFragment extends Fragment implements CalendarView {
     @BindView(R.id.contentView)
     CardView mContentView;
 
-    private CalendarPresenter mPresenter;
+    @InjectPresenter
+    public CalendarPresenter mPresenter;
     private BaseViewInterface mLoadingView;
 
     private int colorHoliday;
@@ -69,13 +69,10 @@ public class CalendarFragment extends Fragment implements CalendarView {
         View view = inflater.inflate(R.layout.content_calendar, container, false);
 
         ButterKnife.bind(this, view);
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler
-                .create(getActivity(), getActivity().getSupportLoaderManager());
-        mPresenter = new CalendarPresenter(lifecycleHandler, this);
+
         mLoadingView = new LoadingFragment(getActivity(), mLayoutContainer);
         initCalendarView();
         initColors();
-        mPresenter.loadAllCalendarDays();
 
         return view;
     }

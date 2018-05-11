@@ -1,4 +1,4 @@
-package com.igorkazakov.user.redminepro.screen.attachment_screen;
+package com.igorkazakov.user.redminepro.screen.attachment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,10 +19,8 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class AttachmentActivity extends AppCompatActivity implements AttachmentView {
+public class AttachmentActivity extends AppCompatActivity {
 
     @BindView(R.id.photo_view)
     PhotoView photoView;
@@ -30,7 +28,9 @@ public class AttachmentActivity extends AppCompatActivity implements AttachmentV
     @BindView(R.id.attachmentContainer)
     FrameLayout attachmentContainer;
 
-    private AttachmentPresenter mPresenter;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
     private BaseViewInterface mLoadingView;
     private static String IMAGE_URL_KEY = "IMAGE_URL_KEY";
 
@@ -44,14 +44,11 @@ public class AttachmentActivity extends AppCompatActivity implements AttachmentV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attachment);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ButterKnife.bind(this);
-        mLoadingView = new LoadingFragment(this, attachmentContainer);
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
-        mPresenter = new AttachmentPresenter(this, lifecycleHandler);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mLoadingView = new LoadingFragment(this, attachmentContainer);
         mLoadingView.showLoading();
         String url = getIntent().getExtras().getString(IMAGE_URL_KEY);
 

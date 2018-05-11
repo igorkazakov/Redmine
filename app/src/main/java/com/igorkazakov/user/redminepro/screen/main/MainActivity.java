@@ -13,7 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.screen.calendar_screen.CalendarFragment;
+import com.igorkazakov.user.redminepro.screen.calendar.CalendarFragment;
 import com.igorkazakov.user.redminepro.screen.dashboard.DashboardFragment;
 import com.igorkazakov.user.redminepro.screen.issues.IssuesFragment;
 
