@@ -36,7 +36,7 @@ public class LoginPresenter extends MvpPresenter<LoginView> {
         } else {
 
             RedmineRepository.auth(login, password)
-            .doOnSubscribe(getViewState()::showLoading)
+            .doOnSubscribe(__ -> getViewState().showLoading())
             .doOnTerminate(getViewState()::hideLoading)
             .subscribe(loginResponse -> onSuccessLogin(password),
                     Throwable::printStackTrace);

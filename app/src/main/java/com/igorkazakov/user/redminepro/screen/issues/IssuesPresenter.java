@@ -20,7 +20,7 @@ public class IssuesPresenter extends MvpPresenter<IssuesView> {
     public void tryLoadIssuesData() {
 
         RedmineRepository.getMyIssues()
-                .doOnSubscribe(getViewState()::showLoading)
+                .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(response -> getViewState().setupView(response),
                         throwable -> throwable.printStackTrace());

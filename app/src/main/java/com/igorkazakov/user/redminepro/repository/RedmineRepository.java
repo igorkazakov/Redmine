@@ -32,6 +32,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import rx.functions.Func1;
 
@@ -105,16 +106,16 @@ public class RedmineRepository {
                     int offset = integer * limit;
                     return getTimeEntriesWithInterval(interval, offset);
                 })
-                .takeUntil(List::isEmpty)
-                .toList()
+                .takeUntil((Predicate<List<TimeEntry>>) List::isEmpty)
+                //.toList()
                 .map(superList -> {
 
                     List<TimeEntry> list = new ArrayList<>();
 
                     if (superList.size() != 0) {
-                        for (List<TimeEntry> itemList : superList) {
-                            list.addAll(itemList);
-                        }
+//                        for (List<TimeEntry> itemList : superList) {
+//                            list.addAll(itemList);
+//                        }
                     }
 
                     return list;
@@ -177,17 +178,17 @@ public class RedmineRepository {
                     int offset = integer * limit;
                     return getIssues(offset);
                 })
-                .takeUntil()
-                .toList()
+                .takeUntil((Predicate<List<Issue>>) List::isEmpty)
+                //.toList()
                 .map(superList -> {
 
                     List<Issue> list = new ArrayList<>();
 
                     if (superList.size() > 0) {
 
-                        for (List<Issue> itemList : superList) {
-                            list.addAll(itemList);
-                        }
+//                        for (List<Issue> itemList : superList) {
+//                            list.addAll(itemList);
+//                        }
                     }
 
                     return list;
@@ -322,7 +323,7 @@ public class RedmineRepository {
                     int offset = integer * limit;
                     return getMemberships(offset, projectId);
                 })
-                .takeUntil(List::isEmpty)
+                .takeUntil((Predicate<? super List<ShortUser>>) List::isEmpty)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
