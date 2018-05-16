@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -78,6 +79,9 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
+    @BindView(R.id.сollapsingToolbar)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
+
     @InjectPresenter
     public IssueDetailPresenter mPresenter;
     private LoadingFragment mLoadingView;
@@ -102,6 +106,11 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
         mLoadingView = new LoadingFragment(this, mContentView);
 
         long issueId = getIntent().getLongExtra(ISSUE_ID_KEY, 0);
+
+        IssueDetailActivity.this.setTitle("Title NAme");
+        //mCollapsingToolbarLayout.setTitle("ВАСЯ");
+       //mCollapsingToolbarLayout.setT("#" + String.valueOf(issueId));
+        getSupportActionBar().setTitle("ВАСЯ");
         getSupportActionBar().setSubtitle("#" + String.valueOf(issueId));
 
         setupChildIssueList();
