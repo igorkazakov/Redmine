@@ -32,7 +32,7 @@ public class CalendarPresenter extends MvpPresenter<CalendarView> {
     public void loadAllCalendarDays() {
 
         OggyRepository.getCalendarDaysForYear()
-                .doOnSubscribe(getViewState()::showLoading)
+                .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(response -> createMonthIndicatorArrays(response),
                         throwable -> throwable.printStackTrace());

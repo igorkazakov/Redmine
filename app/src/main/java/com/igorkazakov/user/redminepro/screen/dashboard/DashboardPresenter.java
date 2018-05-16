@@ -53,7 +53,7 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
             mIsLoading = true;
 
             OggyRepository.getCalendarDaysForYear()
-                        .doOnSubscribe(getViewState()::showLoading)
+                        .doOnSubscribe(__ -> getViewState().showLoading())
                         .subscribe(response -> loadTimeEntriesData(),
                                 throwable -> throwable.printStackTrace());
         }

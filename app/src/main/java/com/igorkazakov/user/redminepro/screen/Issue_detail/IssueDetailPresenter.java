@@ -30,7 +30,7 @@ public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
     public void tryLoadIssueDetailsData(long issueId) {
 
         RedmineRepository.getIssueDetails(issueId)
-                .doOnSubscribe(getViewState()::showLoading)
+                .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(issueEntity -> setupView(issueEntity),
                         throwable -> throwable.printStackTrace());

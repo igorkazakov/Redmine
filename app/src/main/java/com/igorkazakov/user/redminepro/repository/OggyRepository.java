@@ -11,8 +11,10 @@ import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * Created by user on 14.07.17.
@@ -42,24 +44,23 @@ public class OggyRepository {
 
         int year = DateUtils.getCurrentYear();
 
-        Observable[] observables = new Observable[]{
-                OggyRepository.getCalendarDays(1, year),
-                OggyRepository.getCalendarDays(2, year),
-                OggyRepository.getCalendarDays(3, year),
-                OggyRepository.getCalendarDays(4, year),
-                OggyRepository.getCalendarDays(5, year),
-                OggyRepository.getCalendarDays(6, year),
-                OggyRepository.getCalendarDays(7, year),
-                OggyRepository.getCalendarDays(8, year),
-                OggyRepository.getCalendarDays(9, year),
-                OggyRepository.getCalendarDays(10, year),
-                OggyRepository.getCalendarDays(11, year),
-                OggyRepository.getCalendarDays(12, year)};
+        List<Observable<List<OggyCalendarDay>>> observables = new ArrayList<>();
+        observables.add(OggyRepository.getCalendarDays(1, year));
+        observables.add(OggyRepository.getCalendarDays(2, year));
+        observables.add(OggyRepository.getCalendarDays(3, year));
+        observables.add(OggyRepository.getCalendarDays(4, year));
+        observables.add(OggyRepository.getCalendarDays(5, year));
+        observables.add(OggyRepository.getCalendarDays(6, year));
+        observables.add(OggyRepository.getCalendarDays(7, year));
+        observables.add(OggyRepository.getCalendarDays(8, year));
+        observables.add(OggyRepository.getCalendarDays(9, year));
+        observables.add(OggyRepository.getCalendarDays(10, year));
+        observables.add(OggyRepository.getCalendarDays(11, year));
+        observables.add(OggyRepository.getCalendarDays(12, year));
 
-        return Observable.zip(observables, args -> {
-
+        return Observable.zip(observables, objects -> {
             List<OggyCalendarDay> list1 = new ArrayList<>();
-            for (Object arg : args) {
+            for (Object arg : objects) {
                 list1.addAll((List<OggyCalendarDay>) arg);
             }
 

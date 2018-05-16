@@ -4,9 +4,10 @@ import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalend
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import rx.Observable;
+
 
 /**
  * Created by user on 14.07.17.
