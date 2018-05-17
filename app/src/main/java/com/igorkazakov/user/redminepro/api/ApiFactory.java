@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.igorkazakov.user.redminepro.BuildConfig;
+import com.igorkazakov.user.redminepro.api.rxoperator.error.ApiErrorOperator;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -29,33 +30,33 @@ public final class ApiFactory {
     @NonNull
     public static RedmineService getRedmineService() {
 
-        RedmineService service = sService;
-        if (service == null) {
+        RedmineService localService = sService;
+        if (localService == null) {
             synchronized (ApiFactory.class) {
-                service = sService;
-                if (service == null) {
-                    service = sService = buildRetrofit(BuildConfig.REDMINE_API_ENDPOINT).create(RedmineService.class);
+                localService = sService;
+                if (localService == null) {
+                    localService = sService = buildRetrofit(BuildConfig.REDMINE_API_ENDPOINT).create(RedmineService.class);
                 }
             }
         }
 
-        return service;
+        return localService;
     }
 
     @NonNull
     public static OggyService getOggyService() {
 
-        OggyService service = sOggyService;
-        if (service == null) {
+        OggyService localService = sOggyService;
+        if (localService == null) {
             synchronized (ApiFactory.class) {
-                service = sOggyService;
-                if (service == null) {
-                    service = sOggyService = buildRetrofit(BuildConfig.OGGY_API_ENDPOINT).create(OggyService.class);
+                localService = sOggyService;
+                if (localService == null) {
+                    localService = sOggyService = buildRetrofit(BuildConfig.OGGY_API_ENDPOINT).create(OggyService.class);
                 }
             }
         }
 
-        return service;
+        return localService;
     }
 
     @NonNull
@@ -63,6 +64,11 @@ public final class ApiFactory {
         sClient = null;
         sClient = getClient();
         sService = buildRetrofit(BuildConfig.REDMINE_API_ENDPOINT).create(RedmineService.class);
+    }
+
+    public static <T>ApiErrorOperator<T> getApiErrorTransformer() {
+
+        return new ApiErrorOperator<>();
     }
 
     @NonNull

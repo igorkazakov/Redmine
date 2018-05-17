@@ -13,7 +13,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
-import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
+import com.igorkazakov.user.redminepro.screen.base.ProgressInterface;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -31,7 +31,7 @@ public class AttachmentActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    private BaseViewInterface mLoadingView;
+    private ProgressInterface mLoadingView;
     private static String IMAGE_URL_KEY = "IMAGE_URL_KEY";
 
     public static void start(@NonNull Context context, @NonNull String imageUrl) {

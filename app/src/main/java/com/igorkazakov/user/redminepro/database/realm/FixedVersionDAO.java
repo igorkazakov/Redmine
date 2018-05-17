@@ -12,22 +12,26 @@ public class FixedVersionDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(fixedVersions);
+        realm.copyToRealmOrUpdate(fixedVersions);
         realm.commitTransaction();
     }
 
     public static FixedVersion getFixedVersionById(long id) {
 
-        return Realm.getDefaultInstance()
+        FixedVersion item = Realm.getDefaultInstance()
                 .where(FixedVersion.class)
                 .equalTo("id", id)
                 .findFirst();
+
+        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<FixedVersion> getAll() {
 
-        return Realm.getDefaultInstance()
+        List<FixedVersion> items = Realm.getDefaultInstance()
                 .where(FixedVersion.class)
                 .findAll();
+
+        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

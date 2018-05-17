@@ -12,22 +12,26 @@ public class ProjectPriorityDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(priorities);
+        realm.copyToRealmOrUpdate(priorities);
         realm.commitTransaction();
     }
 
     public static Priority getPriorityById(long id) {
 
-        return Realm.getDefaultInstance()
+        Priority item = Realm.getDefaultInstance()
                 .where(Priority.class)
                 .equalTo("id", id)
                 .findFirst();
+
+        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<Priority> getAll() {
 
-        return Realm.getDefaultInstance()
+        List<Priority> items = Realm.getDefaultInstance()
                 .where(Priority.class)
                 .findAll();
+
+        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

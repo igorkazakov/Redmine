@@ -12,22 +12,26 @@ public class StatusDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(statuses);
+        realm.copyToRealmOrUpdate(statuses);
         realm.commitTransaction();
     }
 
     public static Status getStatusById(long id) {
 
-        return Realm.getDefaultInstance()
+        Status item = Realm.getDefaultInstance()
                 .where(Status.class)
                 .equalTo("id", id)
                 .findFirst();
+
+        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<Status> getAll() {
 
-        return Realm.getDefaultInstance()
+        List<Status> items = Realm.getDefaultInstance()
                 .where(Status.class)
                 .findAll();
+
+        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

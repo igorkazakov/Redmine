@@ -12,20 +12,19 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
-import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDetailView {
+public class IssueDetailActivity extends BaseActivity implements IssueDetailView {
 
     @BindView(R.id.contentView)
     FrameLayout mContentView;
@@ -80,7 +79,6 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
 
     @InjectPresenter
     public IssueDetailPresenter mPresenter;
-    private LoadingFragment mLoadingView;
     public static final String ISSUE_ID_KEY = "ISSUE_ID_KEY";
 
     public static void start(@NonNull Context context, long issueId) {
@@ -98,8 +96,6 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mLoadingView = new LoadingFragment(this, mContentView);
 
         long issueId = getIntent().getLongExtra(ISSUE_ID_KEY, 0);
         getSupportActionBar().setSubtitle("#" + String.valueOf(issueId));
@@ -135,16 +131,6 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
                 return false;
             }
         });
-    }
-
-    @Override
-    public void showLoading() {
-        mLoadingView.showLoading();
-    }
-
-    @Override
-    public void hideLoading() {
-        mLoadingView.hideLoading();
     }
 
     @Override

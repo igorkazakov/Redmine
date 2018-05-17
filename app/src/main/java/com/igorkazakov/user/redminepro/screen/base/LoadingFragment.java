@@ -12,7 +12,7 @@ import com.igorkazakov.user.redminepro.R;
  * Created by user on 21.07.17.
  */
 
-public class LoadingFragment implements BaseViewInterface {
+public class LoadingFragment implements ProgressInterface {
 
     private View loadingView;
     private ViewGroup container;

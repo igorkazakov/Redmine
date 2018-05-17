@@ -10,17 +10,6 @@ import android.util.Base64;
 public final class AuthorizationUtils {
 
     private static final String BASIC_AUTHORIZATION = "Basic ";
-    private static AuthorizationUtils sInstanse;
-
-    public static AuthorizationUtils getInstanse() {
-        if (sInstanse == null) {
-            sInstanse = new AuthorizationUtils();
-        }
-
-        return sInstanse;
-    }
-
-    private AuthorizationUtils() {}
 
     @NonNull
     public String createAuthorizationString(@NonNull String login, @NonNull String password) {

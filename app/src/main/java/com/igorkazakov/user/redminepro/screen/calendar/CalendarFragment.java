@@ -9,12 +9,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
-import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -26,7 +24,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CalendarFragment extends MvpAppCompatFragment implements CalendarView {
+public class CalendarFragment extends BaseFragment implements CalendarView {
 
     @BindView(R.id.calendarView)
     MaterialCalendarView mCalendarView;
@@ -51,7 +49,6 @@ public class CalendarFragment extends MvpAppCompatFragment implements CalendarVi
 
     @InjectPresenter
     public CalendarPresenter mPresenter;
-    private BaseViewInterface mLoadingView;
 
     private int colorHoliday;
     private int colorHospital;
@@ -65,12 +62,11 @@ public class CalendarFragment extends MvpAppCompatFragment implements CalendarVi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.content_calendar, container, false);
 
         ButterKnife.bind(this, view);
 
-        mLoadingView = new LoadingFragment(getActivity(), mLayoutContainer);
         initCalendarView();
         initColors();
 
@@ -84,16 +80,6 @@ public class CalendarFragment extends MvpAppCompatFragment implements CalendarVi
                 R.color.color_activity_calendar_hospital);
         colorVacation = ContextCompat.getColor(getActivity(),
                 R.color.color_activity_calendar_vacation);
-    }
-
-    @Override
-    public void showLoading() {
-        mLoadingView.showLoading();
-    }
-
-    @Override
-    public void hideLoading() {
-        mLoadingView.hideLoading();
     }
 
     @Override

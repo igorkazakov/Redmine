@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Switch;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
-import com.igorkazakov.user.redminepro.screen.base.LoadingDialog;
+import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 import com.igorkazakov.user.redminepro.screen.main.MainActivity;
 import com.igorkazakov.user.redminepro.utils.KeyboardUtils;
 
@@ -20,15 +18,13 @@ import butterknife.OnClick;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends MvpAppCompatActivity implements LoginView {
+public class LoginActivity extends BaseActivity implements LoginView {
 
     @BindView(R.id.email)
     EditText mEmailView;
 
     @BindView(R.id.password)
     EditText mPasswordView;
-
-    private BaseViewInterface mLoadingView;
 
     @InjectPresenter
     public LoginPresenter mPresenter;
@@ -38,7 +34,7 @@ public class LoginActivity extends MvpAppCompatActivity implements LoginView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        mLoadingView = LoadingDialog.view(getSupportFragmentManager());
+
         mPresenter.init();
     }
 
@@ -52,16 +48,6 @@ public class LoginActivity extends MvpAppCompatActivity implements LoginView {
     @OnCheckedChanged(R.id.switchRememberMe)
     public void switchRememberMeClick(Switch switchRememberMe) {
         mPresenter.saveSwitchState(switchRememberMe.isChecked());
-    }
-
-    @Override
-    public void showLoading() {
-        mLoadingView.showLoading();
-    }
-
-    @Override
-    public void hideLoading() {
-        mLoadingView.hideLoading();
     }
 
     @Override

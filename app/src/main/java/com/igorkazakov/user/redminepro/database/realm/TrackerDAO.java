@@ -12,22 +12,26 @@ public class TrackerDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(trackers);
+        realm.copyToRealmOrUpdate(trackers);
         realm.commitTransaction();
     }
 
     public static Tracker getTrackerById(long id) {
 
-        return Realm.getDefaultInstance()
+        Tracker item = Realm.getDefaultInstance()
                 .where(Tracker.class)
                 .equalTo("id", id)
                 .findFirst();
+
+        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<Tracker> getAll() {
 
-        return Realm.getDefaultInstance()
+        List<Tracker> items = Realm.getDefaultInstance()
                 .where(Tracker.class)
                 .findAll();
+
+        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

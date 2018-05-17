@@ -14,7 +14,7 @@ public class CalendarDayDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(calendarDays);
+        realm.copyToRealmOrUpdate(calendarDays);
         realm.commitTransaction();
     }
 
