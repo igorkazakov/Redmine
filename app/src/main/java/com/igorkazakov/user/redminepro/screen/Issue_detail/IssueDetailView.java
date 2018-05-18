@@ -1,6 +1,6 @@
 package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.screen.base.ErrorInterface;
 import com.igorkazakov.user.redminepro.screen.base.ProgressInterface;
 
@@ -10,5 +10,5 @@ import com.igorkazakov.user.redminepro.screen.base.ProgressInterface;
 
 public interface IssueDetailView extends ProgressInterface, ErrorInterface {
 
-    void setupView(Issue issueEntity);
+    void setupView(IssueDetail issueEntity);
 }

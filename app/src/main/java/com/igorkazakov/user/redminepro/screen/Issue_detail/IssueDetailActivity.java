@@ -16,6 +16,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 
@@ -134,7 +135,7 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
     }
 
     @Override
-    public void setupView(Issue issueEntity) {
+    public void setupView(IssueDetail issueEntity) {
 
         mStatusTextView.setText(mPresenter.getSafeName(issueEntity.getStatus()));
         mPriorityTextView.setText(mPresenter.getSafeName(issueEntity.getPriority()));
@@ -150,6 +151,9 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
             List<Issue> issueEntities = mPresenter.getChildIssues(issueEntity.getChildren());
             if (issueEntities.size() == 0) {
                 mChildIssueListView.setVisibility(View.GONE);
+
+            } else {
+                mChildIssueListView.setVisibility(View.VISIBLE);
             }
 
             ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
@@ -162,14 +166,22 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
         List<Attachment> attachmentEntities = issueEntity.getAttachments();
         if (attachmentEntities.size() == 0) {
             mAttachmentListView.setVisibility(View.GONE);
+
+        } else {
+            mAttachmentListView.setVisibility(View.VISIBLE);
         }
+
         AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
         mAttachmentList.setAdapter(attachmentAdapter);
 
         List<Journal> journalEntities = issueEntity.getJournals();
         if (journalEntities.size() == 0) {
             mJournalListView.setVisibility(View.GONE);
+
+        } else {
+            mJournalListView.setVisibility(View.VISIBLE);
         }
+
         JournalAdapter journalAdapter = new JournalAdapter(journalEntities, mPresenter);
         mJournalIssuesList.setAdapter(journalAdapter);
 

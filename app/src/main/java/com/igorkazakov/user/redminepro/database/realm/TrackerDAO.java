@@ -18,20 +18,16 @@ public class TrackerDAO {
 
     public static Tracker getTrackerById(long id) {
 
-        Tracker item = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(Tracker.class)
                 .equalTo("id", id)
                 .findFirst();
-
-        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<Tracker> getAll() {
 
-        List<Tracker> items = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(Tracker.class)
                 .findAll();
-
-        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

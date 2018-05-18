@@ -2,9 +2,8 @@ package com.igorkazakov.user.redminepro.screen.attachment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -12,15 +11,14 @@ import android.widget.FrameLayout;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.ApiFactory;
-import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
-import com.igorkazakov.user.redminepro.screen.base.ProgressInterface;
+import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AttachmentActivity extends AppCompatActivity {
+public class AttachmentActivity extends BaseActivity {
 
     @BindView(R.id.photo_view)
     PhotoView photoView;
@@ -31,7 +29,6 @@ public class AttachmentActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    private ProgressInterface mLoadingView;
     private static String IMAGE_URL_KEY = "IMAGE_URL_KEY";
 
     public static void start(@NonNull Context context, @NonNull String imageUrl) {
@@ -48,8 +45,7 @@ public class AttachmentActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mLoadingView = new LoadingFragment(this, attachmentContainer);
-        mLoadingView.showLoading();
+        showLoading();
         String url = getIntent().getExtras().getString(IMAGE_URL_KEY);
 
         Picasso picasso = new Picasso.Builder(this)
@@ -60,13 +56,13 @@ public class AttachmentActivity extends AppCompatActivity {
                 .into(photoView, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
-                        mLoadingView.hideLoading();
+                        hideLoading();
 
                     }
 
                     @Override
                     public void onError() {
-                        mLoadingView.hideLoading();
+                        hideLoading();
                     }
                 });
     }

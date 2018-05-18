@@ -13,7 +13,7 @@ public class IssueDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(issues);
+        realm.insertOrUpdate(issues);
         realm.commitTransaction();
     }
 
@@ -21,7 +21,7 @@ public class IssueDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(issue);
+        realm.insertOrUpdate(issue);
         realm.commitTransaction();
     }
 
@@ -47,5 +47,15 @@ public class IssueDAO {
                 .findAll();
 
         return Realm.getDefaultInstance().copyFromRealm(items);
+    }
+
+    public static Issue getIssueById(long id) {
+
+        Issue item = Realm.getDefaultInstance()
+                .where(Issue.class)
+                .equalTo("id", id)
+                .findFirst();
+
+        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 }

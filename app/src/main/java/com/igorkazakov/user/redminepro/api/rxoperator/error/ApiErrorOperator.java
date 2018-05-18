@@ -39,7 +39,7 @@ public final class ApiErrorOperator<T> implements ObservableOperator<T, T> {
 
 
                 } else if (e instanceof IOException) {
-                    ApiException exception = new ApiException("No Network Connection Error", 1);
+                    ApiException exception = new ApiException("No Network Connection", 1);
                     observer.onError(exception);
 
                 } else {

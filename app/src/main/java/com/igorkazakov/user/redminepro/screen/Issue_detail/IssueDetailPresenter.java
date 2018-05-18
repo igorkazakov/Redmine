@@ -6,6 +6,7 @@ import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Namable;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
@@ -50,7 +51,7 @@ public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
                         });
     }
 
-    public void setupView(Issue issueEntity) {
+    public void setupView(IssueDetail issueEntity) {
         getViewState().setupView(issueEntity);
     }
 

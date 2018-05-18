@@ -46,11 +46,9 @@ public class TimeEntryDAO {
 
     public static List<TimeEntry> getAll() {
 
-        List<TimeEntry> items = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(TimeEntry.class)
                 .findAll();
-
-        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 
     private static float getWorkHoursWithIntervalAndTimeType(TimeInterval interval, TimeType timeType) {

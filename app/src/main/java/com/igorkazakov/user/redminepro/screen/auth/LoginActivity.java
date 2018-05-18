@@ -11,7 +11,6 @@ import com.igorkazakov.user.redminepro.screen.main.MainActivity;
 import com.igorkazakov.user.redminepro.utils.KeyboardUtils;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
@@ -33,7 +32,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+
 
         mPresenter.init();
     }

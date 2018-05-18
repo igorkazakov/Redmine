@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.bottom_navigation)
     BottomNavigationView bottomNavigationView;
 
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
     public static void start(@NonNull Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
@@ -41,29 +44,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        setSupportActionBar(mToolbar);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 item -> {
                     switch (item.getItemId()) {
                         case R.id.action_dashboard:
-                            showOrCreateFragment(DashboardFragment.class, getResources().getString(R.string.title_activity_dashboard));
+                            showOrCreateFragment(DashboardFragment.class);
                             break;
                         case R.id.action_calendar:
-                            showOrCreateFragment(CalendarFragment.class, getResources().getString(R.string.title_activity_calendar));
+                            showOrCreateFragment(CalendarFragment.class);
                             break;
                         case R.id.action_issues:
-                            showOrCreateFragment(IssuesFragment.class, getResources().getString(R.string.title_activity_issues));
+                            showOrCreateFragment(IssuesFragment.class);
                             break;
                     }
                     return true;
                 });
 
-        showOrCreateFragment(DashboardFragment.class, getResources().getString(R.string.title_activity_dashboard));
+        showOrCreateFragment(DashboardFragment.class);
     }
 
-    public void showOrCreateFragment(Class fragmentClass, String fragmentTitle){
+    public void showOrCreateFragment(Class fragmentClass){
 
         boolean fragmentExist = false;
         FragmentManager fragmentManager = getSupportFragmentManager();

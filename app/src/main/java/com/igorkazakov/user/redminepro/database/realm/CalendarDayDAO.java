@@ -32,16 +32,12 @@ public class CalendarDayDAO {
 
     public static long getHoursNormForDate(Date date) {
 
-        long result = 0;
-
-        result = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(OggyCalendarDay.class)
                 .equalTo("date", date)
                 .findAll()
                 .sum("hours")
                 .longValue();
-
-        return result;
     }
 
     public static OggyCalendarDay getCalendarDayWithDate(Date date) {

@@ -18,20 +18,16 @@ public class StatusDAO {
 
     public static Status getStatusById(long id) {
 
-        Status item = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(Status.class)
                 .equalTo("id", id)
                 .findFirst();
-
-        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<Status> getAll() {
 
-        List<Status> items = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(Status.class)
                 .findAll();
-
-        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

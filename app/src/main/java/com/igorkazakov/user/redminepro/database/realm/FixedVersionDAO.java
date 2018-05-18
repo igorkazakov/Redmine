@@ -18,20 +18,16 @@ public class FixedVersionDAO {
 
     public static FixedVersion getFixedVersionById(long id) {
 
-        FixedVersion item = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(FixedVersion.class)
                 .equalTo("id", id)
                 .findFirst();
-
-        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<FixedVersion> getAll() {
 
-        List<FixedVersion> items = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(FixedVersion.class)
                 .findAll();
-
-        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

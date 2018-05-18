@@ -6,7 +6,10 @@ import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.api.ContentType;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
@@ -17,6 +20,7 @@ import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.database.realm.FixedVersionDAO;
 import com.igorkazakov.user.redminepro.database.realm.IssueDAO;
+import com.igorkazakov.user.redminepro.database.realm.IssueDetailDAO;
 import com.igorkazakov.user.redminepro.database.realm.ProjectDAO;
 import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
 import com.igorkazakov.user.redminepro.database.realm.ShortUserDAO;
@@ -96,10 +100,6 @@ public class RedmineRepository {
                     TimeEntryDAO.saveTimeEntries(timeEntries);
                     return timeEntries;
                 })
-                .onErrorResumeNext(throwable -> {
-
-                    return Observable.just(TimeEntryDAO.getAll());
-                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -120,7 +120,21 @@ public class RedmineRepository {
                     return getTimeEntriesWithInterval(interval, offset);
                 })
                 .takeUntil((Predicate<? super List<TimeEntry>>) List::isEmpty)
-                .concatMap(Observable::fromArray);
+                .toList()
+                .map(superList -> {
+
+                    List<TimeEntry> list = new ArrayList<>();
+
+                    if (superList.size() != 0) {
+                        for (List<TimeEntry> itemList : superList) {
+                            list.addAll(itemList);
+                        }
+
+                    }
+
+                    return list;
+                })
+                .toObservable();
 
         List<TimeEntry> cachedData = TimeEntryDAO.getAll();
 
@@ -140,9 +154,7 @@ public class RedmineRepository {
     @NonNull
     public Observable<List<Issue>> getIssues(int offset) {
 
-        Observable<List<Issue>> observable;
-
-        Observable<List<Issue>> observableNetwork = ApiFactory.getRedmineService()
+        return ApiFactory.getRedmineService()
                 .issues(limit, offset)
                 .lift(ApiFactory.getApiErrorTransformer())
                 .map(issuesResponse -> {
@@ -152,19 +164,6 @@ public class RedmineRepository {
                     return issues;
                 })
                 .subscribeOn(Schedulers.io());
-
-        List<Issue> cachedData = IssueDAO.getAll();
-
-        if (cachedData.size() > 0) {
-
-            observable = Observable.just(cachedData)
-                    .concatWith(observableNetwork);
-
-        } else {
-            observable = observableNetwork;
-        }
-
-        return observable.observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull
@@ -182,7 +181,21 @@ public class RedmineRepository {
                     return getIssues(offset);
                 })
                 .takeUntil((Predicate<? super List<Issue>>) List::isEmpty)
-                .concatMap(Observable::fromArray);
+                .toList()
+                .map(superList -> {
+
+                    List<Issue> list = new ArrayList<>();
+
+                    if (superList.size() != 0) {
+                        for (List<Issue> itemList : superList) {
+                            list.addAll(itemList);
+                        }
+
+                    }
+
+                    return list;
+                })
+                .toObservable();
 
         List<Issue> cachedData = IssueDAO.getAll();
 
@@ -199,19 +212,41 @@ public class RedmineRepository {
     }
 
     @NonNull
-    public Observable<Issue> getIssueDetails(long issueId) {
+    public Observable<IssueDetail> getIssueDetails(long issueId) {
 
-        return ApiFactory.getRedmineService()
+        Observable<IssueDetail> observable;
+
+        Observable<IssueDetail> observableNetwork = ApiFactory.getRedmineService()
                 .issueDetails(issueId)
                 .lift(ApiFactory.getApiErrorTransformer())
                 .map(issuesResponse -> {
 
-                    Issue issue = issuesResponse.getIssue();
-                    IssueDAO.saveIssue(issue);
+                    IssueDetail issue = issuesResponse.getIssue();
+
+                    for (Journal journal: issue.getJournals()) {
+                        for (Detail detail: journal.getDetails()) {
+                            detail.generateId();
+                        }
+                    }
+
+                    IssueDetailDAO.saveIssueDetail(issue);
                     return issue;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+
+        IssueDetail cachedData = IssueDetailDAO.getIssueDetailById(issueId);
+
+        if (cachedData != null) {
+
+            observable = Observable.just(cachedData)
+                    .concatWith(observableNetwork);
+
+        } else {
+            observable = observableNetwork;
+        }
+
+        return observable.observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull

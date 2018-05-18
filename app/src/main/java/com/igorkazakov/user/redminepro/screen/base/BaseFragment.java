@@ -8,9 +8,15 @@ import android.view.ViewGroup;
 
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.igorkazakov.user.redminepro.api.ApiException;
+import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.utils.DialogUtils;
 
+import javax.inject.Inject;
+
 public class BaseFragment extends MvpAppCompatFragment {
+
+    @Inject
+    DialogUtils mDialogUtils;
 
     private ProgressInterface mLoadingView;
 
@@ -18,8 +24,8 @@ public class BaseFragment extends MvpAppCompatFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        RedmineApplication.getComponent().inject(this);
         mLoadingView = new LoadingFragment(getActivity(), container);
-
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -28,7 +34,7 @@ public class BaseFragment extends MvpAppCompatFragment {
     }
 
     public void showError(ApiException e) {
-        DialogUtils.ShowErrorDialog(e.getMessage(), getActivity());
+        mDialogUtils.showErrorDialog(e.getMessage(), getActivity());
         hideLoading();
     }
 

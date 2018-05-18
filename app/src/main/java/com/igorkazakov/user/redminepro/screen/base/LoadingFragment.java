@@ -21,7 +21,9 @@ public class LoadingFragment implements ProgressInterface {
     public LoadingFragment(Activity activity, ViewGroup container) {
 
         LinearLayout linearLayout = new LinearLayout(activity);
-        LinearLayout.LayoutParams linLayoutParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams linLayoutParam =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
         linearLayout.setLayoutParams(linLayoutParam);
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         loadingView = layoutInflater.inflate(R.layout.fragment_loading, linearLayout, false);

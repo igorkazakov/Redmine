@@ -18,20 +18,16 @@ public class ProjectPriorityDAO {
 
     public static Priority getPriorityById(long id) {
 
-        Priority item = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(Priority.class)
                 .equalTo("id", id)
                 .findFirst();
-
-        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<Priority> getAll() {
 
-        List<Priority> items = Realm.getDefaultInstance()
+        return Realm.getDefaultInstance()
                 .where(Priority.class)
                 .findAll();
-
-        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }
