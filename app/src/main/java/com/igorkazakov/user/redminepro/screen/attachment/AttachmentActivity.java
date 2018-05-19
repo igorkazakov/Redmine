@@ -26,9 +26,6 @@ public class AttachmentActivity extends BaseActivity {
     @BindView(R.id.attachmentContainer)
     FrameLayout attachmentContainer;
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-
     private static String IMAGE_URL_KEY = "IMAGE_URL_KEY";
 
     public static void start(@NonNull Context context, @NonNull String imageUrl) {
@@ -40,9 +37,7 @@ public class AttachmentActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_attachment);
-        ButterKnife.bind(this);
-        setSupportActionBar(mToolbar);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         showLoading();
@@ -57,7 +52,6 @@ public class AttachmentActivity extends BaseActivity {
                     @Override
                     public void onSuccess() {
                         hideLoading();
-
                     }
 
                     @Override
@@ -65,6 +59,11 @@ public class AttachmentActivity extends BaseActivity {
                         hideLoading();
                     }
                 });
+    }
+
+    @Override
+    public int getMainContentLayout() {
+        return R.layout.activity_attachment;
     }
 
     @Override

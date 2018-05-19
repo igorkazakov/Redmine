@@ -75,9 +75,6 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
     @BindView(R.id.journalListView)
     View mJournalListView;
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-
     @InjectPresenter
     public IssueDetailPresenter mPresenter;
     public static final String ISSUE_ID_KEY = "ISSUE_ID_KEY";
@@ -91,13 +88,8 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_issue_detail);
 
-        ButterKnife.bind(this);
-
-        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         long issueId = getIntent().getLongExtra(ISSUE_ID_KEY, 0);
         getSupportActionBar().setSubtitle("#" + String.valueOf(issueId));
 
@@ -105,6 +97,11 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
         setupAttachmentIssueList();
         setupJournalIssueList();
         mPresenter.tryLoadIssueDetailsData(issueId);
+    }
+
+    @Override
+    public int getMainContentLayout() {
+        return R.layout.content_issue_detail;
     }
 
     private void setupChildIssueList() {

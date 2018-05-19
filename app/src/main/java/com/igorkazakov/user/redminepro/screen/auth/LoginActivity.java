@@ -31,10 +31,13 @@ public class LoginActivity extends BaseActivity implements LoginView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
 
         mPresenter.init();
+    }
+
+    @Override
+    public int getMainContentLayout() {
+        return R.layout.activity_login;
     }
 
     @OnClick(R.id.email_sign_in_button)

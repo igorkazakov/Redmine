@@ -46,7 +46,7 @@ public class OggyRepository {
 
                     return calendarDays;
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

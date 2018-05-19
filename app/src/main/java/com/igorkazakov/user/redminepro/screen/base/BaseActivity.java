@@ -2,6 +2,7 @@ package com.igorkazakov.user.redminepro.screen.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.widget.FrameLayout;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -15,14 +16,16 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BaseActivity extends MvpAppCompatActivity {
+public abstract class BaseActivity extends MvpAppCompatActivity {
 
     @Inject
     DialogUtils mDialogUtils;
 
-    @Nullable
-    @BindView(R.id.contentView)
-    FrameLayout mContentView;
+    @BindView(R.id.main_wrapper)
+    FrameLayout mMainWrapper;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
 
     private ProgressInterface mLoadingView;
 
@@ -30,17 +33,23 @@ public class BaseActivity extends MvpAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.layout_base);
+        getLayoutInflater().inflate(getMainContentLayout(), findViewById(R.id.main_wrapper));
+
         ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
 
         RedmineApplication.getComponent().inject(this);
 
-        if (mContentView != null) {
-            mLoadingView = new LoadingFragment(this, mContentView);
+        if (mMainWrapper != null) {
+            mLoadingView = new LoadingFragment(this, mMainWrapper);
 
         } else {
             mLoadingView = LoadingDialog.view(getSupportFragmentManager());
         }
     }
+
+    public abstract int getMainContentLayout();
 
     public void showLoading() {
         mLoadingView.showLoading();
