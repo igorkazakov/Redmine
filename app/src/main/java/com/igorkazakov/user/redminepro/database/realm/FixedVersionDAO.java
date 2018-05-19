@@ -12,7 +12,7 @@ public class FixedVersionDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(fixedVersions);
+        realm.copyToRealmOrUpdate(fixedVersions);
         realm.commitTransaction();
     }
 

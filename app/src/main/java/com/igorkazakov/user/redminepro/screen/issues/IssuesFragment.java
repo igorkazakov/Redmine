@@ -9,11 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
-import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class IssuesFragment extends MvpAppCompatFragment implements IssuesView {
+public class IssuesFragment extends BaseFragment implements IssuesView {
 
 
     @BindView(R.id.contentView)
@@ -35,7 +34,6 @@ public class IssuesFragment extends MvpAppCompatFragment implements IssuesView {
 
     @InjectPresenter
     public IssuesPresenter mPresenter;
-    private LoadingFragment mLoadingView;
 
     public static IssuesFragment newInstance() {
         IssuesFragment issuesFragment = new IssuesFragment();
@@ -44,7 +42,7 @@ public class IssuesFragment extends MvpAppCompatFragment implements IssuesView {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.content_issues, container, false);
         ButterKnife.bind(this, view);
 
@@ -52,7 +50,6 @@ public class IssuesFragment extends MvpAppCompatFragment implements IssuesView {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mIssueList.setLayoutManager(linearLayoutManager);
-        mLoadingView = new LoadingFragment(getActivity(), mContentView);
 
         return view;
     }
@@ -63,15 +60,5 @@ public class IssuesFragment extends MvpAppCompatFragment implements IssuesView {
         IssuesAdapter adapter = new IssuesAdapter(issueModels);
         mIssueList.setAdapter(adapter);
         mIssueSwipeRefresh.setRefreshing(false);
-    }
-
-    @Override
-    public void showLoading() {
-        mLoadingView.showLoading();
-    }
-
-    @Override
-    public void hideLoading() {
-        mLoadingView.hideLoading();
     }
 }

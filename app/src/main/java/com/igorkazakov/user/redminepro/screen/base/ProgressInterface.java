@@ -8,7 +8,7 @@ import io.reactivex.disposables.Disposable;
  * Created by user on 12.07.17.
  */
 
-public interface BaseViewInterface extends MvpView {
+public interface ProgressInterface extends MvpView {
 
     void showLoading();
     void hideLoading();

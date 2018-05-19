@@ -3,6 +3,8 @@ package com.igorkazakov.user.redminepro.screen.dashboard;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.BuildConfig;
+import com.igorkazakov.user.redminepro.api.ApiException;
+import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.database.realm.CalendarDayDAO;
 import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by user on 12.07.17.
  */
@@ -25,11 +29,17 @@ import java.util.List;
 @InjectViewState
 public class DashboardPresenter extends MvpPresenter<DashboardView> {
 
+    @Inject
+    RedmineRepository mRedmineRepository;
+
+    @Inject
+    OggyRepository mOggyRepository;
+
     private boolean mIsLoading = false;
 
     public DashboardPresenter() {
 
-
+        RedmineApplication.getComponent().inject(this);
     }
 
     @Override
@@ -41,10 +51,10 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
     }
 
     public void loadRedmineData() {
-        RedmineRepository.getStatuses().subscribe();
-        RedmineRepository.getTrackers().subscribe();
-        RedmineRepository.getProjectPriorities().subscribe();
-        RedmineRepository.getProjects().subscribe();
+        mRedmineRepository.getStatuses().subscribe();
+        mRedmineRepository.getTrackers().subscribe();
+        mRedmineRepository.getProjectPriorities().subscribe();
+        mRedmineRepository.getProjects().subscribe();
     }
 
     public void tryLoadDashboardData() {
@@ -52,20 +62,27 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
         if (!mIsLoading) {
             mIsLoading = true;
 
-            OggyRepository.getCalendarDaysForYear()
+            mOggyRepository.getCalendarDaysForYear()
                         .doOnSubscribe(__ -> getViewState().showLoading())
                         .subscribe(response -> loadTimeEntriesData(),
-                                throwable -> throwable.printStackTrace());
+                                throwable -> {
+                                    loadTimeEntriesData();
+                                    ApiException exception = (ApiException)throwable;
+                                    getViewState().showError(exception);
+                                });
         }
     }
 
     public void loadTimeEntriesData() {
 
-            RedmineRepository.getTimeEntriesForYear()
+        mRedmineRepository.getTimeEntriesForYear()
                     .doOnTerminate(getViewState()::hideLoading)
                     .doOnNext(__ -> getViewState().hideLoading())
                     .subscribe(response -> setupView(),
-                            throwable -> throwable.printStackTrace());
+                            throwable -> {
+                                ApiException exception = (ApiException)throwable;
+                                getViewState().showError(exception);
+                            });
     }
 
     public void setupView() {

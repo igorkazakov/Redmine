@@ -27,9 +27,11 @@ public class IssueDAO {
 
     public static List<Issue> getAll() {
 
-        return Realm.getDefaultInstance()
+        List<Issue> items = Realm.getDefaultInstance()
                 .where(Issue.class)
                 .findAll();
+
+        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 
     public static List<Issue> getChildIssues(List<Child> children) {
@@ -39,9 +41,21 @@ public class IssueDAO {
             childIssueIds[children.indexOf(child)] = child.getId();
         }
 
-        return Realm.getDefaultInstance()
+        List<Issue> items = Realm.getDefaultInstance()
                 .where(Issue.class)
                 .in("id", childIssueIds)
                 .findAll();
+
+        return Realm.getDefaultInstance().copyFromRealm(items);
+    }
+
+    public static Issue getIssueById(long id) {
+
+        Issue item = Realm.getDefaultInstance()
+                .where(Issue.class)
+                .equalTo("id", id)
+                .findFirst();
+
+        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 }

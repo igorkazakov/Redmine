@@ -4,9 +4,13 @@ import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.igorkazakov.user.redminepro.api.ApiException;
+import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.igorkazakov.user.redminepro.utils.TextUtils;
+
+import javax.inject.Inject;
 
 /**
  * Created by user on 12.07.17.
@@ -14,12 +18,20 @@ import com.igorkazakov.user.redminepro.utils.TextUtils;
 @InjectViewState
 public class LoginPresenter extends MvpPresenter<LoginView> {
 
-    public LoginPresenter() {}
+    @Inject
+    RedmineRepository mRepository;
+
+    @Inject
+    PreferenceUtils mPreferenceUtils;
+
+    public LoginPresenter() {
+        RedmineApplication.getComponent().inject(this);
+    }
 
     public void init() {
 
-        String login = PreferenceUtils.getInstance().getUserLogin();
-        boolean saveCredentials = PreferenceUtils.getInstance().getUserCredentials();
+        String login = mPreferenceUtils.getUserLogin();
+        boolean saveCredentials = mPreferenceUtils.getUserCredentials();
         if (!login.isEmpty() && saveCredentials) {
             getViewState().openDashboardScreen();
         }
@@ -35,21 +47,24 @@ public class LoginPresenter extends MvpPresenter<LoginView> {
 
         } else {
 
-            RedmineRepository.auth(login, password)
+            mRepository.auth(login, password)
             .doOnSubscribe(__ -> getViewState().showLoading())
             .doOnTerminate(getViewState()::hideLoading)
             .subscribe(loginResponse -> onSuccessLogin(password),
-                    Throwable::printStackTrace);
+                    throwable -> {
+                        ApiException exception = (ApiException)throwable;
+                        getViewState().showError(exception);
+                    });
         }
     }
 
     public void onSuccessLogin(String password) {
 
-        PreferenceUtils.getInstance().saveUserPassword(password);
+        mPreferenceUtils.saveUserPassword(password);
         getViewState().openDashboardScreen();
     }
 
     public void saveSwitchState(boolean state) {
-        PreferenceUtils.getInstance().saveUserCredentials(state);
+        mPreferenceUtils.saveUserCredentials(state);
     }
 }

@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -29,8 +28,7 @@ import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.screen.base.BaseViewInterface;
-import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 
 import java.util.ArrayList;
@@ -39,7 +37,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DashboardFragment extends MvpAppCompatFragment
+public class DashboardFragment extends BaseFragment
         implements DashboardView {
 
     @BindView(R.id.chartWorkTime)
@@ -65,7 +63,6 @@ public class DashboardFragment extends MvpAppCompatFragment
 
     @InjectPresenter
     public DashboardPresenter mPresenter;
-    private BaseViewInterface mLoadingView;
     private KpiStatisticAdapter mAdapter;
 
     public static DashboardFragment newInstance() {
@@ -75,11 +72,11 @@ public class DashboardFragment extends MvpAppCompatFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.content_dashboard, container, false);
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
-        mLoadingView = new LoadingFragment(getActivity(), mContentView);
 
         return view;
     }
@@ -211,16 +208,4 @@ public class DashboardFragment extends MvpAppCompatFragment
         inflater.inflate(R.menu.dashboard, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-
-    @Override
-    public void showLoading() {
-        mLoadingView.showLoading();
-    }
-
-    @Override
-    public void hideLoading() {
-        mLoadingView.hideLoading();
-    }
-
-
 }

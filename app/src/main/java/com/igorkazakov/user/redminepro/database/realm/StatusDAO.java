@@ -12,7 +12,7 @@ public class StatusDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(statuses);
+        realm.copyToRealmOrUpdate(statuses);
         realm.commitTransaction();
     }
 

@@ -12,22 +12,26 @@ public class ShortUserDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(shortUsers);
+        realm.copyToRealmOrUpdate(shortUsers);
         realm.commitTransaction();
     }
 
     public static ShortUser getUserById(long id) {
 
-        return Realm.getDefaultInstance()
+        ShortUser item = Realm.getDefaultInstance()
                 .where(ShortUser.class)
                 .equalTo("id", id)
                 .findFirst();
+
+        return Realm.getDefaultInstance().copyFromRealm(item);
     }
 
     public static List<ShortUser> getAll() {
 
-        return Realm.getDefaultInstance()
+        List<ShortUser> items = Realm.getDefaultInstance()
                 .where(ShortUser.class)
                 .findAll();
+
+        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

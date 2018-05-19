@@ -2,14 +2,17 @@ package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Namable;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
+import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.database.realm.FixedVersionDAO;
 import com.igorkazakov.user.redminepro.database.realm.IssueDAO;
 import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
@@ -20,6 +23,8 @@ import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by user on 28.07.17.
  */
@@ -27,16 +32,26 @@ import java.util.List;
 @InjectViewState
 public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
+    @Inject
+    RedmineRepository mRedmineRepository;
+
+    public IssueDetailPresenter() {
+        RedmineApplication.getComponent().inject(this);
+    }
+
     public void tryLoadIssueDetailsData(long issueId) {
 
-        RedmineRepository.getIssueDetails(issueId)
+        mRedmineRepository.getIssueDetails(issueId)
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(issueEntity -> setupView(issueEntity),
-                        throwable -> throwable.printStackTrace());
+                        throwable -> {
+                            ApiException exception = (ApiException)throwable;
+                            getViewState().showError(exception);
+                        });
     }
 
-    public void setupView(Issue issueEntity) {
+    public void setupView(IssueDetail issueEntity) {
         getViewState().setupView(issueEntity);
     }
 

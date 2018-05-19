@@ -40,7 +40,7 @@ public class TimeEntryDAO {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
 
-        realm.insertOrUpdate(timeEntries);
+        realm.copyToRealmOrUpdate(timeEntries);
         realm.commitTransaction();
     }
 
@@ -51,7 +51,7 @@ public class TimeEntryDAO {
                 .findAll();
     }
 
-    private static long getWorkHoursWithIntervalAndTimeType(TimeInterval interval, TimeType timeType) {
+    private static float getWorkHoursWithIntervalAndTimeType(TimeInterval interval, TimeType timeType) {
 
         return Realm.getDefaultInstance()
                 .where(TimeEntry.class)
@@ -62,10 +62,10 @@ public class TimeEntryDAO {
                 .equalTo("type", timeType.getValue())
                 .findAll()
                 .sum("hours")
-                .longValue();
+                .floatValue();
     }
 
-    private static long getWorkHoursWithDateAndTimeType(Date date, TimeType timeType) {
+    private static float getWorkHoursWithDateAndTimeType(Date date, TimeType timeType) {
 
         return Realm.getDefaultInstance()
                 .where(TimeEntry.class)
@@ -74,7 +74,7 @@ public class TimeEntryDAO {
                 .equalTo("type", timeType.getValue())
                 .findAll()
                 .sum("hours")
-                .longValue();
+                .floatValue();
     }
 
     public static TimeModel getWorkHoursWithInterval(TimeInterval interval) {

@@ -12,8 +12,6 @@ public class PreferenceUtils {
 
     private SharedPreferences mSharedPreferences;
 
-    private static PreferenceUtils sPreferenceUtils;
-
     private static final String USER_ID = "USER_ID";
     private static final String USER_LOGIN = "USER_LOGIN";
     private static final String USER_PASSWORD = "USER_PASSWORD";
@@ -21,25 +19,13 @@ public class PreferenceUtils {
     private static final String USER_MAIL = "USER_MAIL";
     private static final String SAVE_CREDENTIALS = "SAVE_CREDENTIALS";
     private static final String USER_TOKEN = "USER_TOKEN";
-    private static final String CALENDAR_DOWNLOADED = "CALENDAR_DOWNLOADED";
-    private static final String TIME_ENTRIES_DOWNLOADED = "TIME_ENTRIES_DOWNLOADED";
-    private static final String ISSUES_DOWNLOADED = "ISSUES_DOWNLOADED";
 
-    public PreferenceUtils() {}
-
-    public static void createPreferenceUtils(Context context) {
-        sPreferenceUtils = new PreferenceUtils();
-        sPreferenceUtils.mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    public PreferenceUtils(Context context) {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static void releasePreferenceUtils() {
-        sPreferenceUtils.cleanUserCredentials();
-        sPreferenceUtils.mSharedPreferences = null;
-        sPreferenceUtils = null;
-    }
-
-    public static PreferenceUtils getInstance() {
-        return sPreferenceUtils;
+    public void releasePreferenceUtils() {
+        cleanUserCredentials();
     }
 
     public void saveUserId(long value) {
@@ -48,30 +34,6 @@ public class PreferenceUtils {
 
     public long getUserId() {
         return getLongValue(USER_ID, 0);
-    }
-
-    public void saveCalendarDownloaded(Boolean value) {
-        setValue(CALENDAR_DOWNLOADED, value);
-    }
-
-    public Boolean getCalendarDownloaded() {
-        return getBooleanValue(CALENDAR_DOWNLOADED, false);
-    }
-
-    public void saveTimeEntriesDownloaded(Boolean value) {
-        setValue(TIME_ENTRIES_DOWNLOADED, value);
-    }
-
-    public Boolean getTimeEntriesDownloaded() {
-        return getBooleanValue(TIME_ENTRIES_DOWNLOADED, false);
-    }
-
-    public void saveIssuesDownloaded(Boolean value) {
-        setValue(TIME_ENTRIES_DOWNLOADED, value);
-    }
-
-    public Boolean getIssuesDownloaded() {
-        return getBooleanValue(TIME_ENTRIES_DOWNLOADED, false);
     }
 
     public void saveUserLogin(String value) {
@@ -124,57 +86,57 @@ public class PreferenceUtils {
 
     public void cleanUserCredentials() {
 
-        if (!sPreferenceUtils.getUserCredentials()) {
-            sPreferenceUtils.saveUserMail("");
-            sPreferenceUtils.saveUserName("");
-            sPreferenceUtils.saveUserId(-1);
-            sPreferenceUtils.saveUserPassword("");
-            sPreferenceUtils.saveAuthToken("");
-            sPreferenceUtils.saveUserLogin("");
+        if (!getUserCredentials()) {
+            saveUserMail("");
+            saveUserName("");
+            saveUserId(-1);
+            saveUserPassword("");
+            saveAuthToken("");
+            saveUserLogin("");
         }
     }
 
     private void setValue(String key, String value){
-        SharedPreferences.Editor ed = sPreferenceUtils.mSharedPreferences.edit();
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putString(key, value);
         ed.commit();
     }
 
     private void setValue(String key, boolean value){
-        SharedPreferences.Editor ed = sPreferenceUtils.mSharedPreferences.edit();
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putBoolean(key, value);
         ed.commit();
     }
 
     private void setValue(String key, int value){
-        SharedPreferences.Editor ed = sPreferenceUtils.mSharedPreferences.edit();
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putInt(key, value);
         ed.commit();
     }
 
     private void setValue(String key, long value){
-        SharedPreferences.Editor ed = sPreferenceUtils.mSharedPreferences.edit();
+        SharedPreferences.Editor ed = mSharedPreferences.edit();
         ed.putLong(key, value);
         ed.commit();
     }
 
     private boolean getBooleanValue(String key, boolean defValue) {
-        return sPreferenceUtils.mSharedPreferences.getBoolean(key, defValue);
+        return mSharedPreferences.getBoolean(key, defValue);
     }
 
     private String getStringValue(String key, String defValue) {
-        return sPreferenceUtils.mSharedPreferences.getString(key, defValue);
+        return mSharedPreferences.getString(key, defValue);
     }
 
     private int getIntValue(String key, int defValue) {
-        return sPreferenceUtils.mSharedPreferences.getInt(key, defValue);
+        return mSharedPreferences.getInt(key, defValue);
     }
 
     private long getLongValue(String key, long defValue) {
-        return sPreferenceUtils.mSharedPreferences.getLong(key, defValue);
+        return mSharedPreferences.getLong(key, defValue);
     }
 
     private float getFloatValue(String key, float defValue) {
-        return sPreferenceUtils.mSharedPreferences.getFloat(key, defValue);
+        return mSharedPreferences.getFloat(key, defValue);
     }
 }

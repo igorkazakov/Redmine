@@ -1,23 +1,13 @@
-package com.igorkazakov.user.redminepro.api.responseEntity.Issue;
+package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.AssignedTo;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Author;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortProject;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-/**
- * Created by user on 13.07.17.
- */
-
-public class Issue extends RealmObject {
+public class IssueDetail extends RealmObject {
 
     @PrimaryKey
     @SerializedName("id")
@@ -26,9 +16,9 @@ public class Issue extends RealmObject {
     @SerializedName("project")
     @Expose
     private ShortProject project;
-//    @SerializedName("parent")
-//    @Expose
-//    private Parent parent;
+    @SerializedName("parent")
+    @Expose
+    private Parent parent;
     @SerializedName("tracker")
     @Expose
     private Tracker tracker;
@@ -71,18 +61,18 @@ public class Issue extends RealmObject {
     @SerializedName("updated_on")
     @Expose
     private String updatedOn;
-//    @SerializedName("children")
-//    @Expose
-//    private RealmList<Child> children;
-//    @SerializedName("attachments")
-//    @Expose
-//    private RealmList<Attachment> attachments;
-//    @SerializedName("changesets")
+    @SerializedName("children")
+    @Expose
+    private RealmList<Child> children;
+    @SerializedName("attachments")
+    @Expose
+    private RealmList<Attachment> attachments;
+    //    @SerializedName("changesets")
 //    @Expose
 //    private RealmList<Object> changesets;
-//    @SerializedName("journals")
-//    @Expose
-//    private RealmList<Journal> journals;
+    @SerializedName("journals")
+    @Expose
+    private RealmList<Journal> journals;
 
     public double getSpentHours() {
         return spentHours;
@@ -132,13 +122,13 @@ public class Issue extends RealmObject {
         this.status = status;
     }
 
-//    public Parent getParent() {
-//        return parent;
-//    }
-//
-//    public void setParent(Parent parent) {
-//        this.parent = parent;
-//    }
+    public Parent getParent() {
+        return parent;
+    }
+
+    public void setParent(Parent parent) {
+        this.parent = parent;
+    }
 
     public Priority getPriority() {
         return priority;
@@ -220,21 +210,21 @@ public class Issue extends RealmObject {
         this.updatedOn = updatedOn;
     }
 
-//    public RealmList<Child> getChildren() {
-//        return children;
-//    }
-//
-//    public void setChildren(RealmList<Child> children) {
-//        this.children = children;
-//    }
-//
-//    public RealmList<Attachment> getAttachments() {
-//        return attachments;
-//    }
-//
-//    public void setAttachments(RealmList<Attachment> attachments) {
-//        this.attachments = attachments;
-//    }
+    public RealmList<Child> getChildren() {
+        return children;
+    }
+
+    public void setChildren(RealmList<Child> children) {
+        this.children = children;
+    }
+
+    public RealmList<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(RealmList<Attachment> attachments) {
+        this.attachments = attachments;
+    }
 
 //    public RealmList<Object> getChangesets() {
 //        return changesets;
@@ -244,11 +234,11 @@ public class Issue extends RealmObject {
 //        this.changesets = changesets;
 //    }
 
-//    public RealmList<Journal> getJournals() {
-//        return journals;
-//    }
-//
-//    public void setJournals(RealmList<Journal> journals) {
-//        this.journals = journals;
-//    }
+    public RealmList<Journal> getJournals() {
+        return journals;
+    }
+
+    public void setJournals(RealmList<Journal> journals) {
+        this.journals = journals;
+    }
 }

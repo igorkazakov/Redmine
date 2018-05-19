@@ -2,9 +2,12 @@ package com.igorkazakov.user.redminepro.api;
 
 import android.support.annotation.NonNull;
 
+import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -16,7 +19,12 @@ import okhttp3.Response;
 
 public class AuthInterceptor implements Interceptor{
 
-    private AuthInterceptor() {}
+    @Inject
+    PreferenceUtils mPreferenceUtils;
+
+    private AuthInterceptor() {
+        RedmineApplication.getComponent().inject(this);
+    }
 
     @NonNull
     public static Interceptor create() {
@@ -26,7 +34,7 @@ public class AuthInterceptor implements Interceptor{
     @Override
     public Response intercept(Interceptor.Chain chain) throws IOException {
 
-        String authString = PreferenceUtils.getInstance().getAuthToken();
+        String authString = mPreferenceUtils.getAuthToken();
 
         if (authString.isEmpty()) {
             return chain.proceed(chain.request());

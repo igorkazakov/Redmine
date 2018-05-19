@@ -12,7 +12,7 @@ import com.igorkazakov.user.redminepro.R;
  * Created by user on 21.07.17.
  */
 
-public class LoadingFragment implements BaseViewInterface {
+public class LoadingFragment implements ProgressInterface {
 
     private View loadingView;
     private ViewGroup container;
@@ -21,7 +21,9 @@ public class LoadingFragment implements BaseViewInterface {
     public LoadingFragment(Activity activity, ViewGroup container) {
 
         LinearLayout linearLayout = new LinearLayout(activity);
-        LinearLayout.LayoutParams linLayoutParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams linLayoutParam =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
         linearLayout.setLayoutParams(linLayoutParam);
         LayoutInflater layoutInflater = activity.getLayoutInflater();
         loadingView = layoutInflater.inflate(R.layout.fragment_loading, linearLayout, false);

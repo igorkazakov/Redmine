@@ -12,20 +12,20 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
-import com.igorkazakov.user.redminepro.screen.base.LoadingFragment;
+import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDetailView {
+public class IssueDetailActivity extends BaseActivity implements IssueDetailView {
 
     @BindView(R.id.contentView)
     FrameLayout mContentView;
@@ -75,12 +75,8 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
     @BindView(R.id.journalListView)
     View mJournalListView;
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-
     @InjectPresenter
     public IssueDetailPresenter mPresenter;
-    private LoadingFragment mLoadingView;
     public static final String ISSUE_ID_KEY = "ISSUE_ID_KEY";
 
     public static void start(@NonNull Context context, long issueId) {
@@ -92,15 +88,8 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_issue_detail);
 
-        ButterKnife.bind(this);
-
-        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mLoadingView = new LoadingFragment(this, mContentView);
-
         long issueId = getIntent().getLongExtra(ISSUE_ID_KEY, 0);
         getSupportActionBar().setSubtitle("#" + String.valueOf(issueId));
 
@@ -108,6 +97,11 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
         setupAttachmentIssueList();
         setupJournalIssueList();
         mPresenter.tryLoadIssueDetailsData(issueId);
+    }
+
+    @Override
+    public int getMainContentLayout() {
+        return R.layout.content_issue_detail;
     }
 
     private void setupChildIssueList() {
@@ -138,17 +132,7 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
     }
 
     @Override
-    public void showLoading() {
-        mLoadingView.showLoading();
-    }
-
-    @Override
-    public void hideLoading() {
-        mLoadingView.hideLoading();
-    }
-
-    @Override
-    public void setupView(Issue issueEntity) {
+    public void setupView(IssueDetail issueEntity) {
 
         mStatusTextView.setText(mPresenter.getSafeName(issueEntity.getStatus()));
         mPriorityTextView.setText(mPresenter.getSafeName(issueEntity.getPriority()));
@@ -164,6 +148,9 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
             List<Issue> issueEntities = mPresenter.getChildIssues(issueEntity.getChildren());
             if (issueEntities.size() == 0) {
                 mChildIssueListView.setVisibility(View.GONE);
+
+            } else {
+                mChildIssueListView.setVisibility(View.VISIBLE);
             }
 
             ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
@@ -176,14 +163,22 @@ public class IssueDetailActivity extends MvpAppCompatActivity implements IssueDe
         List<Attachment> attachmentEntities = issueEntity.getAttachments();
         if (attachmentEntities.size() == 0) {
             mAttachmentListView.setVisibility(View.GONE);
+
+        } else {
+            mAttachmentListView.setVisibility(View.VISIBLE);
         }
+
         AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
         mAttachmentList.setAdapter(attachmentAdapter);
 
         List<Journal> journalEntities = issueEntity.getJournals();
         if (journalEntities.size() == 0) {
             mJournalListView.setVisibility(View.GONE);
+
+        } else {
+            mJournalListView.setVisibility(View.VISIBLE);
         }
+
         JournalAdapter journalAdapter = new JournalAdapter(journalEntities, mPresenter);
         mJournalIssuesList.setAdapter(journalAdapter);
 

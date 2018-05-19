@@ -12,14 +12,16 @@ public class ProjectDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(projects);
+        realm.copyToRealmOrUpdate(projects);
         realm.commitTransaction();
     }
 
     public static List<Project> getAll() {
 
-        return Realm.getDefaultInstance()
+        List<Project> items = Realm.getDefaultInstance()
                 .where(Project.class)
                 .findAll();
+
+        return Realm.getDefaultInstance().copyFromRealm(items);
     }
 }

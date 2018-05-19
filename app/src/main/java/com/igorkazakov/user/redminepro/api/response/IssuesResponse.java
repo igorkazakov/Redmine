@@ -2,6 +2,7 @@ package com.igorkazakov.user.redminepro.api.response;
 
 import com.google.gson.annotations.SerializedName;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class IssuesResponse {
     private List<Issue> mIssues;
 
     @SerializedName("issue")
-    private Issue mIssue;
+    private IssueDetail mIssue;
 
     public List<Issue> getIssues() {
         return mIssues;
@@ -25,11 +26,11 @@ public class IssuesResponse {
         this.mIssues = mIssueList;
     }
 
-    public Issue getIssue() {
+    public IssueDetail getIssue() {
         return mIssue;
     }
 
-    public void setIssue(Issue mIssue) {
+    public void setIssue(IssueDetail mIssue) {
         this.mIssue = mIssue;
     }
 }

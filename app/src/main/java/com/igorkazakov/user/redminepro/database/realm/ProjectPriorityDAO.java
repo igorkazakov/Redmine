@@ -12,7 +12,7 @@ public class ProjectPriorityDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insertOrUpdate(priorities);
+        realm.copyToRealmOrUpdate(priorities);
         realm.commitTransaction();
     }
 
