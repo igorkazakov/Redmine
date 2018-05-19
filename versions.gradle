@@ -1,7 +1,7 @@
 ext {
     supportVersion = '26.+'
-    okhttpVersion = '3.4.1'
-    retrofitVersion = '2.1.0'
+    okhttpVersion = '3.10.0'
+    retrofitVersion = '2.4.0'
     rxandroidVersion = '2.0.2'
     rxjavaVersion = '2.1.12'
     rxLoaderVersion = '0.1.3'
