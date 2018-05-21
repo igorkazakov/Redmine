@@ -39,10 +39,7 @@ public class LoginPresenter extends MvpPresenter<LoginView> {
 
     public void tryLogin(@NonNull String login, @NonNull String password) {
 
-        if (TextUtils.validateEmail(login)) {
-            getViewState().showLoginError();
-
-        } else if (TextUtils.validatePassword(password)) {
+        if (TextUtils.validatePassword(password)) {
             getViewState().showPasswordError();
 
         } else {
