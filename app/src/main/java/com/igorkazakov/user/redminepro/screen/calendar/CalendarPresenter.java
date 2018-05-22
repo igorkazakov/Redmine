@@ -4,7 +4,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
-import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.OggyRepository;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
@@ -14,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 /**
  * Created by Igor on 29.08.2017.
  */
@@ -23,15 +20,14 @@ import javax.inject.Inject;
 @InjectViewState
 public class CalendarPresenter extends MvpPresenter<CalendarView> {
 
-    @Inject
     OggyRepository mRepository;
 
     private ArrayList<CalendarDay> listOfHoliday = new ArrayList<>();
     private ArrayList<CalendarDay> listOfHospital = new ArrayList<>();
     private ArrayList<CalendarDay> listOfVacation = new ArrayList<>();
 
-    public CalendarPresenter() {
-        RedmineApplication.getComponent().inject(this);
+    public CalendarPresenter(OggyRepository repository) {
+        mRepository = repository;
     }
 
     @Override
@@ -44,11 +40,11 @@ public class CalendarPresenter extends MvpPresenter<CalendarView> {
 
         mRepository.getCalendarDaysForYear()
                 .doOnSubscribe(__ -> getViewState().showLoading())
-                .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(response -> createMonthIndicatorArrays(response),
                         throwable -> {
                             ApiException exception = (ApiException)throwable;
                             getViewState().showError(exception);
+                            getViewState().hideLoading();
                         });
 
     }

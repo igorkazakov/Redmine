@@ -9,12 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +40,20 @@ public class IssuesFragment extends BaseFragment implements IssuesView {
 
     @InjectPresenter
     public IssuesPresenter mPresenter;
+
+    @Inject
+    RedmineRepository mRedmineRepository;
+
+    @ProvidePresenter
+    IssuesPresenter provideIssuesPresenter() {
+        return new IssuesPresenter(mRedmineRepository);
+    }
+
+    @Override
+    public MvpDelegate getMvpDelegate() {
+        RedmineApplication.getComponent().inject(this);
+        return super.getMvpDelegate();
+    }
 
     public static IssuesFragment newInstance() {
         IssuesFragment issuesFragment = new IssuesFragment();

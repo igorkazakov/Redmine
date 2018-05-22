@@ -5,12 +5,9 @@ import android.support.annotation.NonNull;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.igorkazakov.user.redminepro.utils.TextUtils;
-
-import javax.inject.Inject;
 
 /**
  * Created by user on 12.07.17.
@@ -18,14 +15,14 @@ import javax.inject.Inject;
 @InjectViewState
 public class LoginPresenter extends MvpPresenter<LoginView> {
 
-    @Inject
     RedmineRepository mRepository;
-
-    @Inject
     PreferenceUtils mPreferenceUtils;
 
-    public LoginPresenter() {
-        RedmineApplication.getComponent().inject(this);
+    public LoginPresenter(RedmineRepository repository,
+                          PreferenceUtils preferenceUtils) {
+
+        mPreferenceUtils = preferenceUtils;
+        mRepository = repository;
     }
 
     public void init() {
@@ -39,7 +36,10 @@ public class LoginPresenter extends MvpPresenter<LoginView> {
 
     public void tryLogin(@NonNull String login, @NonNull String password) {
 
-        if (TextUtils.validatePassword(password)) {
+        if (login.isEmpty()) {
+            getViewState().showLoginError();
+
+        } else if (TextUtils.validatePassword(password)) {
             getViewState().showPasswordError();
 
         } else {
