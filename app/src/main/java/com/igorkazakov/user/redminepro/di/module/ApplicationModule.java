@@ -22,24 +22,24 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    Context provideContext() {
+    public Context provideContext() {
         return mApplication;
     }
 
     @Provides
-    RedmineApplication provideApplication() {
+    public RedmineApplication provideApplication() {
         return mApplication;
     }
 
     @Provides
     @Singleton
-    PreferenceUtils provideSharedPrefs(Context context) {
+    public PreferenceUtils provideSharedPrefs(Context context) {
         return new PreferenceUtils(context);
     }
 
     @Provides
     @Singleton
-    DialogUtils provideDialogUtils() {
+    public DialogUtils provideDialogUtils() {
         return new DialogUtils();
     }
 }

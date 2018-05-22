@@ -4,11 +4,18 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
+import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 import com.igorkazakov.user.redminepro.screen.main.MainActivity;
 import com.igorkazakov.user.redminepro.utils.KeyboardUtils;
+import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnCheckedChanged;
@@ -25,13 +32,29 @@ public class LoginActivity extends BaseActivity implements LoginView {
     @BindView(R.id.password)
     EditText mPasswordView;
 
+    @Inject
+    RedmineRepository mRepository;
+
+    @Inject
+    PreferenceUtils mPreferenceUtils;
+
     @InjectPresenter
     public LoginPresenter mPresenter;
+
+    @ProvidePresenter
+    LoginPresenter provideLoginPresenter() {
+        return new LoginPresenter(mRepository, mPreferenceUtils);
+    }
+
+    @Override
+    public MvpDelegate getMvpDelegate() {
+        RedmineApplication.getComponent().inject(this);
+        return super.getMvpDelegate();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mPresenter.init();
     }
 

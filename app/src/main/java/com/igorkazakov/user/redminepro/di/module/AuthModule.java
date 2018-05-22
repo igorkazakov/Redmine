@@ -12,7 +12,7 @@ public class AuthModule {
 
     @Singleton
     @Provides
-    AuthorizationUtils provideAuthorizationUtils() {
+    public AuthorizationUtils provideAuthorizationUtils() {
         return new AuthorizationUtils();
     }
 }

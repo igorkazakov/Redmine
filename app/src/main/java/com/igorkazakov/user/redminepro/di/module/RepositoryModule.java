@@ -13,13 +13,13 @@ public class RepositoryModule {
 
     @Provides
     @Singleton
-    RedmineRepository provideRedmineRepository() {
+    public RedmineRepository provideRedmineRepository() {
         return new RedmineRepository();
     }
 
     @Provides
     @Singleton
-    OggyRepository provideOggyRepository() {
+    public OggyRepository provideOggyRepository() {
         return new OggyRepository();
     }
 }

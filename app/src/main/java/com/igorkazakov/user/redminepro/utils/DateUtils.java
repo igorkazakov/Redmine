@@ -43,11 +43,16 @@ public class DateUtils {
         return format.format(date);
     }
 
+    public static Date getYesterday(Calendar calendar) {
+
+        removeTime(calendar);
+        calendar.add(Calendar.DATE, -1);
+        return calendar.getTime();
+    }
+
     public static Date getYesterday() {
-        Calendar c = Calendar.getInstance();
-        removeTime(c);
-        c.add(Calendar.DATE, -1);
-        return c.getTime();
+
+        return getYesterday(Calendar.getInstance());
     }
 
     public static int getCurrentYear() {
@@ -69,13 +74,13 @@ public class DateUtils {
         return c.getTime();
     }
 
-    public static TimeInterval getPreviousWeekInterval() {
+    public static TimeInterval getPreviousWeekInterval(Date date) {
 
         int daysForPreviousSunday = -1;
         int daysForPreviousMonday = -6;
 
         Calendar c = Calendar.getInstance();
-        c.setTime(DateUtils.getMonday(new Date()));
+        c.setTime(DateUtils.getMonday(date));
         removeTime(c);
         c.add(Calendar.DATE, daysForPreviousSunday);
         Date end = c.getTime();
@@ -85,49 +90,66 @@ public class DateUtils {
         return new TimeInterval(start, end);
     }
 
-    public static TimeInterval getCurrentWeekInterval() {
+    public static TimeInterval getPreviousWeekInterval() {
+
+        return getPreviousWeekInterval(new Date());
+    }
+
+    public static TimeInterval getCurrentWeekInterval(Date date) {
 
         Calendar c = Calendar.getInstance();
-        c.setTime(DateUtils.getMonday(new Date()));
-        removeTime(c);
+        c.setTime(DateUtils.getMonday(date));
         Date start = c.getTime();
-        Date end = getCurrentDateWithoutTime();
+        Date end = getDateWithoutTime(date);
 
         return new TimeInterval(start, end);
     }
 
-    public static TimeInterval getCurrentMonthInterval() {
+    public static TimeInterval getCurrentWeekInterval() {
+
+        return getCurrentWeekInterval(new Date());
+    }
+
+    public static TimeInterval getCurrentMonthInterval(Date date) {
 
         Date start, end;
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(getCurrentDateWithoutTime());
-        removeTime(calendar);
+        calendar.setTime(getDateWithoutTime(date));
         calendar.set(Calendar.DAY_OF_MONTH,
                 calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
 
         start = calendar.getTime();
 
-        end = getCurrentDateWithoutTime();
+        end = getDateWithoutTime(date);
         return new TimeInterval(start, end);
     }
 
-    public static TimeInterval getCurrentWholeWeekInterval() {
+    public static TimeInterval getCurrentMonthInterval() {
+
+        return getCurrentMonthInterval(new Date());
+    }
+
+    public static TimeInterval getCurrentWholeWeekInterval(Date date) {
 
         Calendar c = Calendar.getInstance();
-        c.setTime(DateUtils.getMonday(new Date()));
-        removeTime(c);
+        c.setTime(DateUtils.getMonday(date));
         Date start = c.getTime();
         c.add(Calendar.DAY_OF_WEEK, 6);
         Date end = c.getTime();
         return new TimeInterval(start, end);
     }
 
-    public static TimeInterval getMonthInterval(int month) {
+    public static TimeInterval getCurrentWholeWeekInterval() {
+
+        return getCurrentWholeWeekInterval(new Date());
+    }
+
+    public static TimeInterval getMonthInterval(Date date, int month) {
 
         Date start, end;
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        removeTime(calendar);
+        calendar.setTime(getDateWithoutTime(date));
+
         calendar.set(Calendar.MONTH, month);
 
         calendar.set(Calendar.DAY_OF_MONTH,
@@ -141,9 +163,12 @@ public class DateUtils {
         return new TimeInterval(start, end);
     }
 
-    public static TimeInterval getIntervalFromStartYear() {
+    public static TimeInterval getMonthInterval(int month) {
 
-        Date currentDate = getCurrentDateWithoutTime();
+        return getMonthInterval(new Date(), month);
+    }
+
+    public static TimeInterval getIntervalFromStartYear(Date date) {
 
         int year = Calendar.getInstance().get(Calendar.YEAR);
         Calendar calendarStart = Calendar.getInstance();
@@ -153,7 +178,12 @@ public class DateUtils {
         removeTime(calendarStart);
         Date startDate = calendarStart.getTime();
 
-        return new TimeInterval(startDate, currentDate);
+        return new TimeInterval(startDate, getDateWithoutTime(date));
+    }
+
+    public static TimeInterval getIntervalFromStartYear() {
+
+        return getIntervalFromStartYear(new Date());
     }
 
     private static void removeTime(Calendar calendar) {
@@ -163,16 +193,14 @@ public class DateUtils {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    private static Date getCurrentDateWithoutTime() {
+    private static Date getDateWithoutTime(Date date) {
         Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+        cal.setTime(date);
         removeTime(cal);
         return cal.getTime();
     }
 
-    public static String timeDifference(Date oldDate) {
-
-        Date nowDate = new Date();
+    public static String timeDifference(Date nowDate, Date oldDate) {
 
         long diff = nowDate.getTime() - oldDate.getTime();
 
@@ -184,9 +212,9 @@ public class DateUtils {
         int diffYears = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
         int years = Math.abs(diffYears);
         int months = Math.abs(diffYears * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH));
-        long days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-        long minutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
-        long seconds = TimeUnit.SECONDS.convert(diff, TimeUnit.MILLISECONDS);
+        long days = Math.abs(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
+        long minutes = Math.abs(TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS));
+        long seconds = Math.abs(TimeUnit.SECONDS.convert(diff, TimeUnit.MILLISECONDS));
 
         if (years > 0) {
 
@@ -209,5 +237,10 @@ public class DateUtils {
         } else {
             return "";
         }
+    }
+
+    public static String timeDifference(Date oldDate) {
+
+        return timeDifference(new Date(), oldDate);
     }
 }

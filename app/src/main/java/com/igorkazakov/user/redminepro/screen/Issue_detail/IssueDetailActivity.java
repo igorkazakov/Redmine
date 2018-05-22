@@ -6,24 +6,28 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
+import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class IssueDetailActivity extends BaseActivity implements IssueDetailView {
 
@@ -75,9 +79,23 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
     @BindView(R.id.journalListView)
     View mJournalListView;
 
+    @Inject
+    RedmineRepository mRedmineRepository;
+
     @InjectPresenter
     public IssueDetailPresenter mPresenter;
     public static final String ISSUE_ID_KEY = "ISSUE_ID_KEY";
+
+    @ProvidePresenter
+    IssueDetailPresenter provideIssueDetailPresenter() {
+        return new IssueDetailPresenter(mRedmineRepository);
+    }
+
+    @Override
+    public MvpDelegate getMvpDelegate() {
+        RedmineApplication.getComponent().inject(this);
+        return super.getMvpDelegate();
+    }
 
     public static void start(@NonNull Context context, long issueId) {
         Intent intent = new Intent(context, IssueDetailActivity.class);

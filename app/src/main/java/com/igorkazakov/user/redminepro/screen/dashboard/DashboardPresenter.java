@@ -4,7 +4,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.database.realm.CalendarDayDAO;
 import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
@@ -20,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 /**
  * Created by user on 12.07.17.
  */
@@ -29,17 +26,16 @@ import javax.inject.Inject;
 @InjectViewState
 public class DashboardPresenter extends MvpPresenter<DashboardView> {
 
-    @Inject
     RedmineRepository mRedmineRepository;
-
-    @Inject
     OggyRepository mOggyRepository;
 
     private boolean mIsLoading = false;
 
-    public DashboardPresenter() {
+    public DashboardPresenter(RedmineRepository redmineRepository,
+                              OggyRepository oggyRepository) {
 
-        RedmineApplication.getComponent().inject(this);
+        mRedmineRepository = redmineRepository;
+        mOggyRepository = oggyRepository;
     }
 
     @Override

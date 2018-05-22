@@ -15,9 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -70,14 +68,6 @@ public class OggyRepository {
         observables.add(getCalendarDays(10, year));
         observables.add(getCalendarDays(11, year));
         observables.add(getCalendarDays(12, year));
-
-
-        Observable.zip(observables, new Function<Object[], List<OggyCalendarDay>>() {
-            @Override
-            public List<OggyCalendarDay> apply(Object[] objects) throws Exception {
-                return null;
-            }
-        });
 
         return Observable.zip(observables, args -> {
 

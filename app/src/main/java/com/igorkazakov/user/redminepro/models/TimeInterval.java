@@ -24,4 +24,17 @@ public class TimeInterval {
     public Date getEnd() {
         return end;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj instanceof TimeInterval) {
+            TimeInterval timeInterval = (TimeInterval) obj;
+
+            return getStart().getTime() == timeInterval.getStart().getTime() &&
+                    getEnd().getTime() == timeInterval.getEnd().getTime();
+        }
+
+        return false;
+    }
 }

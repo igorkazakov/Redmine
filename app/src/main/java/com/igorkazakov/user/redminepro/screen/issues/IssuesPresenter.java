@@ -3,10 +3,7 @@ package com.igorkazakov.user.redminepro.screen.issues;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.repository.RedmineRepository;
-
-import javax.inject.Inject;
 
 /**
  * Created by user on 25.07.17.
@@ -15,11 +12,10 @@ import javax.inject.Inject;
 @InjectViewState
 public class IssuesPresenter extends MvpPresenter<IssuesView> {
 
-    @Inject
     RedmineRepository mRedmineRepository;
 
-    public IssuesPresenter() {
-        RedmineApplication.getComponent().inject(this);
+    public IssuesPresenter(RedmineRepository redmineRepository) {
+        mRedmineRepository = redmineRepository;
     }
     @Override
     protected void onFirstViewAttach() {
