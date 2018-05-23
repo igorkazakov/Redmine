@@ -44,7 +44,6 @@ public class CalendarPresenter extends MvpPresenter<CalendarView> {
                         throwable -> {
                             ApiException exception = (ApiException)throwable;
                             getViewState().showError(exception);
-                            getViewState().hideLoading();
                         });
 
     }
