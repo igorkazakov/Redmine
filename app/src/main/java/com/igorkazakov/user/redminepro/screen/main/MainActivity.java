@@ -49,21 +49,26 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 item -> {
-                    switch (item.getItemId()) {
-                        case R.id.action_dashboard:
-                            showOrCreateFragment(DashboardFragment.class);
-                            break;
-                        case R.id.action_calendar:
-                            showOrCreateFragment(CalendarFragment.class);
-                            break;
-                        case R.id.action_issues:
-                            showOrCreateFragment(IssuesFragment.class);
-                            break;
-                    }
+                    changeFragment(item.getItemId());
                     return true;
                 });
 
         showOrCreateFragment(DashboardFragment.class);
+    }
+
+    public void changeFragment(int id) {
+
+        switch (id) {
+            case R.id.action_dashboard:
+                showOrCreateFragment(DashboardFragment.class);
+                break;
+            case R.id.action_calendar:
+                showOrCreateFragment(CalendarFragment.class);
+                break;
+            case R.id.action_issues:
+                showOrCreateFragment(IssuesFragment.class);
+                break;
+        }
     }
 
     public void showOrCreateFragment(Class fragmentClass){

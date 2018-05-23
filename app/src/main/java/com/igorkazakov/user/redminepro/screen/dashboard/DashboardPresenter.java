@@ -29,8 +29,6 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
     RedmineRepository mRedmineRepository;
     OggyRepository mOggyRepository;
 
-    private boolean mIsLoading = false;
-
     public DashboardPresenter(RedmineRepository redmineRepository,
                               OggyRepository oggyRepository) {
 
@@ -55,35 +53,30 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
 
     public void tryLoadDashboardData() {
 
-        if (!mIsLoading) {
-            mIsLoading = true;
-
-            mOggyRepository.getCalendarDaysForYear()
-                        .doOnSubscribe(__ -> getViewState().showLoading())
-                        .subscribe(response -> loadTimeEntriesData(),
-                                throwable -> {
-                                    loadTimeEntriesData();
-                                    ApiException exception = (ApiException)throwable;
-                                    getViewState().showError(exception);
-                                });
-        }
+        mOggyRepository.getCalendarDaysForYear()
+                .doOnSubscribe(__ -> getViewState().showLoading())
+                .subscribe(response -> loadTimeEntriesData(),
+                        throwable -> {
+                            loadTimeEntriesData();
+                            ApiException exception = (ApiException) throwable;
+                            getViewState().showError(exception);
+                        });
     }
 
     public void loadTimeEntriesData() {
 
         mRedmineRepository.getTimeEntriesForYear()
-                    .doOnTerminate(getViewState()::hideLoading)
-                    .doOnNext(__ -> getViewState().hideLoading())
-                    .subscribe(response -> setupView(),
-                            throwable -> {
-                                ApiException exception = (ApiException)throwable;
-                                getViewState().showError(exception);
-                            });
+                .doOnTerminate(getViewState()::hideLoading)
+                .doOnNext(__ -> getViewState().hideLoading())
+                .subscribe(response -> setupView(),
+                        throwable -> {
+                            ApiException exception = (ApiException) throwable;
+                            getViewState().showError(exception);
+                        });
     }
 
     public void setupView() {
 
-        mIsLoading = false;
         getViewState().setupCurrentWeekStatistic(remainHoursForNormalKpi(),
                 remainHoursForWeek(), getWholeCurrentWeekHoursNorm());
         getViewState().setupChart(KPIUtils.getHoursForYear(), KPIUtils.calculateKpiForYear());
