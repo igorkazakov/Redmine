@@ -30,16 +30,14 @@ public final class DateDeserializer implements JsonDeserializer<Date> {
     @Override
     public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
-        synchronized (this) {
+        String element = json.getAsJsonPrimitive().getAsString();
+        Date date = null;
 
-            String element = json.getAsJsonPrimitive().getAsString();
-            Date date = null;
-
-            try {
-                date = mDateFormat.get().parse(element);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        try {
+            date = mDateFormat.get().parse(element);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         try {
             date = mDateTimeFormat.get().parse(element);
@@ -47,8 +45,6 @@ public final class DateDeserializer implements JsonDeserializer<Date> {
             e.printStackTrace();
         }
 
-            return date;
-        }
+        return date;
     }
-
 }
