@@ -1,5 +1,9 @@
 package com.igorkazakov.user.redminepro.screen.dashboard;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.BuildConfig;
@@ -19,15 +23,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+
 /**
  * Created by user on 12.07.17.
  */
 
 @InjectViewState
-public class DashboardPresenter extends MvpPresenter<DashboardView> {
+public class DashboardPresenter extends MvpPresenter<DashboardView> implements LifecycleObserver {
 
-    RedmineRepository mRedmineRepository;
-    OggyRepository mOggyRepository;
+    private RedmineRepository mRedmineRepository;
+    private OggyRepository mOggyRepository;
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     public DashboardPresenter(RedmineRepository redmineRepository,
                               OggyRepository oggyRepository) {
@@ -44,16 +52,9 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
         tryLoadDashboardData();
     }
 
-    public void loadRedmineData() {
-        mRedmineRepository.getStatuses().subscribe();
-        mRedmineRepository.getTrackers().subscribe();
-        mRedmineRepository.getProjectPriorities().subscribe();
-        mRedmineRepository.getProjects().subscribe();
-    }
-
     public void tryLoadDashboardData() {
 
-        mOggyRepository.getCalendarDaysForYear()
+        Disposable disposable = mOggyRepository.getCalendarDaysForYear()
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .subscribe(response -> loadTimeEntriesData(),
                         throwable -> {
@@ -61,18 +62,8 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
                             ApiException exception = (ApiException) throwable;
                             getViewState().showError(exception);
                         });
-    }
 
-    public void loadTimeEntriesData() {
-
-        mRedmineRepository.getTimeEntriesForYear()
-                .doOnTerminate(getViewState()::hideLoading)
-                .doOnNext(__ -> getViewState().hideLoading())
-                .subscribe(response -> setupView(),
-                        throwable -> {
-                            ApiException exception = (ApiException) throwable;
-                            getViewState().showError(exception);
-                        });
+        mCompositeDisposable.add(disposable);
     }
 
     public void setupView() {
@@ -83,7 +74,28 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
         getViewState().setupStatisticRecyclerView(getStatistics());
     }
 
-    public List<StatisticModel> getStatistics() {
+    private void loadRedmineData() {
+        mRedmineRepository.getStatuses().subscribe();
+        mRedmineRepository.getTrackers().subscribe();
+        mRedmineRepository.getProjectPriorities().subscribe();
+        mRedmineRepository.getProjects().subscribe();
+    }
+
+    private void loadTimeEntriesData() {
+
+        Disposable disposable = mRedmineRepository.getTimeEntriesForYear()
+                .doOnTerminate(getViewState()::hideLoading)
+                .doOnNext(__ -> getViewState().hideLoading())
+                .subscribe(response -> setupView(),
+                        throwable -> {
+                            ApiException exception = (ApiException) throwable;
+                            getViewState().showError(exception);
+                        });
+
+        mCompositeDisposable.add(disposable);
+    }
+
+    private List<StatisticModel> getStatistics() {
 
         List<StatisticModel> timeModelList = new ArrayList<>();
         timeModelList.add(new StatisticModel(KPIUtils.getHoursForCurrentMonth(),
@@ -100,12 +112,12 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
         return timeModelList;
     }
 
-    public float getWholeCurrentWeekHoursNorm() {
+    private float getWholeCurrentWeekHoursNorm() {
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         return CalendarDayDAO.getHoursNormForInterval(interval);
     }
 
-    public float remainHoursForNormalKpi() {
+    private float remainHoursForNormalKpi() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         TimeModel model = TimeEntryDAO.getWorkHoursWithInterval(interval);
@@ -120,7 +132,7 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
         }
     }
 
-    public float remainHoursForWeek() {
+    private float remainHoursForWeek() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         TimeModel model = TimeEntryDAO.getWorkHoursWithInterval(interval);
@@ -131,6 +143,13 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> {
 
         } else {
             return 0;
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void onActivityDestroy() {
+        if (!mCompositeDisposable.isDisposed()) {
+            mCompositeDisposable.dispose();
         }
     }
 }

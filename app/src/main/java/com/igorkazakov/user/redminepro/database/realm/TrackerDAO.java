@@ -12,7 +12,7 @@ public class TrackerDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(trackers);
+        realm.insertOrUpdate(trackers);
         realm.commitTransaction();
     }
 

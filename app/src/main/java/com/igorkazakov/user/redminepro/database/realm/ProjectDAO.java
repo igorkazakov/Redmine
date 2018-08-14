@@ -12,7 +12,7 @@ public class ProjectDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(projects);
+        realm.insertOrUpdate(projects);
         realm.commitTransaction();
     }
 

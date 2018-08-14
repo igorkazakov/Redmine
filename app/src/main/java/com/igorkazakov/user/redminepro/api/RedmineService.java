@@ -11,6 +11,7 @@ import com.igorkazakov.user.redminepro.api.response.TrackersResponse;
 import com.igorkazakov.user.redminepro.api.response.VersionsResponse;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
@@ -46,13 +47,13 @@ public interface RedmineService {
     Observable<IssuesResponse> issueDetails(@Path("issue_id") long issueid);
 
     @GET("/issue_statuses.json")
-    Observable<StatusesResponse> statuses();
+    Single<StatusesResponse> statuses();
 
     @GET("/trackers.json")
-    Observable<TrackersResponse> trackers();
+    Single<TrackersResponse> trackers();
 
     @GET("/projects.json")
-    Observable<ProjectsResponse> projects();
+    Single<ProjectsResponse> projects();
 
     @GET("/projects/{project_id}/memberships.json")
     Observable<MembershipsResponse> memberships(@Path("project_id") long projectId,
@@ -63,5 +64,5 @@ public interface RedmineService {
     Observable<VersionsResponse> versions(@Path("project_id") long projectId);
 
     @GET("/enumerations/issue_priorities.json")
-    Observable<PrioritiesResponse> priorities();
+    Single<PrioritiesResponse> priorities();
 }

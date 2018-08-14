@@ -12,6 +12,7 @@ import java.util.List;
 
 public class IssuesResponse {
 
+
     @SerializedName("issues")
     private List<Issue> mIssues;
 
