@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.igorkazakov.user.redminepro.utils.TextUtils;
 
@@ -15,10 +15,10 @@ import com.igorkazakov.user.redminepro.utils.TextUtils;
 @InjectViewState
 public class LoginPresenter extends MvpPresenter<LoginView> {
 
-    RedmineRepository mRepository;
-    PreferenceUtils mPreferenceUtils;
+    private RepositoryInterface mRepository;
+    private PreferenceUtils mPreferenceUtils;
 
-    public LoginPresenter(RedmineRepository repository,
+    public LoginPresenter(RepositoryInterface repository,
                           PreferenceUtils preferenceUtils) {
 
         mPreferenceUtils = preferenceUtils;

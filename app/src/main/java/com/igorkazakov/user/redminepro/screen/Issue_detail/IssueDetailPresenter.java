@@ -18,7 +18,7 @@ import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
 import com.igorkazakov.user.redminepro.database.realm.ShortUserDAO;
 import com.igorkazakov.user.redminepro.database.realm.StatusDAO;
 import com.igorkazakov.user.redminepro.database.realm.TrackerDAO;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 
 import java.util.List;
 
@@ -29,15 +29,15 @@ import java.util.List;
 @InjectViewState
 public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
-    RedmineRepository mRedmineRepository;
+    private RepositoryInterface mRepository;
 
-    public IssueDetailPresenter(RedmineRepository redmineRepository) {
-        mRedmineRepository = redmineRepository;
+    public IssueDetailPresenter(RepositoryInterface redmineRepository) {
+        mRepository = redmineRepository;
     }
 
     public void tryLoadIssueDetailsData(long issueId) {
 
-        mRedmineRepository.getIssueDetails(issueId)
+        mRepository.getIssueDetails(issueId)
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(issueEntity -> setupView(issueEntity),

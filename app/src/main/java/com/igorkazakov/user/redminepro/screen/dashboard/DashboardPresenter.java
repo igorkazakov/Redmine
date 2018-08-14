@@ -13,8 +13,7 @@ import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.repository.OggyRepository;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
@@ -33,15 +32,12 @@ import io.reactivex.disposables.Disposable;
 @InjectViewState
 public class DashboardPresenter extends MvpPresenter<DashboardView> implements LifecycleObserver {
 
-    private RedmineRepository mRedmineRepository;
-    private OggyRepository mOggyRepository;
+    private RepositoryInterface mRepository;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
-    public DashboardPresenter(RedmineRepository redmineRepository,
-                              OggyRepository oggyRepository) {
+    public DashboardPresenter(RepositoryInterface repository) {
 
-        mRedmineRepository = redmineRepository;
-        mOggyRepository = oggyRepository;
+        mRepository = repository;
     }
 
     @Override
@@ -54,7 +50,7 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> implements L
 
     public void tryLoadDashboardData() {
 
-        Disposable disposable = mOggyRepository.getCalendarDaysForYear()
+        Disposable disposable = mRepository.getCalendarDaysForYear()
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .subscribe(response -> loadTimeEntriesData(),
                         throwable -> {
@@ -75,15 +71,15 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> implements L
     }
 
     private void loadRedmineData() {
-        mRedmineRepository.getStatuses().subscribe();
-        mRedmineRepository.getTrackers().subscribe();
-        mRedmineRepository.getProjectPriorities().subscribe();
-        mRedmineRepository.getProjects().subscribe();
+        mRepository.getStatuses().subscribe();
+        mRepository.getTrackers().subscribe();
+        mRepository.getProjectPriorities().subscribe();
+        mRepository.getProjects().subscribe();
     }
 
     private void loadTimeEntriesData() {
 
-        Disposable disposable = mRedmineRepository.getTimeEntriesForYear()
+        Disposable disposable = mRepository.getTimeEntriesForYear()
                 .doOnTerminate(getViewState()::hideLoading)
                 .doOnNext(__ -> getViewState().hideLoading())
                 .subscribe(response -> setupView(),

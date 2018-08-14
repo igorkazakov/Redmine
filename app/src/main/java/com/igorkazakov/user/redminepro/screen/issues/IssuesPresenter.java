@@ -3,7 +3,7 @@ package com.igorkazakov.user.redminepro.screen.issues;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 
 /**
  * Created by user on 25.07.17.
@@ -12,10 +12,10 @@ import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 @InjectViewState
 public class IssuesPresenter extends MvpPresenter<IssuesView> {
 
-    RedmineRepository mRedmineRepository;
+    private RepositoryInterface mRepository;
 
-    public IssuesPresenter(RedmineRepository redmineRepository) {
-        mRedmineRepository = redmineRepository;
+    public IssuesPresenter(RepositoryInterface redmineRepository) {
+        mRepository = redmineRepository;
     }
     @Override
     protected void onFirstViewAttach() {
@@ -25,7 +25,7 @@ public class IssuesPresenter extends MvpPresenter<IssuesView> {
 
     public void tryLoadIssuesData() {
 
-        mRedmineRepository.getMyIssues()
+        mRepository.getMyIssues()
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(response -> getViewState().setupView(response),

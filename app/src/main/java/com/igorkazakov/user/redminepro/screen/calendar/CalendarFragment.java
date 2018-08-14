@@ -15,7 +15,8 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.repository.OggyRepository;
+import com.igorkazakov.user.redminepro.repository.OggyService;
+import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -57,7 +58,7 @@ public class CalendarFragment extends BaseFragment implements CalendarView {
     public CalendarPresenter mPresenter;
 
     @Inject
-    OggyRepository mRepository;
+    RepositoryInterface mRepository;
 
     private int colorHoliday;
     private int colorHospital;

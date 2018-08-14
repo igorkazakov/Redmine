@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.di.module;
 
-import com.igorkazakov.user.redminepro.repository.OggyRepository;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.Repository;
+import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 
 import javax.inject.Singleton;
 
@@ -13,13 +13,7 @@ public class RepositoryModule {
 
     @Provides
     @Singleton
-    public RedmineRepository provideRedmineRepository() {
-        return new RedmineRepository();
-    }
-
-    @Provides
-    @Singleton
-    public OggyRepository provideOggyRepository() {
-        return new OggyRepository();
+    public RepositoryInterface provideRepository() {
+        return Repository.getInstance();
     }
 }

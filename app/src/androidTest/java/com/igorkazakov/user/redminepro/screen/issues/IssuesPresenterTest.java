@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.screen.issues;
 
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.RedmineService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class IssuesPresenterTest {
 
     @Mock
-    RedmineRepository redmineRepository;
+    RedmineService redmineRepository;
 
     @Mock
     IssuesView issuesView;

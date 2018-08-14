@@ -4,7 +4,7 @@ package com.igorkazakov.user.redminepro.screen.auth;
 
 import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.RedmineService;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
 import org.junit.Before;
@@ -29,7 +29,7 @@ public class LoginPresenterTest {
     LoginView loginView;
 
     @Mock
-    RedmineRepository repository;
+    RedmineService repository;
 
     @Mock
     PreferenceUtils preferenceUtils;

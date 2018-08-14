@@ -20,7 +20,8 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.At
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.RedmineService;
+import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 
 import java.util.List;
@@ -80,7 +81,7 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
     View mJournalListView;
 
     @Inject
-    RedmineRepository mRedmineRepository;
+    RepositoryInterface mRepository;
 
     @InjectPresenter
     public IssueDetailPresenter mPresenter;
@@ -88,7 +89,7 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
 
     @ProvidePresenter
     IssueDetailPresenter provideIssueDetailPresenter() {
-        return new IssueDetailPresenter(mRedmineRepository);
+        return new IssueDetailPresenter(mRepository);
     }
 
     @Override

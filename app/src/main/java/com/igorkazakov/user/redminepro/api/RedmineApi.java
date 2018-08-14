@@ -22,7 +22,7 @@ import retrofit2.http.Query;
  * Created by user on 11.07.17.
  */
 
-public interface RedmineService {
+public interface RedmineApi {
 
     @GET("/users/current.json")
     Observable<LoginResponse> login(@Header("Authorization") String authorization,
