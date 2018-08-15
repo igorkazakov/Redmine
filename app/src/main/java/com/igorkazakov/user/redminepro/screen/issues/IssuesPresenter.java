@@ -1,9 +1,13 @@
 package com.igorkazakov.user.redminepro.screen.issues;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
+
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by user on 25.07.17.
@@ -12,9 +16,10 @@ import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 @InjectViewState
 public class IssuesPresenter extends MvpPresenter<IssuesView> {
 
-    private RepositoryInterface mRepository;
+    private IssuesServiceInterface mRepository;
+    private Disposable mDisposable;
 
-    public IssuesPresenter(RepositoryInterface redmineRepository) {
+    public IssuesPresenter(IssuesServiceInterface redmineRepository) {
         mRepository = redmineRepository;
     }
     @Override
@@ -25,7 +30,7 @@ public class IssuesPresenter extends MvpPresenter<IssuesView> {
 
     public void tryLoadIssuesData() {
 
-        mRepository.getMyIssues()
+        mDisposable = mRepository.getMyIssues()
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(response -> getViewState().setupView(response),
@@ -33,5 +38,12 @@ public class IssuesPresenter extends MvpPresenter<IssuesView> {
                             ApiException exception = (ApiException)throwable;
                             getViewState().showError(exception);
                         });
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void onActivityDestroy() {
+        if (!mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
     }
 }

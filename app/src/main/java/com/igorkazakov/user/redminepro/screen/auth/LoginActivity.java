@@ -9,8 +9,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
-import com.igorkazakov.user.redminepro.repository.RedmineService;
-import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
+import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 import com.igorkazakov.user.redminepro.screen.main.MainActivity;
 import com.igorkazakov.user.redminepro.utils.KeyboardUtils;
@@ -34,7 +33,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
     EditText mPasswordView;
 
     @Inject
-    RepositoryInterface mRepository;
+    Repository mRepository;
 
     @Inject
     PreferenceUtils mPreferenceUtils;

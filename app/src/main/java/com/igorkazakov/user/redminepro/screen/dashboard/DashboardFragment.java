@@ -30,7 +30,7 @@ import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
+import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
 
@@ -64,7 +64,7 @@ public class DashboardFragment extends BaseFragment
     FrameLayout mContentView;
 
     @Inject
-    RepositoryInterface mRepository;
+    Repository mRepository;
 
     @InjectPresenter
     public DashboardPresenter mPresenter;
@@ -82,8 +82,7 @@ public class DashboardFragment extends BaseFragment
     }
 
     public static DashboardFragment newInstance() {
-        DashboardFragment dashboardFragment = new DashboardFragment();
-        return dashboardFragment;
+        return new DashboardFragment();
     }
 
     @Override

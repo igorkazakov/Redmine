@@ -6,8 +6,6 @@ import com.igorkazakov.user.redminepro.di.module.ApiModule;
 import com.igorkazakov.user.redminepro.di.module.ApplicationModule;
 import com.igorkazakov.user.redminepro.di.module.AuthModule;
 import com.igorkazakov.user.redminepro.di.module.RepositoryModule;
-import com.igorkazakov.user.redminepro.repository.OggyService;
-import com.igorkazakov.user.redminepro.repository.RedmineService;
 import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailActivity;
 import com.igorkazakov.user.redminepro.screen.auth.LoginActivity;
@@ -31,8 +29,6 @@ import dagger.Component;
 public interface ApplicationComponent {
 
     void inject(RedmineApplication application);
-    void inject(RedmineService redmineRepository);
-    void inject(OggyService oggyRepository);
     void inject(AuthInterceptor authInterceptor);
     void inject(IssuesFragment issuesFragment);
     void inject(DashboardFragment dashboardFragment);

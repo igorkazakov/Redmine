@@ -9,7 +9,6 @@ import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
 import com.igorkazakov.user.redminepro.models.TimeModel;
-import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
@@ -26,13 +25,13 @@ import io.reactivex.disposables.Disposable;
 @InjectViewState
 public class CalendarPresenter extends MvpPresenter<CalendarView> implements LifecycleObserver {
 
-    private RepositoryInterface mRepository;
+    private CalendarServiceInterface mRepository;
     private ArrayList<CalendarDay> listOfHoliday = new ArrayList<>();
     private ArrayList<CalendarDay> listOfHospital = new ArrayList<>();
     private ArrayList<CalendarDay> listOfVacation = new ArrayList<>();
     private Disposable mDisposable;
 
-    public CalendarPresenter(RepositoryInterface repository) {
+    public CalendarPresenter(CalendarServiceInterface repository) {
         mRepository = repository;
     }
 

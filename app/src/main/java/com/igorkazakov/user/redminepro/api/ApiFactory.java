@@ -65,11 +65,6 @@ public final class ApiFactory {
         sService = buildRetrofit(BuildConfig.REDMINE_API_ENDPOINT).create(RedmineApi.class);
     }
 
-//    public static <T>ApiErrorOperator<T> getApiErrorTransformer() {
-//
-//        return new ApiErrorOperator<>();
-//    }
-
     @NonNull
     private static Retrofit buildRetrofit(String baseUrl) {
 

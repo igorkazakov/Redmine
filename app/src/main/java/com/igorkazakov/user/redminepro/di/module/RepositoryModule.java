@@ -1,7 +1,6 @@
 package com.igorkazakov.user.redminepro.di.module;
 
 import com.igorkazakov.user.redminepro.repository.Repository;
-import com.igorkazakov.user.redminepro.repository.RepositoryInterface;
 
 import javax.inject.Singleton;
 
@@ -13,7 +12,7 @@ public class RepositoryModule {
 
     @Provides
     @Singleton
-    public RepositoryInterface provideRepository() {
+    public Repository provideRepository() {
         return Repository.getInstance();
     }
 }

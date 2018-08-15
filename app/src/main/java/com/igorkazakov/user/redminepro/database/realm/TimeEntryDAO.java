@@ -32,14 +32,16 @@ public class TimeEntryDAO {
 
         for (TimeEntry timeEntry: timeEntries) {
             if (timeEntry.getCustomFields().size() > 0) {
-                String type = timeEntry.getCustomFields().get(0).getValue();
+                String type = null;
+                if (timeEntry.getCustomFields().get(0) != null) {
+                    type = timeEntry.getCustomFields().get(0).getValue();
+                }
                 timeEntry.setType(type != null ? type : "");
             }
         }
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-
         realm.copyToRealmOrUpdate(timeEntries);
         realm.commitTransaction();
     }

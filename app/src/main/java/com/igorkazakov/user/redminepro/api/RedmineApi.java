@@ -35,9 +35,9 @@ public interface RedmineApi {
 
     @GET("/time_entries.json")
     Observable<TimeEntryResponse> timeEntriesForYear(@Query("limit") int limit,
-                                              @Query("user_id") long userId,
-                                              @Query("offset") int offset,
-                                              @Query("spent_on") String interval);
+                                                   @Query("user_id") long userId,
+                                                   @Query("offset") long offset,
+                                                   @Query("spent_on") String interval);
 
     @GET("/issues.json?assigned_to_id=me")
     Observable<IssuesResponse> issues(@Query("limit") int limit,

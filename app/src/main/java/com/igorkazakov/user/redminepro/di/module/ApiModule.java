@@ -3,7 +3,6 @@ package com.igorkazakov.user.redminepro.di.module;
 import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.api.OggyApi;
 import com.igorkazakov.user.redminepro.api.RedmineApi;
-import com.igorkazakov.user.redminepro.api.rxoperator.error.ApiErrorOperator;
 
 import javax.inject.Singleton;
 
@@ -23,12 +22,5 @@ public class ApiModule {
     @Singleton
     public OggyApi provideOggyApi() {
         return ApiFactory.getOggyService();
-    }
-
-    @Provides
-    @Singleton
-    public ApiErrorOperator provideApiErrorTransformer() {
-
-        return new ApiErrorOperator<>();
     }
 }
