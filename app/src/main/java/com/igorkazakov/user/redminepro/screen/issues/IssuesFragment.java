@@ -15,7 +15,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 
 import java.util.List;
@@ -42,11 +42,11 @@ public class IssuesFragment extends BaseFragment implements IssuesView {
     public IssuesPresenter mPresenter;
 
     @Inject
-    RedmineRepository mRedmineRepository;
+    Repository mRepository;
 
     @ProvidePresenter
     IssuesPresenter provideIssuesPresenter() {
-        return new IssuesPresenter(mRedmineRepository);
+        return new IssuesPresenter(mRepository);
     }
 
     @Override

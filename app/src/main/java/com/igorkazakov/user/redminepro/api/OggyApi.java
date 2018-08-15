@@ -12,7 +12,7 @@ import retrofit2.http.Query;
  * Created by user on 14.07.17.
  */
 
-public interface OggyService {
+public interface OggyApi {
 
     @GET("/api/user_calendar")
     Single<List<OggyCalendarDay>> getCalendarDays(@Query("login") String login,

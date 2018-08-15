@@ -3,8 +3,8 @@ package com.igorkazakov.user.redminepro.screen.dashboard;
 import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
-import com.igorkazakov.user.redminepro.repository.OggyRepository;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.OggyService;
+import com.igorkazakov.user.redminepro.repository.RedmineService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,10 +29,10 @@ import static org.mockito.Mockito.when;
 public class DashboardPresenterTest {
 
     @Mock
-    RedmineRepository redmineRepository;
+    RedmineService redmineRepository;
 
     @Mock
-    OggyRepository oggyRepository;
+    OggyService oggyRepository;
 
     @Mock
     DashboardView dashboardView;

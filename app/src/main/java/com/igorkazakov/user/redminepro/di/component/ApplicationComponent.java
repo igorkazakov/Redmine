@@ -2,11 +2,11 @@ package com.igorkazakov.user.redminepro.di.component;
 
 import com.igorkazakov.user.redminepro.api.AuthInterceptor;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.di.module.ApiModule;
 import com.igorkazakov.user.redminepro.di.module.ApplicationModule;
 import com.igorkazakov.user.redminepro.di.module.AuthModule;
 import com.igorkazakov.user.redminepro.di.module.RepositoryModule;
-import com.igorkazakov.user.redminepro.repository.OggyRepository;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailActivity;
 import com.igorkazakov.user.redminepro.screen.auth.LoginActivity;
 import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
@@ -20,16 +20,15 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {RepositoryModule.class,
+@Component(modules = {ApiModule.class,
         ApplicationModule.class,
-        AuthModule.class
+        AuthModule.class,
+        RepositoryModule.class
 })
 
 public interface ApplicationComponent {
 
     void inject(RedmineApplication application);
-    void inject(RedmineRepository redmineRepository);
-    void inject(OggyRepository oggyRepository);
     void inject(AuthInterceptor authInterceptor);
     void inject(IssuesFragment issuesFragment);
     void inject(DashboardFragment dashboardFragment);
@@ -38,5 +37,5 @@ public interface ApplicationComponent {
     void inject(BaseFragment baseFragment);
     void inject(LoginActivity loginActivity);
     void inject(IssueDetailActivity issueDetailActivity);
-
+    void inject(Repository repository);
 }

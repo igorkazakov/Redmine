@@ -1,34 +1,35 @@
 package com.igorkazakov.user.redminepro.screen.auth;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
-import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.igorkazakov.user.redminepro.utils.TextUtils;
+
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by user on 12.07.17.
  */
 @InjectViewState
-public class LoginPresenter extends MvpPresenter<LoginView> {
+public class LoginPresenter extends MvpPresenter<LoginView> implements LifecycleObserver {
 
-    RedmineRepository mRepository;
-    PreferenceUtils mPreferenceUtils;
+    private LoginServiceInterface mRepository;
+    private Disposable mDisposable;
 
-    public LoginPresenter(RedmineRepository repository,
-                          PreferenceUtils preferenceUtils) {
+    public LoginPresenter(LoginServiceInterface repository) {
 
-        mPreferenceUtils = preferenceUtils;
         mRepository = repository;
     }
 
     public void init() {
 
-        String login = mPreferenceUtils.getUserLogin();
-        boolean saveCredentials = mPreferenceUtils.getUserCredentials();
+        String login = mRepository.getUserLogin();
+        boolean saveCredentials = mRepository.getUserCredentials();
         if (!login.isEmpty() && saveCredentials) {
             getViewState().openDashboardScreen();
         }
@@ -44,24 +45,31 @@ public class LoginPresenter extends MvpPresenter<LoginView> {
 
         } else {
 
-            mRepository.auth(login, password)
-            .doOnSubscribe(__ -> getViewState().showLoading())
-            .doOnTerminate(getViewState()::hideLoading)
-            .subscribe(loginResponse -> onSuccessLogin(password),
-                    throwable -> {
-                        ApiException exception = (ApiException)throwable;
-                        getViewState().showError(exception);
-                    });
+            mDisposable = mRepository.auth(login, password)
+                    .doOnSubscribe(__ -> getViewState().showLoading())
+                    .doOnTerminate(getViewState()::hideLoading)
+                    .subscribe(loginResponse -> onSuccessLogin(password),
+                            throwable -> {
+                                ApiException exception = (ApiException) throwable;
+                                getViewState().showError(exception);
+                            });
         }
     }
 
     public void onSuccessLogin(String password) {
 
-        mPreferenceUtils.saveUserPassword(password);
+        mRepository.saveUserPassword(password);
         getViewState().openDashboardScreen();
     }
 
     public void saveSwitchState(boolean state) {
-        mPreferenceUtils.saveUserCredentials(state);
+        mRepository.saveUserCredentials(state);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void onActivityDestroy() {
+        if (!mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
     }
 }

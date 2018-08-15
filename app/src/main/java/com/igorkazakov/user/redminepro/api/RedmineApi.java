@@ -22,7 +22,7 @@ import retrofit2.http.Query;
  * Created by user on 11.07.17.
  */
 
-public interface RedmineService {
+public interface RedmineApi {
 
     @GET("/users/current.json")
     Observable<LoginResponse> login(@Header("Authorization") String authorization,
@@ -35,9 +35,9 @@ public interface RedmineService {
 
     @GET("/time_entries.json")
     Observable<TimeEntryResponse> timeEntriesForYear(@Query("limit") int limit,
-                                              @Query("user_id") long userId,
-                                              @Query("offset") int offset,
-                                              @Query("spent_on") String interval);
+                                                   @Query("user_id") long userId,
+                                                   @Query("offset") long offset,
+                                                   @Query("spent_on") String interval);
 
     @GET("/issues.json?assigned_to_id=me")
     Observable<IssuesResponse> issues(@Query("limit") int limit,

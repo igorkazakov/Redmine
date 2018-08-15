@@ -1,5 +1,8 @@
 package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
@@ -12,15 +15,10 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Pr
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
-import com.igorkazakov.user.redminepro.database.realm.FixedVersionDAO;
-import com.igorkazakov.user.redminepro.database.realm.IssueDAO;
-import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
-import com.igorkazakov.user.redminepro.database.realm.ShortUserDAO;
-import com.igorkazakov.user.redminepro.database.realm.StatusDAO;
-import com.igorkazakov.user.redminepro.database.realm.TrackerDAO;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
 
 import java.util.List;
+
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by user on 28.07.17.
@@ -29,18 +27,19 @@ import java.util.List;
 @InjectViewState
 public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
-    RedmineRepository mRedmineRepository;
+    private IssueDetailServiceInterface mRepository;
+    private Disposable mDisposable;
 
-    public IssueDetailPresenter(RedmineRepository redmineRepository) {
-        mRedmineRepository = redmineRepository;
+    public IssueDetailPresenter(IssueDetailServiceInterface redmineRepository) {
+        mRepository = redmineRepository;
     }
 
     public void tryLoadIssueDetailsData(long issueId) {
 
-        mRedmineRepository.getIssueDetails(issueId)
+        mDisposable = mRepository.getIssueDetails(issueId)
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
-                .subscribe(issueEntity -> setupView(issueEntity),
+                .subscribe(this::setupView,
                         throwable -> {
                             ApiException exception = (ApiException)throwable;
                             getViewState().showError(exception);
@@ -58,31 +57,38 @@ public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
     public List<Issue> getChildIssues(List<Child> children) {
 
-        return IssueDAO.getChildIssues(children);
+        return mRepository.getChildIssues(children);
     }
 
     public ShortUser getUserById(long id) {
 
-        return ShortUserDAO.getUserById(id);
+        return mRepository.getUserById(id);
     }
 
     public Status getStatusById(long id) {
 
-        return StatusDAO.getStatusById(id);
+        return mRepository.getStatusById(id);
     }
 
     public Tracker getTrackerById(long id) {
 
-        return TrackerDAO.getTrackerById(id);
+        return mRepository.getTrackerById(id);
     }
 
     public FixedVersion getVersionById(long id) {
 
-        return FixedVersionDAO.getFixedVersionById(id);
+        return mRepository.getVersionById(id);
     }
 
     public Priority getPriorityById(long id) {
 
-        return ProjectPriorityDAO.getPriorityById(id);
+        return mRepository.getPriorityById(id);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void onActivityDestroy() {
+        if (!mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
     }
 }

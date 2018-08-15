@@ -12,7 +12,7 @@ public class ShortUserDAO {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(shortUsers);
+        realm.insertOrUpdate(shortUsers);
         realm.commitTransaction();
     }
 

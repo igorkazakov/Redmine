@@ -4,7 +4,7 @@ import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Namable;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
-import com.igorkazakov.user.redminepro.repository.RedmineRepository;
+import com.igorkazakov.user.redminepro.repository.RedmineService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class IssueDetailPresenterTest {
 
     @Mock
-    RedmineRepository redmineRepository;
+    RedmineService redmineRepository;
 
     @Mock
     IssueDetailView issueDetailView;

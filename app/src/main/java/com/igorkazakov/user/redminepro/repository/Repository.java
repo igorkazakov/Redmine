@@ -1,11 +1,16 @@
 package com.igorkazakov.user.redminepro.repository;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.api.ContentType;
+import com.igorkazakov.user.redminepro.api.OggyApi;
+import com.igorkazakov.user.redminepro.api.RedmineApi;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
+import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
@@ -18,6 +23,7 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tr
 import com.igorkazakov.user.redminepro.api.responseEntity.Membership;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.database.realm.CalendarDayDAO;
 import com.igorkazakov.user.redminepro.database.realm.FixedVersionDAO;
 import com.igorkazakov.user.redminepro.database.realm.IssueDAO;
 import com.igorkazakov.user.redminepro.database.realm.IssueDetailDAO;
@@ -28,12 +34,20 @@ import com.igorkazakov.user.redminepro.database.realm.StatusDAO;
 import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.database.realm.TrackerDAO;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
+import com.igorkazakov.user.redminepro.models.TimeModel;
+import com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailServiceInterface;
+import com.igorkazakov.user.redminepro.screen.auth.LoginServiceInterface;
+import com.igorkazakov.user.redminepro.screen.calendar.CalendarServiceInterface;
+import com.igorkazakov.user.redminepro.screen.dashboard.DashboardServiceInterface;
+import com.igorkazakov.user.redminepro.screen.issues.IssuesServiceInterface;
 import com.igorkazakov.user.redminepro.utils.AuthorizationUtils;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
+import com.igorkazakov.user.redminepro.utils.RxUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -43,32 +57,98 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
-
-/**
- * Created by user on 11.07.17.
- */
-
-public class RedmineRepository {
-
-    @Inject
-    PreferenceUtils mPreferenceUtils;
+public class Repository implements LoginServiceInterface,
+        CalendarServiceInterface,
+        DashboardServiceInterface,
+        IssueDetailServiceInterface,
+        IssuesServiceInterface {
 
     @Inject
     AuthorizationUtils mAuthorizationUtils;
+    @Inject
+    PreferenceUtils mPreferenceUtils;
+    @Inject
+    RedmineApi mRedmineApi;
+    @Inject
+    OggyApi mOggyApi;
 
-    public RedmineRepository() {
-        RedmineApplication.getComponent().inject(this);
-    }
+    private static volatile Repository sInstance;
 
     private static final int limit = 100;
 
+    private Repository() {
+        RedmineApplication.getComponent().inject(this);
+    }
+
+    public static Repository getInstance() {
+
+        Repository localService = sInstance;
+        if (localService == null) {
+            synchronized (Repository.class) {
+                localService = sInstance;
+                if (localService == null) {
+                    localService = sInstance = new Repository();
+                }
+            }
+        }
+
+        return localService;
+    }
+
+    /// ============================================================================================
+    /// CalendarServiceInterface
+    /// ============================================================================================
+
+    public Single<List<OggyCalendarDay>> getCalendarDaysForYear() {
+
+        int year = DateUtils.getCurrentYear();
+
+        List<Single<List<OggyCalendarDay>>> observables = new ArrayList<>();
+        observables.add(getCalendarDays(1, year));
+        observables.add(getCalendarDays(2, year));
+        observables.add(getCalendarDays(3, year));
+        observables.add(getCalendarDays(4, year));
+        observables.add(getCalendarDays(5, year));
+        observables.add(getCalendarDays(6, year));
+        observables.add(getCalendarDays(7, year));
+        observables.add(getCalendarDays(8, year));
+        observables.add(getCalendarDays(9, year));
+        observables.add(getCalendarDays(10, year));
+        observables.add(getCalendarDays(11, year));
+        observables.add(getCalendarDays(12, year));
+
+        return Single.zip(observables, args -> {
+
+            List<OggyCalendarDay> list1 = new ArrayList<>();
+            for (Object arg : args) {
+                list1.addAll((List<OggyCalendarDay>) arg);
+            }
+
+            return list1;
+        });
+    }
+
+    /// ============================================================================================
+    /// LoginServiceInterface
+    /// ============================================================================================
+
+    @Override
+    public String getUserLogin() {
+        return mPreferenceUtils.getUserLogin();
+    }
+
+    @Override
+    public boolean getUserCredentials() {
+        return mPreferenceUtils.getUserCredentials();
+    }
+
     @NonNull
-    public Observable<LoginResponse> auth(@NonNull String login, @NonNull String password) {
+    public Observable<LoginResponse> auth(String login, String password) {
 
         String authString = mAuthorizationUtils.createAuthorizationString(login, password);
-        return ApiFactory.getRedmineService()
+        return mRedmineApi
                 .login(authString, ContentType.JSON.getValue())
-                .lift(ApiFactory.getApiErrorTransformer())
+                .lift(RxUtils.getApiErrorTransformer())
                 .map(loginResponse -> {
 
                     mPreferenceUtils.saveAuthToken(authString);
@@ -84,72 +164,19 @@ public class RedmineRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    @NonNull
-    public Observable<List<TimeEntry>> getTimeEntriesWithInterval(TimeInterval interval, int offset) {
-
-        long userId = mPreferenceUtils.getUserId();
-        String startDateString = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
-        String endDateString = DateUtils.stringFromDate(interval.getEnd(), DateUtils.getSimpleFormatter());
-        String strInterval = "><" + startDateString + "|" + endDateString;
-
-        return ApiFactory.getRedmineService()
-                .timeEntriesForYear(limit, userId, offset, strInterval)
-                .lift(ApiFactory.getApiErrorTransformer())
-                .map(timeEntryResponse -> {
-
-                    List<TimeEntry> timeEntries = timeEntryResponse.getTimeEntries();
-                    TimeEntryDAO.saveTimeEntries(timeEntries);
-                    return timeEntries;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+    @Override
+    public void saveUserPassword(String password) {
+        mPreferenceUtils.saveUserPassword(password);
     }
 
-    @NonNull
-    public Observable<List<TimeEntry>> getTimeEntriesForYear() {
-
-        TimeInterval interval = DateUtils.getIntervalFromStartYear();
-        Observable<List<TimeEntry>> observable;
-
-        Observable<List<TimeEntry>> observableNetwork = Observable
-                .range(0, Integer.MAX_VALUE - 1)
-                .lift(ApiFactory.getApiErrorTransformer())
-                .subscribeOn(Schedulers.io())
-                .concatMap( integer -> {
-
-                    int offset = integer * limit;
-                    return getTimeEntriesWithInterval(interval, offset);
-                })
-                .takeUntil((Predicate<? super List<TimeEntry>>) List::isEmpty);
-
-        List<TimeEntry> cachedData = TimeEntryDAO.getAll();
-
-        if (cachedData.size() > 0) {
-
-            observable = Observable.just(cachedData);
-
-        } else {
-            observable = observableNetwork;
-        }
-
-        return observable.observeOn(AndroidSchedulers.mainThread());
+    @Override
+    public void saveUserCredentials(boolean state) {
+        mPreferenceUtils.saveUserCredentials(state);
     }
 
-
-    @NonNull
-    private Observable<List<Issue>> getIssues(int offset) {
-
-        return ApiFactory.getRedmineService()
-                .issues(limit, offset)
-                .lift(ApiFactory.getApiErrorTransformer())
-                .map(issuesResponse -> {
-
-                    List<Issue> issues = issuesResponse.getIssues();
-                    IssueDAO.saveIssues(issues);
-                    return issues;
-                })
-                .subscribeOn(Schedulers.io());
-    }
+    /// ============================================================================================
+    /// IssuesServiceInterface
+    /// ============================================================================================
 
     @NonNull
     public Observable<List<Issue>> getMyIssues() {
@@ -158,7 +185,7 @@ public class RedmineRepository {
 
         Observable<List<Issue>> observableNetwork = Observable
                 .range(0, Integer.MAX_VALUE - 1)
-                .lift(ApiFactory.getApiErrorTransformer())
+                .lift(RxUtils.getApiErrorTransformer())
                 .subscribeOn(Schedulers.io())
                 .concatMap(integer -> {
 
@@ -196,14 +223,18 @@ public class RedmineRepository {
         return observable.observeOn(AndroidSchedulers.mainThread());
     }
 
+    /// ============================================================================================
+    /// IssueDetailServiceInterface
+    /// ============================================================================================
+
     @NonNull
     public Observable<IssueDetail> getIssueDetails(long issueId) {
 
         Observable<IssueDetail> observable;
 
-        Observable<IssueDetail> observableNetwork = ApiFactory.getRedmineService()
+        Observable<IssueDetail> observableNetwork = mRedmineApi
                 .issueDetails(issueId)
-                .lift(ApiFactory.getApiErrorTransformer())
+                .lift(RxUtils.getApiErrorTransformer())
                 .map(issuesResponse -> {
 
                     IssueDetail issue = issuesResponse.getIssue();
@@ -233,10 +264,111 @@ public class RedmineRepository {
         return observable.observeOn(AndroidSchedulers.mainThread());
     }
 
+    @Override
+    public List<Issue> getChildIssues(List<Child> children) {
+        return IssueDAO.getChildIssues(children);
+    }
+
+    @Override
+    public ShortUser getUserById(long id) {
+        return ShortUserDAO.getUserById(id);
+    }
+
+    @Override
+    public Status getStatusById(long id) {
+        return StatusDAO.getStatusById(id);
+    }
+
+    @Override
+    public Tracker getTrackerById(long id) {
+        return TrackerDAO.getTrackerById(id);
+    }
+
+    @Override
+    public FixedVersion getVersionById(long id) {
+        return FixedVersionDAO.getFixedVersionById(id);
+    }
+
+    @Override
+    public Priority getPriorityById(long id) {
+        return ProjectPriorityDAO.getPriorityById(id);
+    }
+
+    /// ============================================================================================
+    /// DashboardServiceInterface
+    /// ============================================================================================
+
+    @NonNull
+    public Observable<List<TimeEntry>> getTimeEntriesWithInterval(TimeInterval interval, long offset) {
+
+        long userId = mPreferenceUtils.getUserId();
+        String startDateString = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
+        String endDateString = DateUtils.stringFromDate(interval.getEnd(), DateUtils.getSimpleFormatter());
+        String strInterval = "><" + startDateString + "|" + endDateString;
+
+        return mRedmineApi
+                .timeEntriesForYear(limit, userId, offset, strInterval)
+                .lift(RxUtils.getApiErrorTransformer())
+                .map(timeEntryResponse -> {
+
+                    List<TimeEntry> timeEntries = timeEntryResponse.getTimeEntries();
+                    TimeEntryDAO.saveTimeEntries(timeEntries);
+                    Log.e("getTimeEntriesWith", "page" + offset+ "\n");
+                    return timeEntries;
+                })
+                .subscribeOn(Schedulers.computation());
+    }
+
+    @NonNull
+    public Observable<List<TimeEntry>> getTimeEntriesForYear() {
+
+        TimeInterval interval = DateUtils.getIntervalFromStartYear();
+        Observable<List<TimeEntry>> observable;
+
+        Observable<List<TimeEntry>> observableNetwork = Observable
+                .intervalRange(0,
+                        Integer.MAX_VALUE - 1,
+                        0,
+                        1,
+                        TimeUnit.SECONDS)
+                .lift(RxUtils.getApiErrorTransformer())
+                .subscribeOn(Schedulers.io())
+                .concatMap( integer -> {
+
+                    long offset = integer * limit;
+                    Log.e("getTimeEntriesWith", "post page" + offset + "\n");
+                    return getTimeEntriesWithInterval(interval, offset);
+                })
+                .takeUntil((Predicate<? super List<TimeEntry>>) List::isEmpty);
+
+        List<TimeEntry> cachedData = TimeEntryDAO.getAll();
+
+        if (cachedData.size() > 0) {
+
+            observable = Observable.just(cachedData)
+                    .concatWith(observableNetwork);
+
+        } else {
+            observable = observableNetwork;
+        }
+
+        return observable.observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public float fetchHoursNormForInterval(TimeInterval interval) {
+        return CalendarDayDAO.getHoursNormForInterval(interval);
+    }
+
+    @Override
+    public TimeModel fetchWorkHoursWithInterval(TimeInterval interval) {
+        return TimeEntryDAO.getWorkHoursWithInterval(interval);
+    }
+
     @NonNull
     public Single getProjects() {
 
-        return ApiFactory.getRedmineService()
+        return mRedmineApi
                 .projects()
                 .map(projectsResponse -> {
 
@@ -254,7 +386,7 @@ public class RedmineRepository {
     @NonNull
     public Single getTrackers() {
 
-        return ApiFactory.getRedmineService()
+        return mRedmineApi
                 .trackers()
                 .map(trackersResponse -> {
 
@@ -270,7 +402,7 @@ public class RedmineRepository {
     @NonNull
     public Single getStatuses() {
 
-        return ApiFactory.getRedmineService()
+        return mRedmineApi
                 .statuses()
                 .map(statusesResponse -> {
 
@@ -284,10 +416,9 @@ public class RedmineRepository {
                 .subscribeOn(Schedulers.io());
     }
 
-    @NonNull
     public void getVersionsByProject(long projectId) {
 
-        ApiFactory.getRedmineService()
+        mRedmineApi
                 .versions(projectId)
                 .map(versionsResponse -> {
 
@@ -301,10 +432,9 @@ public class RedmineRepository {
                 .subscribe();
     }
 
-    @NonNull
     public Single getProjectPriorities() {
 
-        return ApiFactory.getRedmineService()
+        return mRedmineApi
                 .priorities()
                 .map(prioritiesResponse -> {
 
@@ -316,6 +446,8 @@ public class RedmineRepository {
                 .onErrorReturn(throwable -> new ArrayList<>())
                 .subscribeOn(Schedulers.io());
     }
+
+
 
     private void loadUsers(@NonNull List<Project> projects) {
 
@@ -343,7 +475,7 @@ public class RedmineRepository {
     @NonNull
     private Observable<List<ShortUser>> getMemberships(int offset, long projectId) {
 
-        return ApiFactory.getRedmineService()
+        return mRedmineApi
                 .memberships(projectId, limit, offset)
                 .map(membershipsResponse -> {
 
@@ -356,10 +488,43 @@ public class RedmineRepository {
                     }
 
                     ShortUserDAO.saveShortUsers(shortUsers);
-
                     return shortUsers;
                 })
                 .onErrorReturn(throwable -> new ArrayList<>())
                 .subscribeOn(Schedulers.newThread());
+    }
+
+    @NonNull
+    private Observable<List<Issue>> getIssues(int offset) {
+
+        return mRedmineApi
+                .issues(limit, offset)
+                .lift(RxUtils.getApiErrorTransformer())
+                .map(issuesResponse -> {
+
+                    List<Issue> issues = issuesResponse.getIssues();
+                    IssueDAO.saveIssues(issues);
+                    return issues;
+                })
+                .subscribeOn(Schedulers.io());
+    }
+
+    private Single<List<OggyCalendarDay>> getCalendarDays(int month, int year) {
+
+        String login = mPreferenceUtils.getUserLogin();
+        String password = mPreferenceUtils.getUserPassword();
+
+        return mOggyApi
+                .getCalendarDays(login, password, month, year)
+                .lift(RxUtils.getApiErrorTransformer())
+                .map(calendarDays -> {
+
+
+                    CalendarDayDAO.saveCalendarDays(calendarDays);
+
+                    return calendarDays;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

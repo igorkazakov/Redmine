@@ -2,7 +2,7 @@ package com.igorkazakov.user.redminepro.screen.calendar;
 
 import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
-import com.igorkazakov.user.redminepro.repository.OggyRepository;
+import com.igorkazakov.user.redminepro.repository.OggyService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class CalendarPresenterTest {
     CalendarView calendarView;
 
     @Mock
-    OggyRepository repository;
+    OggyService repository;
 
     public CalendarPresenterTest() {
         super();
