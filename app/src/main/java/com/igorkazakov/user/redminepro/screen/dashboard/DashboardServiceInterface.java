@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.screen.dashboard;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
+import com.igorkazakov.user.redminepro.database.room.entity.OggyCalendarDayEntity;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 
@@ -12,7 +12,7 @@ import io.reactivex.Single;
 
 public interface DashboardServiceInterface {
 
-    Single<List<OggyCalendarDay>> getCalendarDaysForYear();
+    Single<List<OggyCalendarDayEntity>> getCalendarDaysForYear();
     Single getStatuses();
     Single getProjectPriorities();
     Single getTrackers();

@@ -8,7 +8,6 @@ import com.igorkazakov.user.redminepro.api.ContentType;
 import com.igorkazakov.user.redminepro.api.OggyApi;
 import com.igorkazakov.user.redminepro.api.RedmineApi;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
-import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
@@ -33,6 +32,8 @@ import com.igorkazakov.user.redminepro.database.realm.ShortUserDAO;
 import com.igorkazakov.user.redminepro.database.realm.StatusDAO;
 import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.database.realm.TrackerDAO;
+import com.igorkazakov.user.redminepro.database.room.database.RoomDbHelper;
+import com.igorkazakov.user.redminepro.database.room.entity.OggyCalendarDayEntity;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailServiceInterface;
@@ -71,6 +72,8 @@ public class Repository implements LoginServiceInterface,
     RedmineApi mRedmineApi;
     @Inject
     OggyApi mOggyApi;
+    @Inject
+    RoomDbHelper mRoomDbHelper;
 
     private static volatile Repository sInstance;
 
@@ -99,11 +102,11 @@ public class Repository implements LoginServiceInterface,
     /// CalendarServiceInterface
     /// ============================================================================================
 
-    public Single<List<OggyCalendarDay>> getCalendarDaysForYear() {
+    public Single<List<OggyCalendarDayEntity>> getCalendarDaysForYear() {
 
         int year = DateUtils.getCurrentYear();
 
-        List<Single<List<OggyCalendarDay>>> observables = new ArrayList<>();
+        List<Single<List<OggyCalendarDayEntity>>> observables = new ArrayList<>();
         observables.add(getCalendarDays(1, year));
         observables.add(getCalendarDays(2, year));
         observables.add(getCalendarDays(3, year));
@@ -119,9 +122,9 @@ public class Repository implements LoginServiceInterface,
 
         return Single.zip(observables, args -> {
 
-            List<OggyCalendarDay> list1 = new ArrayList<>();
+            List<OggyCalendarDayEntity> list1 = new ArrayList<>();
             for (Object arg : args) {
-                list1.addAll((List<OggyCalendarDay>) arg);
+                list1.addAll((List<OggyCalendarDayEntity>) arg);
             }
 
             return list1;
@@ -509,7 +512,7 @@ public class Repository implements LoginServiceInterface,
                 .subscribeOn(Schedulers.io());
     }
 
-    private Single<List<OggyCalendarDay>> getCalendarDays(int month, int year) {
+    private Single<List<OggyCalendarDayEntity>> getCalendarDays(int month, int year) {
 
         String login = mPreferenceUtils.getUserLogin();
         String password = mPreferenceUtils.getUserPassword();
@@ -519,8 +522,8 @@ public class Repository implements LoginServiceInterface,
                 .lift(RxUtils.getApiErrorTransformer())
                 .map(calendarDays -> {
 
-
-                    CalendarDayDAO.saveCalendarDays(calendarDays);
+                    mRoomDbHelper.oggyCalendarDayEntityDAO().insert(calendarDays);
+                    //CalendarDayDAO.saveCalendarDays(calendarDays);
 
                     return calendarDays;
                 })

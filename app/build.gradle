@@ -99,9 +99,11 @@ dependencies {
 
     implementation 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.2'
 
-
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
-    // Optional, if you use support library fragments:
+
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
+
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 }

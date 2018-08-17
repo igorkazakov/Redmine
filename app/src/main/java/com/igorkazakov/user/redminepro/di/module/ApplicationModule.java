@@ -1,8 +1,10 @@
 package com.igorkazakov.user.redminepro.di.module;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.database.room.database.RoomDbHelper;
 import com.igorkazakov.user.redminepro.utils.DialogUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
@@ -41,5 +43,12 @@ public class ApplicationModule {
     @Singleton
     public DialogUtils provideDialogUtils() {
         return new DialogUtils();
+    }
+
+    @Provides
+    @Singleton
+    public RoomDbHelper provideRoomDb(Context context) {
+        return Room.databaseBuilder(context,
+                RoomDbHelper.class, "database").build();
     }
 }

@@ -1,6 +1,6 @@
 package com.igorkazakov.user.redminepro.api;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
+import com.igorkazakov.user.redminepro.database.room.entity.OggyCalendarDayEntity;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ import retrofit2.http.Query;
 public interface OggyApi {
 
     @GET("/api/user_calendar")
-    Single<List<OggyCalendarDay>> getCalendarDays(@Query("login") String login,
-                                                  @Query("password") String password,
-                                                  @Query("month") Integer month,
-                                                  @Query("year") Integer year);
+    Single<List<OggyCalendarDayEntity>> getCalendarDays(@Query("login") String login,
+                                                        @Query("password") String password,
+                                                        @Query("month") Integer month,
+                                                        @Query("year") Integer year);
 }

@@ -8,6 +8,7 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
 import com.igorkazakov.user.redminepro.api.responseEntity.CalendarDay.OggyCalendarDay;
+import com.igorkazakov.user.redminepro.database.room.entity.OggyCalendarDayEntity;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -59,9 +60,9 @@ public class CalendarPresenter extends MvpPresenter<CalendarView> implements Lif
         getViewState().showDayWorkHours(kpi, model);
     }
 
-    private void createMonthIndicatorArrays(List<OggyCalendarDay> response) {
+    private void createMonthIndicatorArrays(List<OggyCalendarDayEntity> response) {
 
-        for (OggyCalendarDay day : response) {
+        for (OggyCalendarDayEntity day : response) {
 
             switch (day.getType()) {
                 case OggyCalendarDay.FEAST:

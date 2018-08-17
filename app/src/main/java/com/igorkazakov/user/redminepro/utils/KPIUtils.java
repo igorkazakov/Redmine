@@ -2,6 +2,7 @@ package com.igorkazakov.user.redminepro.utils;
 
 import com.igorkazakov.user.redminepro.database.realm.CalendarDayDAO;
 import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
+import com.igorkazakov.user.redminepro.database.room.dao.OggyCalendarDayDAO;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 
@@ -43,7 +44,7 @@ public class KPIUtils {
 
         TimeInterval interval = DateUtils.getIntervalFromStartYear();
         TimeModel model = TimeEntryDAO.getWorkHoursWithInterval(interval);
-        float norm = CalendarDayDAO.getHoursNormForInterval(interval);
+        float norm = OggyCalendarDayDAO.getHoursNormForInterval(interval.getStart().getTime(), interval.getEnd().getTime());
 
         return NumberUtils.round((model.getRegularTime() + model.getTeamFuckupTime()) / norm);
     }
