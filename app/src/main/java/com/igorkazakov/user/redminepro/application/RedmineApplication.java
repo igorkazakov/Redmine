@@ -6,6 +6,7 @@ import com.igorkazakov.user.redminepro.di.component.ApplicationComponent;
 import com.igorkazakov.user.redminepro.di.component.DaggerApplicationComponent;
 import com.igorkazakov.user.redminepro.di.module.ApplicationModule;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
+import com.squareup.leakcanary.LeakCanary;
 
 import javax.inject.Inject;
 
@@ -34,6 +35,13 @@ public class RedmineApplication extends MultiDexApplication {
         sComponent.inject(this);
 
         Realm.init(this);
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
     }
 
     @Override
