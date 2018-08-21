@@ -25,6 +25,14 @@ public class TimeInterval {
         return end;
     }
 
+    public Long getStartLong() {
+        return start.getTime();
+    }
+
+    public Long getEndLong() {
+        return end.getTime();
+    }
+
     @Override
     public boolean equals(Object obj) {
 

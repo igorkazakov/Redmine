@@ -10,8 +10,6 @@ import android.preference.PreferenceManager;
 
 public class PreferenceUtils {
 
-    private SharedPreferences mSharedPreferences;
-
     private static final String USER_ID = "USER_ID";
     private static final String USER_LOGIN = "USER_LOGIN";
     private static final String USER_PASSWORD = "USER_PASSWORD";
@@ -20,7 +18,25 @@ public class PreferenceUtils {
     private static final String SAVE_CREDENTIALS = "SAVE_CREDENTIALS";
     private static final String USER_TOKEN = "USER_TOKEN";
 
-    public PreferenceUtils(Context context) {
+    private SharedPreferences mSharedPreferences;
+    private static volatile PreferenceUtils sInstance;
+
+    public static PreferenceUtils getInstance(Context context) {
+
+        PreferenceUtils localInstance = sInstance;
+        if (localInstance == null) {
+            synchronized (PreferenceUtils.class) {
+                localInstance = sInstance;
+                if (localInstance == null) {
+                    localInstance = sInstance = new PreferenceUtils(context);
+                }
+            }
+        }
+
+        return localInstance;
+    }
+
+    private PreferenceUtils(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 

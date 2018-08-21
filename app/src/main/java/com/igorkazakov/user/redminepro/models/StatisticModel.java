@@ -6,9 +6,9 @@ package com.igorkazakov.user.redminepro.models;
 
 public class StatisticModel {
 
-    TimeModel timeModel;
-    float kpi;
-    String title;
+    private TimeModel timeModel;
+    private float kpi;
+    private String title;
 
     public String getTitle() {
         return title;

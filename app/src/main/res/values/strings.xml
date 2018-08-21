@@ -45,4 +45,10 @@
     <string name="bottom_menu_calendar">Calendar</string>
     <string name="bottom_menu_issues">Issues</string>
 
+    <string name="title_current_month">Current month</string>
+    <string name="title_previous_week">Previous week</string>
+    <string name="title_current_week">Current week</string>
+    <string name="title_yesterday">Yesterday</string>
+    <string name="title_today">Today</string>
+
 </resources>

@@ -6,6 +6,7 @@ import android.content.Context;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
 import com.igorkazakov.user.redminepro.database.room.database.RoomDbHelper;
 import com.igorkazakov.user.redminepro.utils.DialogUtils;
+import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 
 import javax.inject.Singleton;
@@ -36,7 +37,7 @@ public class ApplicationModule {
     @Provides
     @Singleton
     public PreferenceUtils provideSharedPrefs(Context context) {
-        return new PreferenceUtils(context);
+        return PreferenceUtils.getInstance(context);
     }
 
     @Provides
@@ -49,6 +50,14 @@ public class ApplicationModule {
     @Singleton
     public RoomDbHelper provideRoomDb(Context context) {
         return Room.databaseBuilder(context,
-                RoomDbHelper.class, "database").build();
+                RoomDbHelper.class, "database")
+                .allowMainThreadQueries()
+                .build();
+    }
+
+    @Provides
+    @Singleton
+    public KPIUtils provideKPIUtils() {
+        return KPIUtils.getInstance();
     }
 }

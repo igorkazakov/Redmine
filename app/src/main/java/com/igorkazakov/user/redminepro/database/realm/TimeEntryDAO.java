@@ -7,6 +7,7 @@ import com.igorkazakov.user.redminepro.models.TimeModel;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.Single;
 import io.realm.Realm;
 
 public class TimeEntryDAO {
@@ -79,7 +80,8 @@ public class TimeEntryDAO {
                 .floatValue();
     }
 
-    public static TimeModel getWorkHoursWithInterval(TimeInterval interval) {
+    public static Single<TimeModel> getWorkHoursWithInterval(TimeInterval interval) {
+
 
         TimeModel model = new TimeModel(0, 0, 0);
 
@@ -87,10 +89,10 @@ public class TimeEntryDAO {
         model.setFuckupTime(getWorkHoursWithIntervalAndTimeType(interval, TimeType.FUCKUP));
         model.setTeamFuckupTime(getWorkHoursWithIntervalAndTimeType(interval, TimeType.TEAMFUCKUP));
 
-        return model;
+        return Single.just(model);
     }
 
-    public static TimeModel getWorkHoursWithDate(Date date) {
+    public static Single<TimeModel> getWorkHoursWithDate(Date date) {
 
         TimeModel model = new TimeModel(0, 0, 0);
 
@@ -98,6 +100,6 @@ public class TimeEntryDAO {
         model.setFuckupTime(getWorkHoursWithDateAndTimeType(date, TimeType.FUCKUP));
         model.setTeamFuckupTime(getWorkHoursWithDateAndTimeType(date, TimeType.TEAMFUCKUP));
 
-        return model;
+        return Single.just(model);
     }
 }

@@ -8,16 +8,11 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.models.StatisticModel;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -30,10 +25,12 @@ import io.reactivex.disposables.Disposable;
 public class DashboardPresenter extends MvpPresenter<DashboardView> implements LifecycleObserver {
 
     private DashboardServiceInterface mRepository;
+    private KPIUtils mKPIUtils;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
-    public DashboardPresenter(DashboardServiceInterface repository) {
+    DashboardPresenter(DashboardServiceInterface repository, KPIUtils kpiUtils) {
         mRepository = repository;
+        mKPIUtils = kpiUtils;
     }
 
     @Override
@@ -61,16 +58,23 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> implements L
     public void setupView() {
 
         getViewState().setupCurrentWeekStatistic(remainHoursForNormalKpi(),
-                remainHoursForWeek(), getWholeCurrentWeekHoursNorm());
-        getViewState().setupChart(KPIUtils.getHoursForYear(), KPIUtils.calculateKpiForYear());
-        getViewState().setupStatisticRecyclerView(getStatistics());
+                remainHoursForWeek(),
+                getWholeCurrentWeekHoursNorm());
+
+        mCompositeDisposable.add(mKPIUtils.getChartData().subscribe(result -> {
+            getViewState().setupChart(result.getTimeModel(), result.getKpi());
+        }));
+
+        mCompositeDisposable.add(mKPIUtils.getStatistics().subscribe(result -> {
+            getViewState().setupStatisticRecyclerView(result);
+        }));
     }
 
     private void loadRedmineData() {
-        mRepository.getStatuses().subscribe();
-        mRepository.getTrackers().subscribe();
-        mRepository.getProjectPriorities().subscribe();
-        mRepository.getProjects().subscribe();
+        mCompositeDisposable.add(mRepository.getStatuses().subscribe());
+        mCompositeDisposable.add(mRepository.getTrackers().subscribe());
+        mCompositeDisposable.add(mRepository.getProjectPriorities().subscribe());
+        mCompositeDisposable.add(mRepository.getProjects().subscribe());
     }
 
     private void loadTimeEntriesData() {
@@ -85,23 +89,6 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> implements L
                         });
 
         mCompositeDisposable.add(disposable);
-    }
-
-    private List<StatisticModel> getStatistics() {
-
-        List<StatisticModel> timeModelList = new ArrayList<>();
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForCurrentMonth(),
-                KPIUtils.calculateKpiForCurrentMonth(), "Current month"));
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForPreviousWeek(),
-                KPIUtils.calculateKpiForPreviousWeek(), "Previous week"));
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForCurrentWeek(),
-                KPIUtils.calculateKpiForCurrentWeek(), "Current week"));
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForYesterday(),
-                KPIUtils.calculateKpiForDate(DateUtils.getYesterday()), "Yesterday"));
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForToday(),
-                KPIUtils.calculateKpiForDate(new Date()), "Today"));
-
-        return timeModelList;
     }
 
     private float getWholeCurrentWeekHoursNorm() {

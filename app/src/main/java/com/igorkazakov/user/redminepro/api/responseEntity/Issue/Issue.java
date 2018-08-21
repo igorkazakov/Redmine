@@ -26,9 +26,6 @@ public class Issue extends RealmObject {
     @SerializedName("project")
     @Expose
     private ShortProject project;
-//    @SerializedName("parent")
-//    @Expose
-//    private Parent parent;
     @SerializedName("tracker")
     @Expose
     private Tracker tracker;
@@ -71,18 +68,6 @@ public class Issue extends RealmObject {
     @SerializedName("updated_on")
     @Expose
     private String updatedOn;
-//    @SerializedName("children")
-//    @Expose
-//    private RealmList<Child> children;
-//    @SerializedName("attachments")
-//    @Expose
-//    private RealmList<Attachment> attachments;
-//    @SerializedName("changesets")
-//    @Expose
-//    private RealmList<Object> changesets;
-//    @SerializedName("journals")
-//    @Expose
-//    private RealmList<Journal> journals;
 
     public double getSpentHours() {
         return spentHours;
@@ -131,14 +116,6 @@ public class Issue extends RealmObject {
     public void setStatus(Status status) {
         this.status = status;
     }
-
-//    public Parent getParent() {
-//        return parent;
-//    }
-//
-//    public void setParent(Parent parent) {
-//        this.parent = parent;
-//    }
 
     public Priority getPriority() {
         return priority;
@@ -219,36 +196,4 @@ public class Issue extends RealmObject {
     public void setUpdatedOn(String updatedOn) {
         this.updatedOn = updatedOn;
     }
-
-//    public RealmList<Child> getChildren() {
-//        return children;
-//    }
-//
-//    public void setChildren(RealmList<Child> children) {
-//        this.children = children;
-//    }
-//
-//    public RealmList<Attachment> getAttachments() {
-//        return attachments;
-//    }
-//
-//    public void setAttachments(RealmList<Attachment> attachments) {
-//        this.attachments = attachments;
-//    }
-
-//    public RealmList<Object> getChangesets() {
-//        return changesets;
-//    }
-//
-//    public void setChangesets(RealmList<Object> changesets) {
-//        this.changesets = changesets;
-//    }
-
-//    public RealmList<Journal> getJournals() {
-//        return journals;
-//    }
-//
-//    public void setJournals(RealmList<Journal> journals) {
-//        this.journals = journals;
-//    }
 }

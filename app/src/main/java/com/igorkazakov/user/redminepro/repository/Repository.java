@@ -1,7 +1,6 @@
 package com.igorkazakov.user.redminepro.repository;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.igorkazakov.user.redminepro.api.ApiFactory;
 import com.igorkazakov.user.redminepro.api.ContentType;
@@ -47,6 +46,7 @@ import com.igorkazakov.user.redminepro.utils.PreferenceUtils;
 import com.igorkazakov.user.redminepro.utils.RxUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -316,7 +316,6 @@ public class Repository implements LoginServiceInterface,
 
                     List<TimeEntry> timeEntries = timeEntryResponse.getTimeEntries();
                     TimeEntryDAO.saveTimeEntries(timeEntries);
-                    Log.e("getTimeEntriesWith", "page" + offset+ "\n");
                     return timeEntries;
                 })
                 .subscribeOn(Schedulers.computation());
@@ -339,7 +338,6 @@ public class Repository implements LoginServiceInterface,
                 .concatMap( integer -> {
 
                     long offset = integer * limit;
-                    Log.e("getTimeEntriesWith", "post page" + offset + "\n");
                     return getTimeEntriesWithInterval(interval, offset);
                 })
                 .takeUntil((Predicate<? super List<TimeEntry>>) List::isEmpty);
@@ -365,7 +363,7 @@ public class Repository implements LoginServiceInterface,
 
     @Override
     public TimeModel fetchWorkHoursWithInterval(TimeInterval interval) {
-        return TimeEntryDAO.getWorkHoursWithInterval(interval);
+        return new TimeModel(0, 0, 0);//TimeEntryDAO.getWorkHoursWithInterval(interval);
     }
 
     @NonNull
@@ -419,22 +417,6 @@ public class Repository implements LoginServiceInterface,
                 .subscribeOn(Schedulers.io());
     }
 
-    public void getVersionsByProject(long projectId) {
-
-        mRedmineApi
-                .versions(projectId)
-                .map(versionsResponse -> {
-
-                    List<FixedVersion> fixedVersions = versionsResponse.getFixedVersions();
-                    FixedVersionDAO.saveFixedVersions(fixedVersions);
-
-                    return fixedVersions;
-                })
-                .onErrorReturn(throwable -> new ArrayList<>())
-                .subscribeOn(Schedulers.io())
-                .subscribe();
-    }
-
     public Single getProjectPriorities() {
 
         return mRedmineApi
@@ -450,7 +432,44 @@ public class Repository implements LoginServiceInterface,
                 .subscribeOn(Schedulers.io());
     }
 
+    public Single<TimeModel> workHoursWithInterval(TimeInterval interval) {
+        return TimeEntryDAO.getWorkHoursWithInterval(interval)
+                .subscribeOn(Schedulers.io());
+    }
 
+    public Single<TimeModel> workHoursWithDate(Date date) {
+        return TimeEntryDAO.getWorkHoursWithDate(date)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Long> hoursNormForInterval(TimeInterval interval) {
+        return mRoomDbHelper.oggyCalendarDayEntityDAO().getHoursNormForInterval(
+                interval.getStart().getTime(),
+                interval.getEnd().getTime())
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Long> hoursNormForDate(Date date) {
+        return mRoomDbHelper.oggyCalendarDayEntityDAO().getHoursNormForDate(date.getTime())
+                .subscribeOn(Schedulers.io())
+                .onErrorReturnItem(0L);
+    }
+
+    private void getVersionsByProject(long projectId) {
+
+        mRedmineApi
+                .versions(projectId)
+                .map(versionsResponse -> {
+
+                    List<FixedVersion> fixedVersions = versionsResponse.getFixedVersions();
+                    FixedVersionDAO.saveFixedVersions(fixedVersions);
+
+                    return fixedVersions;
+                })
+                .onErrorReturn(throwable -> new ArrayList<>())
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+    }
 
     private void loadUsers(@NonNull List<Project> projects) {
 
@@ -523,11 +542,11 @@ public class Repository implements LoginServiceInterface,
                 .map(calendarDays -> {
 
                     mRoomDbHelper.oggyCalendarDayEntityDAO().insert(calendarDays);
-                    //CalendarDayDAO.saveCalendarDays(calendarDays);
-
                     return calendarDays;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
+
 }

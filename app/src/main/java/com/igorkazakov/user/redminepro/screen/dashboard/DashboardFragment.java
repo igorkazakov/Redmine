@@ -33,6 +33,7 @@ import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
+import com.igorkazakov.user.redminepro.utils.KPIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,13 +67,16 @@ public class DashboardFragment extends BaseFragment
     @Inject
     Repository mRepository;
 
+    @Inject
+    KPIUtils mKPIUtils;
+
     @InjectPresenter
     public DashboardPresenter mPresenter;
     private KpiStatisticAdapter mAdapter;
 
     @ProvidePresenter
     DashboardPresenter provideDashboardPresenter() {
-        return new DashboardPresenter(mRepository);
+        return new DashboardPresenter(mRepository, mKPIUtils);
     }
 
     @Override
@@ -136,7 +140,7 @@ public class DashboardFragment extends BaseFragment
     public void setupStatisticRecyclerView(List<StatisticModel> timeModelList) {
 
         mAdapter = new KpiStatisticAdapter(timeModelList);
-        mStatisticRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()){
+        mStatisticRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
             public boolean canScrollVertically() {
                 return false;

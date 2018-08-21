@@ -10,6 +10,7 @@ import com.igorkazakov.user.redminepro.database.room.converters.DateConverter;
 import java.util.Date;
 
 @Entity
+@TypeConverters({DateConverter.class})
 public class OggyCalendarDayEntity {
 
     public static final String WORK = "work";
@@ -25,7 +26,6 @@ public class OggyCalendarDayEntity {
     @SerializedName("user_id")
     private Long userId;
 
-    @TypeConverters({DateConverter.class})
     @SerializedName("date")
     private Date date;
 

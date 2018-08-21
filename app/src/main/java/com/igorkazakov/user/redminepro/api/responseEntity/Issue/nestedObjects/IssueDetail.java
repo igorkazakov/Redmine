@@ -67,9 +67,7 @@ public class IssueDetail extends RealmObject {
     @SerializedName("attachments")
     @Expose
     private RealmList<Attachment> attachments;
-    //    @SerializedName("changesets")
-//    @Expose
-//    private RealmList<Object> changesets;
+
     @SerializedName("journals")
     @Expose
     private RealmList<Journal> journals;
@@ -225,14 +223,6 @@ public class IssueDetail extends RealmObject {
     public void setAttachments(RealmList<Attachment> attachments) {
         this.attachments = attachments;
     }
-
-//    public RealmList<Object> getChangesets() {
-//        return changesets;
-//    }
-//
-//    public void setChangesets(RealmList<Object> changesets) {
-//        this.changesets = changesets;
-//    }
 
     public RealmList<Journal> getJournals() {
         return journals;
