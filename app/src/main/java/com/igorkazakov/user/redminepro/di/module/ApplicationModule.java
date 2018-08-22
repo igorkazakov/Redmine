@@ -51,7 +51,6 @@ public class ApplicationModule {
     public RoomDbHelper provideRoomDb(Context context) {
         return Room.databaseBuilder(context,
                 RoomDbHelper.class, "database")
-                .allowMainThreadQueries()
                 .build();
     }
 

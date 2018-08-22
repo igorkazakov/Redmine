@@ -3,38 +3,32 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by user on 25.07.17.
  */
 
-public class Tracker extends RealmObject implements Namable {
+public class Tracker {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
-    private Long id;
+    private Long trackerId;
     @SerializedName("name")
     @Expose
-    private String name;
+    private String trackerName;
 
-    public Long getId() {
-        return id;
+    public Long getTrackerId() {
+        return trackerId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTrackerId(Long id) {
+        this.trackerId = id;
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public String getTrackerName() {
+        return trackerName != null ? trackerName : "";
     }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setTrackerName(String name) {
+        this.trackerName = name;
     }
 }

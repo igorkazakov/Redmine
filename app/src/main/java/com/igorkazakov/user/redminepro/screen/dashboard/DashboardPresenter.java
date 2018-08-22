@@ -8,12 +8,13 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.api.ApiException;
+import com.igorkazakov.user.redminepro.models.CurrentWeekHoursModel;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
-import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
 
+import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -57,9 +58,11 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> implements L
 
     public void setupView() {
 
-        getViewState().setupCurrentWeekStatistic(remainHoursForNormalKpi(),
-                remainHoursForWeek(),
-                getWholeCurrentWeekHoursNorm());
+        mCompositeDisposable.add(getDataForCurrentWeekStatistic().subscribe(result -> {
+            getViewState().setupCurrentWeekStatistic(result.getRemainHoursForNormalKpi(),
+                    result.getRemainHoursForWeek(),
+                    result.getCurrentWeekHoursNorm());
+        }));
 
         mCompositeDisposable.add(mKPIUtils.getChartData().subscribe(result -> {
             getViewState().setupChart(result.getTimeModel(), result.getKpi());
@@ -91,38 +94,65 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> implements L
         mCompositeDisposable.add(disposable);
     }
 
-    private float getWholeCurrentWeekHoursNorm() {
+    private Single<CurrentWeekHoursModel> getDataForCurrentWeekStatistic() {
+
+        return Single.zip(
+                getWholeCurrentWeekHoursNorm(),
+                remainHoursForNormalKpi(),
+                remainHoursForWeek(),
+                (currentWeekHoursNorm, remainHoursForNormalKpi, remainHoursForWeek) -> {
+
+                    return new CurrentWeekHoursModel(
+                            currentWeekHoursNorm,
+                            remainHoursForNormalKpi,
+                            remainHoursForWeek);
+                });
+    }
+
+    private Single<Long> getWholeCurrentWeekHoursNorm() {
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         return mRepository.fetchHoursNormForInterval(interval);
     }
 
-    private float remainHoursForNormalKpi() {
+    private Single<Float> remainHoursForNormalKpi() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        TimeModel model = mRepository.fetchWorkHoursWithInterval(interval);
-        float norm = mRepository.fetchHoursNormForInterval(interval);
-        float remainHours = NumberUtils.round(norm * BuildConfig.NORMAL_KPI -
-                (model.getRegularTime() + model.getTeamFuckupTime()));
-        if (remainHours > 0) {
-            return remainHours;
 
-        } else {
-            return 0;
-        }
+        return Single.zip(mRepository.fetchWorkHoursWithInterval(interval),
+                mRepository.fetchHoursNormForInterval(interval),
+                (model, norm) -> {
+
+                    float remainHours = NumberUtils.round(norm * BuildConfig.NORMAL_KPI -
+                            (model.getRegularTime() + model.getTeamFuckupTime()));
+                    if (remainHours > 0) {
+                        return remainHours;
+
+                    } else {
+                        return 0f;
+                    }
+                });
     }
 
-    private float remainHoursForWeek() {
+    private Single<Float> remainHoursForWeek() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        TimeModel model = mRepository.fetchWorkHoursWithInterval(interval);
-        float norm = mRepository.fetchHoursNormForInterval(interval);
-        float remainHours = norm - (model.getRegularTime() + model.getFuckupTime() + model.getTeamFuckupTime());
-        if (remainHours > 0) {
-            return remainHours;
 
-        } else {
-            return 0;
-        }
+        return Single.zip(mRepository.fetchWorkHoursWithInterval(interval),
+                mRepository.fetchHoursNormForInterval(interval),
+                (model, norm) -> {
+
+                    float remainHours = norm -
+                            (model.getRegularTime() +
+                                    model.getFuckupTime() +
+                                    model.getTeamFuckupTime());
+
+                    if (remainHours > 0) {
+                        return remainHours;
+
+                    } else {
+                        return 0f;
+                    }
+                });
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

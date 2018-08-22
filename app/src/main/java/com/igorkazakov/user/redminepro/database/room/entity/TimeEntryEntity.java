@@ -2,6 +2,7 @@ package com.igorkazakov.user.redminepro.database.room.entity;
 
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
@@ -13,9 +14,7 @@ import com.igorkazakov.user.redminepro.database.room.converters.DateConverter;
 
 import java.util.Date;
 
-import io.realm.annotations.PrimaryKey;
-
-@Entity
+@Entity(tableName = "TimeEntryEntity")
 @TypeConverters({DateConverter.class})
 public class TimeEntryEntity {
 
@@ -36,6 +35,10 @@ public class TimeEntryEntity {
     private Date updatedOn;
     private String type;
 
+    public TimeEntryEntity() {
+
+    }
+
     public TimeEntryEntity(TimeEntry timeEntry) {
         this.id = timeEntry.getId();
         this.project = timeEntry.getProject();
@@ -54,43 +57,87 @@ public class TimeEntryEntity {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public TimeEntryProject getProject() {
         return project;
+    }
+
+    public void setProject(TimeEntryProject project) {
+        this.project = project;
     }
 
     public TimeEntryIssue getIssue() {
         return issue;
     }
 
+    public void setIssue(TimeEntryIssue issue) {
+        this.issue = issue;
+    }
+
     public TimeEntryUser getUser() {
         return user;
+    }
+
+    public void setUser(TimeEntryUser user) {
+        this.user = user;
     }
 
     public TimeEntryActivity getActivity() {
         return activity;
     }
 
+    public void setActivity(TimeEntryActivity activity) {
+        this.activity = activity;
+    }
+
     public Double getHours() {
         return hours;
+    }
+
+    public void setHours(Double hours) {
+        this.hours = hours;
     }
 
     public String getComments() {
         return comments;
     }
 
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
     public Date getSpentOn() {
         return spentOn;
+    }
+
+    public void setSpentOn(Date spentOn) {
+        this.spentOn = spentOn;
     }
 
     public Date getCreatedOn() {
         return createdOn;
     }
 
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
     public Date getUpdatedOn() {
         return updatedOn;
     }
 
+    public void setUpdatedOn(Date updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

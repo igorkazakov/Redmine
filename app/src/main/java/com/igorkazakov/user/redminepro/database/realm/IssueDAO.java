@@ -1,6 +1,5 @@
 package com.igorkazakov.user.redminepro.database.realm;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 
 import java.util.List;

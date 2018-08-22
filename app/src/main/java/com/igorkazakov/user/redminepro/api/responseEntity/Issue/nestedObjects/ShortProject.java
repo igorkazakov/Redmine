@@ -3,36 +3,32 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by user on 25.07.17.
  */
 
-public class ShortProject extends RealmObject {
+public class ShortProject {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
-    private Long id;
+    private Long shortProjectId;
     @SerializedName("name")
     @Expose
-    private String name;
+    private String shortProjectName;
 
-    public Long getId() {
-        return id;
+    public Long getShortProjectId() {
+        return shortProjectId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setShortProjectId(Long id) {
+        this.shortProjectId = id;
     }
 
-    public String getName() {
-        return name;
+    public String getShortProjectName() {
+        return shortProjectName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setShortProjectName(String name) {
+        this.shortProjectName = name;
     }
 }

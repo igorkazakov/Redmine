@@ -3,50 +3,44 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by user on 25.07.17.
  */
 
-public class FixedVersion extends RealmObject implements Namable {
+public class FixedVersion {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
-    private Long id;
+    private Long fixedVersionId;
     @SerializedName("name")
     @Expose
-    private String name;
+    private String fixedVersionName;
+//    @SerializedName("project")
+//    @Expose
+//    @Embedded
+//    private ShortProject project;
 
-    @SerializedName("project")
-    @Expose
-    private ShortProject project;
+//    public ShortProject getProject() {
+//        return project;
+//    }
+//
+//    public void setProject(ShortProject project) {
+//        this.project = project;
+//    }
 
-    public ShortProject getProject() {
-        return project;
+    public Long getFixedVersionId() {
+        return fixedVersionId;
     }
 
-    public void setProject(ShortProject project) {
-        this.project = project;
+    public void setFixedVersionId(Long id) {
+        this.fixedVersionId = id;
     }
 
-    public Long getId() {
-        return id;
+    public String getFixedVersionName() {
+        return fixedVersionName != null ? fixedVersionName : "";
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setFixedVersionName(String name) {
+        this.fixedVersionName = name;
     }
 }

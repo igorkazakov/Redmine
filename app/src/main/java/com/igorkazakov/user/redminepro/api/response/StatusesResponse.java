@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
+import com.igorkazakov.user.redminepro.database.room.entity.StatusEntity;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import java.util.List;
 public class StatusesResponse {
 
     @SerializedName("issue_statuses")
-    private List<Status> statuses;
+    private List<StatusEntity> statuses;
 
-    public List<Status> getStatuses() {
+    public List<StatusEntity> getStatuses() {
         return statuses;
     }
 
-    public void setStatuses(List<Status> statuses) {
+    public void setStatuses(List<StatusEntity> statuses) {
         this.statuses = statuses;
     }
 }

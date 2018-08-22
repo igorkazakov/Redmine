@@ -6,19 +6,15 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Namable;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueDetailEntity;
 
-import java.util.List;
-
-import io.reactivex.disposables.Disposable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by user on 28.07.17.
@@ -28,7 +24,7 @@ import io.reactivex.disposables.Disposable;
 public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
     private IssueDetailServiceInterface mRepository;
-    private Disposable mDisposable;
+    private CompositeDisposable mDisposable = new CompositeDisposable();
 
     public IssueDetailPresenter(IssueDetailServiceInterface redmineRepository) {
         mRepository = redmineRepository;
@@ -36,28 +32,29 @@ public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
     public void tryLoadIssueDetailsData(long issueId) {
 
-        mDisposable = mRepository.getIssueDetails(issueId)
+        mDisposable.add(mRepository.getIssueDetails(issueId)
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(this::setupView,
                         throwable -> {
-                            ApiException exception = (ApiException)throwable;
+                            ApiException exception = (ApiException) throwable;
                             getViewState().showError(exception);
-                        });
+                        }));
     }
 
-    public void setupView(IssueDetail issueEntity) {
+    public void setupView(IssueDetailEntity issueEntity) {
         getViewState().setupView(issueEntity);
     }
 
-    public String getSafeName(Namable object) {
-        return object != null &&
-                object.getName() != null ? object.getName() : "";
-    }
+    public void checkChildIssues(Long issueDetailId) {
 
-    public List<Issue> getChildIssues(List<Child> children) {
+        mDisposable.add(mRepository.getChildsByIssueDetailId(issueDetailId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(response -> mRepository.getChildIssues(response))
+                .subscribe(result -> {
 
-        return mRepository.getChildIssues(children);
+                    getViewState().setupChildIssues(result);
+                }));
     }
 
     public ShortUser getUserById(long id) {

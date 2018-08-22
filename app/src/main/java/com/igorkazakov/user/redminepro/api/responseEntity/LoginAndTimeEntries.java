@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.api.responseEntity;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
-import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.TimeEntryEntity;
 
 import java.util.List;
 
@@ -11,10 +11,10 @@ import java.util.List;
 
 public class LoginAndTimeEntries {
 
-    private List<Issue> mIssueList;
-    private List<TimeEntry> mTimeEntryList;
+    private List<IssueEntity> mIssueList;
+    private List<TimeEntryEntity> mTimeEntryList;
 
-    public LoginAndTimeEntries(List<Issue> issueList, List<TimeEntry> timeEntry) {
+    public LoginAndTimeEntries(List<IssueEntity> issueList, List<TimeEntryEntity> timeEntry) {
         mIssueList = issueList;
         mTimeEntryList = timeEntry;
     }

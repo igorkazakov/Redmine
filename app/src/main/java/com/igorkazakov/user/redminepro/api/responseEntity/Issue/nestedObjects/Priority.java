@@ -3,38 +3,32 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by user on 25.07.17.
  */
 
-public class Priority extends RealmObject implements Namable {
+public class Priority {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
-    private Long id;
+    private Long priorityId;
     @SerializedName("name")
     @Expose
-    private String name;
+    private String priorityName;
 
-    public Long getId() {
-        return id;
+    public Long getPriorityId() {
+        return priorityId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPriorityId(Long id) {
+        this.priorityId = id;
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public String getPriorityName() {
+        return priorityName != null ? priorityName : "";
     }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setPriorityName(String name) {
+        this.priorityName = name;
     }
 }

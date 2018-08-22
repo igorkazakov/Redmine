@@ -9,7 +9,7 @@ import com.igorkazakov.user.redminepro.database.room.converters.DateConverter;
 
 import java.util.Date;
 
-@Entity
+@Entity(tableName = "OggyCalendarDayEntity")
 @TypeConverters({DateConverter.class})
 public class OggyCalendarDayEntity {
 

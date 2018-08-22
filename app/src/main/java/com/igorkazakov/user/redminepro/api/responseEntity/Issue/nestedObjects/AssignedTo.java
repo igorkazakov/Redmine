@@ -3,38 +3,32 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by user on 25.07.17.
  */
 
-public class AssignedTo extends RealmObject implements Namable {
+public class AssignedTo {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
-    private Long id;
+    private Long assignedToId;
     @SerializedName("name")
     @Expose
-    private String name;
+    private String assignedToName;
 
-    public Long getId() {
-        return id;
+    public Long getAssignedToId() {
+        return assignedToId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setAssignedToId(Long id) {
+        this.assignedToId = id;
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public String getAssignedToName() {
+        return assignedToName != null ? assignedToName : "";
     }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setAssignedToName(String name) {
+        this.assignedToName = name;
     }
 }

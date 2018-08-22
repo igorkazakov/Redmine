@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
+import com.igorkazakov.user.redminepro.database.room.entity.PriorityEntity;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import java.util.List;
 public class PrioritiesResponse {
 
     @SerializedName("issue_priorities")
-    private List<Priority> priorities;
+    private List<PriorityEntity> priorities;
 
-    public List<Priority> getPriorities() {
+    public List<PriorityEntity> getPriorities() {
         return priorities;
     }
 
-    public void setPriorities(List<Priority> priorities) {
+    public void setPriorities(List<PriorityEntity> priorities) {
         this.priorities = priorities;
     }
 }

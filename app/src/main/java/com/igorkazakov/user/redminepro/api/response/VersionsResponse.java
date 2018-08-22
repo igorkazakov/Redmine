@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.database.room.entity.FixedVersionEntity;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import java.util.List;
 public class VersionsResponse {
 
     @SerializedName("versions")
-    private List<FixedVersion> fixedVersions;
+    private List<FixedVersionEntity> fixedVersions;
 
-    public List<FixedVersion> getFixedVersions() {
+    public List<FixedVersionEntity> getFixedVersions() {
         return fixedVersions;
     }
 
-    public void setFixedVersions(List<FixedVersion> fixedVersions) {
+    public void setFixedVersions(List<FixedVersionEntity> fixedVersions) {
         this.fixedVersions = fixedVersions;
     }
 }

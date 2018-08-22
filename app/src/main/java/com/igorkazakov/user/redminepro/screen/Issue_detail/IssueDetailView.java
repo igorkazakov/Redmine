@@ -1,8 +1,11 @@
 package com.igorkazakov.user.redminepro.screen.Issue_detail;
 
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueDetailEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.screen.base.ErrorInterface;
 import com.igorkazakov.user.redminepro.screen.base.ProgressInterface;
+
+import java.util.List;
 
 /**
  * Created by user on 28.07.17.
@@ -10,5 +13,7 @@ import com.igorkazakov.user.redminepro.screen.base.ProgressInterface;
 
 public interface IssueDetailView extends ProgressInterface, ErrorInterface {
 
-    void setupView(IssueDetail issueEntity);
+    void setupView(IssueDetailEntity issueEntity);
+
+    void setupChildIssues(List<IssueEntity> issueEntities);
 }

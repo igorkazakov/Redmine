@@ -19,13 +19,13 @@ public class TimeEntryCustomFieldEntity {
 
     @PrimaryKey
     private Integer id;
-    private String name;
+    private String customFieldName;
     private String value;
     private Integer timeEntryId;
 
     TimeEntryCustomFieldEntity(TimeEntryCustomField customField, Integer parentId) {
         this.id = customField.getId();
-        this.name = customField.getName();
+        this.customFieldName = customField.getName();
         this.value = customField.getValue();
         this.timeEntryId = parentId;
     }
@@ -34,8 +34,8 @@ public class TimeEntryCustomFieldEntity {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getCustomFieldName() {
+        return customFieldName;
     }
 
     public String getValue() {
@@ -44,5 +44,21 @@ public class TimeEntryCustomFieldEntity {
 
     public Integer getTimeEntryId() {
         return timeEntryId;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setCustomFieldName(String customFieldName) {
+        this.customFieldName = customFieldName;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setTimeEntryId(Integer timeEntryId) {
+        this.timeEntryId = timeEntryId;
     }
 }

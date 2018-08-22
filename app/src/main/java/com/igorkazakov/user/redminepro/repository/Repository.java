@@ -7,32 +7,32 @@ import com.igorkazakov.user.redminepro.api.ContentType;
 import com.igorkazakov.user.redminepro.api.OggyApi;
 import com.igorkazakov.user.redminepro.api.RedmineApi;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 import com.igorkazakov.user.redminepro.api.responseEntity.Membership;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
-import com.igorkazakov.user.redminepro.database.realm.CalendarDayDAO;
 import com.igorkazakov.user.redminepro.database.realm.FixedVersionDAO;
-import com.igorkazakov.user.redminepro.database.realm.IssueDAO;
 import com.igorkazakov.user.redminepro.database.realm.IssueDetailDAO;
-import com.igorkazakov.user.redminepro.database.realm.ProjectDAO;
 import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
 import com.igorkazakov.user.redminepro.database.realm.ShortUserDAO;
 import com.igorkazakov.user.redminepro.database.realm.StatusDAO;
-import com.igorkazakov.user.redminepro.database.realm.TimeEntryDAO;
 import com.igorkazakov.user.redminepro.database.realm.TrackerDAO;
 import com.igorkazakov.user.redminepro.database.room.database.RoomDbHelper;
+import com.igorkazakov.user.redminepro.database.room.entity.ChildEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.FixedVersionEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.OggyCalendarDayEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.ProjectEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.ShortUserEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.TimeEntryEntity;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailServiceInterface;
@@ -182,11 +182,9 @@ public class Repository implements LoginServiceInterface,
     /// ============================================================================================
 
     @NonNull
-    public Observable<List<Issue>> getMyIssues() {
+    public Observable<List<IssueEntity>> getMyIssues() {
 
-        Observable<List<Issue>> observable;
-
-        Observable<List<Issue>> observableNetwork = Observable
+        Observable<List<IssueEntity>> observableNetwork = Observable
                 .range(0, Integer.MAX_VALUE - 1)
                 .lift(RxUtils.getApiErrorTransformer())
                 .subscribeOn(Schedulers.io())
@@ -195,35 +193,13 @@ public class Repository implements LoginServiceInterface,
                     int offset = integer * limit;
                     return getIssues(offset);
                 })
-                .takeUntil((Predicate<? super List<Issue>>) List::isEmpty)
-                .toList()
-                .map(superList -> {
+                .takeUntil((Predicate<? super List<IssueEntity>>) List::isEmpty);
 
-                    List<Issue> list = new ArrayList<>();
-
-                    if (superList.size() != 0) {
-                        for (List<Issue> itemList : superList) {
-                            list.addAll(itemList);
-                        }
-
-                    }
-
-                    return list;
-                })
-                .toObservable();
-
-        List<Issue> cachedData = IssueDAO.getAll();
-
-        if (cachedData.size() > 0) {
-
-            observable = Observable.just(cachedData)
-                    .concatWith(observableNetwork);
-
-        } else {
-            observable = observableNetwork;
-        }
-
-        return observable.observeOn(AndroidSchedulers.mainThread());
+        return mRoomDbHelper.issueEntityDAO()
+                .getAll()
+                .subscribeOn(Schedulers.io())
+                .toObservable()
+                .concatWith(observableNetwork);
     }
 
     /// ============================================================================================
@@ -242,8 +218,8 @@ public class Repository implements LoginServiceInterface,
 
                     IssueDetail issue = issuesResponse.getIssue();
 
-                    for (Journal journal: issue.getJournals()) {
-                        for (Detail detail: journal.getDetails()) {
+                    for (Journal journal : issue.getJournals()) {
+                        for (Detail detail : journal.getDetails()) {
                             detail.generateId();
                         }
                     }
@@ -268,8 +244,26 @@ public class Repository implements LoginServiceInterface,
     }
 
     @Override
-    public List<Issue> getChildIssues(List<Child> children) {
-        return IssueDAO.getChildIssues(children);
+    public Single<List<IssueEntity>> getChildIssues(List<ChildEntity> children) {
+
+        List<Long> childIssueIds = new ArrayList<>(children.size());
+        for (ChildEntity child: children) {
+            childIssueIds.add(child.getChildId());
+        }
+
+        return mRoomDbHelper
+                .issueEntityDAO()
+                .getChildIssues(childIssueIds)
+                .subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    public Single<List<ChildEntity>> getChildsByIssueDetailId(long issueDetailId) {
+
+        return mRoomDbHelper
+                .childEntityDAO()
+                .getChildrensById(issueDetailId)
+                .subscribeOn(Schedulers.io());
     }
 
     @Override
@@ -302,7 +296,7 @@ public class Repository implements LoginServiceInterface,
     /// ============================================================================================
 
     @NonNull
-    public Observable<List<TimeEntry>> getTimeEntriesWithInterval(TimeInterval interval, long offset) {
+    public Observable<List<TimeEntryEntity>> getTimeEntriesWithInterval(TimeInterval interval, long offset) {
 
         long userId = mPreferenceUtils.getUserId();
         String startDateString = DateUtils.stringFromDate(interval.getStart(), DateUtils.getSimpleFormatter());
@@ -311,59 +305,71 @@ public class Repository implements LoginServiceInterface,
 
         return mRedmineApi
                 .timeEntriesForYear(limit, userId, offset, strInterval)
+                .subscribeOn(Schedulers.io())
                 .lift(RxUtils.getApiErrorTransformer())
                 .map(timeEntryResponse -> {
 
-                    List<TimeEntry> timeEntries = timeEntryResponse.getTimeEntries();
-                    TimeEntryDAO.saveTimeEntries(timeEntries);
-                    return timeEntries;
-                })
-                .subscribeOn(Schedulers.computation());
+                    List<TimeEntryEntity> timeEntryEntities = new ArrayList<>(timeEntryResponse.getTimeEntries().size());
+
+                    for (TimeEntry timeEntry : timeEntryResponse.getTimeEntries()) {
+
+                        if (timeEntry.getCustomFields().size() > 0) {
+                            String type = null;
+                            if (timeEntry.getCustomFields().get(0) != null) {
+                                type = timeEntry.getCustomFields().get(0).getValue();
+                            }
+                            timeEntry.setType(type != null ? type : "");
+                        }
+
+                        TimeEntryEntity entity = new TimeEntryEntity(timeEntry);
+                        timeEntryEntities.add(entity);
+                    }
+
+                    mRoomDbHelper.timeEntryEntityDAO().insertOrUpdate(timeEntryEntities);
+                    return timeEntryEntities;
+                });
     }
 
     @NonNull
-    public Observable<List<TimeEntry>> getTimeEntriesForYear() {
+    public Observable<List<TimeEntryEntity>> getTimeEntriesForYear() {
 
         TimeInterval interval = DateUtils.getIntervalFromStartYear();
-        Observable<List<TimeEntry>> observable;
 
-        Observable<List<TimeEntry>> observableNetwork = Observable
+        Observable<List<TimeEntryEntity>> observableNetwork = Observable
                 .intervalRange(0,
                         Integer.MAX_VALUE - 1,
                         0,
                         1,
                         TimeUnit.SECONDS)
-                .lift(RxUtils.getApiErrorTransformer())
                 .subscribeOn(Schedulers.io())
-                .concatMap( integer -> {
+                .lift(RxUtils.getApiErrorTransformer())
+                .concatMap(integer -> {
 
                     long offset = integer * limit;
                     return getTimeEntriesWithInterval(interval, offset);
                 })
-                .takeUntil((Predicate<? super List<TimeEntry>>) List::isEmpty);
+                .takeUntil((Predicate<? super List<TimeEntryEntity>>) List::isEmpty);
 
-        List<TimeEntry> cachedData = TimeEntryDAO.getAll();
+        Observable<List<TimeEntryEntity>> cachedData = mRoomDbHelper.timeEntryEntityDAO()
+                .getAll()
+                .subscribeOn(Schedulers.io())
+                .toObservable();
 
-        if (cachedData.size() > 0) {
-
-            observable = Observable.just(cachedData)
-                    .concatWith(observableNetwork);
-
-        } else {
-            observable = observableNetwork;
-        }
-
-        return observable.observeOn(AndroidSchedulers.mainThread());
+        return cachedData.concatWith(observableNetwork)
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
-    public float fetchHoursNormForInterval(TimeInterval interval) {
-        return CalendarDayDAO.getHoursNormForInterval(interval);
+    public Single<Long> fetchHoursNormForInterval(TimeInterval interval) {
+        return mRoomDbHelper.oggyCalendarDayEntityDAO().getHoursNormForInterval(
+                interval.getStartLong(),
+                interval.getEndLong())
+                .subscribeOn(Schedulers.io());
     }
 
     @Override
-    public TimeModel fetchWorkHoursWithInterval(TimeInterval interval) {
-        return new TimeModel(0, 0, 0);//TimeEntryDAO.getWorkHoursWithInterval(interval);
+    public Single<TimeModel> fetchWorkHoursWithInterval(TimeInterval interval) {
+        return mRoomDbHelper.timeEntryEntityDAO().getWorkHoursWithInterval(interval);
     }
 
     @NonNull
@@ -373,8 +379,8 @@ public class Repository implements LoginServiceInterface,
                 .projects()
                 .map(projectsResponse -> {
 
-                    List<Project> projects = projectsResponse.getProjects();
-                    ProjectDAO.saveProjects(projects);
+                    List<ProjectEntity> projects = projectsResponse.getProjects();
+                    mRoomDbHelper.projectEntityDAO().insertOrUpdate(projects);
 
                     loadUsers(projects);
 
@@ -391,9 +397,8 @@ public class Repository implements LoginServiceInterface,
                 .trackers()
                 .map(trackersResponse -> {
 
-                    List<Tracker> trackers = trackersResponse.getTrackers();
-                    TrackerDAO.saveTrackers(trackers);
-                    trackers.clear();
+                    mRoomDbHelper.trackerEntityDAO()
+                            .insertOrUpdate(trackersResponse.getTrackers());
                     return null;
                 })
                 .onErrorReturn(throwable -> new ArrayList<>())
@@ -407,9 +412,8 @@ public class Repository implements LoginServiceInterface,
                 .statuses()
                 .map(statusesResponse -> {
 
-                    List<Status> statuses = statusesResponse.getStatuses();
-                    StatusDAO.saveStatuses(statuses);
-                    statuses.clear();
+                    mRoomDbHelper.statusEntityDAO()
+                            .insertOrUpdate(statusesResponse.getStatuses());
 
                     return null;
                 })
@@ -423,9 +427,8 @@ public class Repository implements LoginServiceInterface,
                 .priorities()
                 .map(prioritiesResponse -> {
 
-                    List<Priority> priorities = prioritiesResponse.getPriorities();
-                    ProjectPriorityDAO.saveIProjectPriorities(priorities);
-                    priorities.clear();
+                    mRoomDbHelper.priorityEntityDAO()
+                            .insertOrUpdate(prioritiesResponse.getPriorities());
                     return null;
                 })
                 .onErrorReturn(throwable -> new ArrayList<>())
@@ -433,13 +436,11 @@ public class Repository implements LoginServiceInterface,
     }
 
     public Single<TimeModel> workHoursWithInterval(TimeInterval interval) {
-        return TimeEntryDAO.getWorkHoursWithInterval(interval)
-                .subscribeOn(Schedulers.io());
+        return mRoomDbHelper.timeEntryEntityDAO().getWorkHoursWithInterval(interval);
     }
 
     public Single<TimeModel> workHoursWithDate(Date date) {
-        return TimeEntryDAO.getWorkHoursWithDate(date)
-                .subscribeOn(Schedulers.io());
+        return mRoomDbHelper.timeEntryEntityDAO().getWorkHoursWithDate(date);
     }
 
     public Single<Long> hoursNormForInterval(TimeInterval interval) {
@@ -461,8 +462,8 @@ public class Repository implements LoginServiceInterface,
                 .versions(projectId)
                 .map(versionsResponse -> {
 
-                    List<FixedVersion> fixedVersions = versionsResponse.getFixedVersions();
-                    FixedVersionDAO.saveFixedVersions(fixedVersions);
+                    List<FixedVersionEntity> fixedVersions = versionsResponse.getFixedVersions();
+                    mRoomDbHelper.fixedVersionEntityDAO().insertOrUpdate(fixedVersions);
 
                     return fixedVersions;
                 })
@@ -471,9 +472,9 @@ public class Repository implements LoginServiceInterface,
                 .subscribe();
     }
 
-    private void loadUsers(@NonNull List<Project> projects) {
+    private void loadUsers(@NonNull List<ProjectEntity> projects) {
 
-        for (Project projectEntity: projects) {
+        for (ProjectEntity projectEntity : projects) {
 
             getPaginatedMemberships(projectEntity.getId());
             getVersionsByProject(projectEntity.getId());
@@ -488,28 +489,28 @@ public class Repository implements LoginServiceInterface,
                     int offset = integer * limit;
                     return getMemberships(offset, projectId);
                 })
-                .takeUntil((Predicate<? super List<ShortUser>>) List::isEmpty)
+                .takeUntil((Predicate<? super List<ShortUserEntity>>) List::isEmpty)
                 .onErrorReturn(throwable -> new ArrayList<>())
                 .subscribeOn(Schedulers.io())
                 .subscribe();
     }
 
     @NonNull
-    private Observable<List<ShortUser>> getMemberships(int offset, long projectId) {
+    private Observable<List<ShortUserEntity>> getMemberships(int offset, long projectId) {
 
         return mRedmineApi
                 .memberships(projectId, limit, offset)
                 .map(membershipsResponse -> {
 
                     List<Membership> memberships = membershipsResponse.getMemberships();
-                    List<ShortUser> shortUsers = new ArrayList<>();
-                    for (Membership membership: memberships) {
+                    List<ShortUserEntity> shortUsers = new ArrayList<>();
+                    for (Membership membership : memberships) {
                         if (membership.getUser() != null) {
                             shortUsers.add(membership.getUser());
                         }
                     }
 
-                    ShortUserDAO.saveShortUsers(shortUsers);
+                    mRoomDbHelper.shortUserEntityDAO().insertOrUpdate(shortUsers);
                     return shortUsers;
                 })
                 .onErrorReturn(throwable -> new ArrayList<>())
@@ -517,15 +518,15 @@ public class Repository implements LoginServiceInterface,
     }
 
     @NonNull
-    private Observable<List<Issue>> getIssues(int offset) {
+    private Observable<List<IssueEntity>> getIssues(int offset) {
 
         return mRedmineApi
                 .issues(limit, offset)
                 .lift(RxUtils.getApiErrorTransformer())
                 .map(issuesResponse -> {
 
-                    List<Issue> issues = issuesResponse.getIssues();
-                    IssueDAO.saveIssues(issues);
+                    List<IssueEntity> issues = issuesResponse.getIssues();
+                    mRoomDbHelper.issueEntityDAO().insertOrUpdate(issues);
                     return issues;
                 })
                 .subscribeOn(Schedulers.io());
