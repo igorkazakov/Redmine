@@ -40,7 +40,7 @@ public class IssueHolder extends RecyclerView.ViewHolder implements View.OnClick
     public void bind(IssueEntity model) {
 
         mIssueModel = model;
-        mProjectNameLabel.setText(model.getProject().getName());
+        mProjectNameLabel.setText(model.getProject().getShortProjectName());
         mIssueNumberLabel.setText(String.valueOf(model.getId()));
         mIssueSubjectLabel.setText(model.getSubject());
     }

@@ -7,7 +7,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "ProjectEntity")
-public class ProjectEntity {
+public class ProjectEntity extends EmptyEntity {
 
     @PrimaryKey
     @SerializedName("id")
@@ -64,5 +64,11 @@ public class ProjectEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public static ProjectEntity createEmptyInstance() {
+        ProjectEntity entity = new ProjectEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

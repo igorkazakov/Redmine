@@ -7,7 +7,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "ShortUserEntity")
-public class ShortUserEntity {
+public class ShortUserEntity extends EmptyEntity {
 
     @PrimaryKey
     @SerializedName("id")
@@ -31,5 +31,11 @@ public class ShortUserEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public static ShortUserEntity createEmptyInstance() {
+        ShortUserEntity entity = new ShortUserEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

@@ -17,7 +17,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         childColumns = "parentId",
         onDelete = CASCADE))
 
-public class ChildEntity {
+public class ChildEntity extends EmptyEntity {
 
     @PrimaryKey
     @SerializedName("id")
@@ -63,5 +63,11 @@ public class ChildEntity {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public static ChildEntity createEmptyInstance() {
+        ChildEntity entity = new ChildEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

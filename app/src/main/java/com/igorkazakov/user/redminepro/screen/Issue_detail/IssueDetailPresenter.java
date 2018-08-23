@@ -6,15 +6,19 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
+import com.igorkazakov.user.redminepro.database.room.entity.DetailEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.FixedVersionEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.IssueDetailEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.PriorityEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.ShortUserEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.StatusEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.TrackerEntity;
+
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by user on 28.07.17.
@@ -37,47 +41,78 @@ public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(this::setupView,
                         throwable -> {
-                            ApiException exception = (ApiException) throwable;
-                            getViewState().showError(exception);
+                            if (throwable.getClass().isInstance(ApiException.class)) {
+                                ApiException exception = (ApiException) throwable;
+                                getViewState().showError(exception);
+                            }
                         }));
     }
 
     public void setupView(IssueDetailEntity issueEntity) {
-        getViewState().setupView(issueEntity);
+        if (!issueEntity.isEmpty()) {
+            getViewState().setupView(issueEntity);
+        }
     }
 
     public void checkChildIssues(Long issueDetailId) {
 
         mDisposable.add(mRepository.getChildsByIssueDetailId(issueDetailId)
-                .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(response -> mRepository.getChildIssues(response))
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
 
                     getViewState().setupChildIssues(result);
                 }));
     }
 
-    public ShortUser getUserById(long id) {
+    public void checkAttachments(Long issueDetailId) {
+
+        mDisposable.add(mRepository.getAttachmentsByIssueDetailId(issueDetailId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    getViewState().setupAttachments(result);
+                }));
+    }
+
+    public void checkJournals(Long issueDetailId) {
+
+        mDisposable.add(mRepository.getJournalsByIssueDetailId(issueDetailId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    getViewState().setupJournals(result);
+                }));
+    }
+
+    public void fetchDetails(long journalId, Consumer<? super List<DetailEntity>> onSuccess) {
+
+        mDisposable.add(mRepository.getDetailEntitiesByJournalId(journalId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onSuccess));
+    }
+
+    public ShortUserEntity getUserById(long id) {
 
         return mRepository.getUserById(id);
     }
 
-    public Status getStatusById(long id) {
+    public StatusEntity getStatusById(long id) {
 
         return mRepository.getStatusById(id);
     }
 
-    public Tracker getTrackerById(long id) {
+    public TrackerEntity getTrackerById(long id) {
 
         return mRepository.getTrackerById(id);
     }
 
-    public FixedVersion getVersionById(long id) {
+    public FixedVersionEntity getVersionById(long id) {
 
         return mRepository.getVersionById(id);
     }
 
-    public Priority getPriorityById(long id) {
+    public PriorityEntity getPriorityById(long id) {
 
         return mRepository.getPriorityById(id);
     }

@@ -77,8 +77,10 @@ public class IssuesFragment extends BaseFragment implements IssuesView {
     @Override
     public void setupView(List<IssueEntity> issueModels) {
 
-        IssuesAdapter adapter = new IssuesAdapter(issueModels);
-        mIssueList.setAdapter(adapter);
-        mIssueSwipeRefresh.setRefreshing(false);
+        if (!issueModels.isEmpty()) {
+            IssuesAdapter adapter = new IssuesAdapter(issueModels);
+            mIssueList.setAdapter(adapter);
+            mIssueSwipeRefresh.setRefreshing(false);
+        }
     }
 }

@@ -15,12 +15,11 @@ import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
-
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.database.room.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.IssueDetailEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.JournalsEntity;
 import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 
@@ -153,41 +152,34 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
     @Override
     public void setupView(IssueDetailEntity issueEntity) {
 
-        mStatusTextView.setText(issueEntity.getStatus().getName());
-        mPriorityTextView.setText(issueEntity.getPriority().getPriorityName());
-        mAssignedToTextView.setText(issueEntity.getAssignedTo().getAssignedToName());
-        mTrackerTextView.setText(issueEntity.getTracker().getTrackerName());
-        mFixedVersionTextView.setText(issueEntity.getFixedVersion().getFixedVersionName());
+        if (issueEntity.getStatus() != null) {
+            mStatusTextView.setText(issueEntity.getStatus().getName());
+        }
+
+        if (issueEntity.getPriority() != null) {
+            mPriorityTextView.setText(issueEntity.getPriority().getPriorityName());
+        }
+
+        if (issueEntity.getAssignedTo() != null) {
+            mAssignedToTextView.setText(issueEntity.getAssignedTo().getAssignedToName());
+        }
+
+        if (issueEntity.getTracker() != null) {
+            mTrackerTextView.setText(issueEntity.getTracker().getTrackerName());
+        }
+
+        if (issueEntity.getFixedVersion() != null) {
+            mFixedVersionTextView.setText(issueEntity.getFixedVersion().getFixedVersionName());
+        }
+
         mStartDateTextView.setText(issueEntity.getStartDate());
         mEstimatedHoursTextView.setText(String.valueOf(issueEntity.getEstimatedHours()));
         mSpentHoursTextView.setText(String.valueOf(issueEntity.getSpentHours()));
         mIssueNameTextView.setText(issueEntity.getSubject());
 
-
         mPresenter.checkChildIssues(issueEntity.getId());
-
-        List<Attachment> attachmentEntities = issueEntity.getAttachments();
-        if (attachmentEntities.size() == 0) {
-            mAttachmentListView.setVisibility(View.GONE);
-
-        } else {
-            mAttachmentListView.setVisibility(View.VISIBLE);
-        }
-
-        AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
-        mAttachmentList.setAdapter(attachmentAdapter);
-
-        List<Journal> journalEntities = issueEntity.getJournals();
-        if (journalEntities.size() == 0) {
-            mJournalListView.setVisibility(View.GONE);
-
-        } else {
-            mJournalListView.setVisibility(View.VISIBLE);
-        }
-
-        JournalAdapter journalAdapter = new JournalAdapter(journalEntities, mPresenter);
-        mJournalIssuesList.setAdapter(journalAdapter);
-
+        mPresenter.checkAttachments(issueEntity.getId());
+        mPresenter.checkJournals(issueEntity.getId());
     }
 
     @Override
@@ -204,6 +196,32 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
     }
 
     @Override
+    public void setupAttachments(List<AttachmentEntity> attachmentEntities) {
+
+        if (attachmentEntities.size() == 0) {
+            mAttachmentListView.setVisibility(View.GONE);
+
+        } else {
+            mAttachmentListView.setVisibility(View.VISIBLE);
+            AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
+            mAttachmentList.setAdapter(attachmentAdapter);
+        }
+    }
+
+    @Override
+    public void setupJournals(List<JournalsEntity> journalsEntities) {
+
+        if (journalsEntities.size() == 0) {
+            mJournalListView.setVisibility(View.GONE);
+
+        } else {
+            mJournalListView.setVisibility(View.VISIBLE);
+            JournalAdapter journalAdapter = new JournalAdapter(journalsEntities, mPresenter);
+            mJournalIssuesList.setAdapter(journalAdapter);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -215,5 +233,4 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

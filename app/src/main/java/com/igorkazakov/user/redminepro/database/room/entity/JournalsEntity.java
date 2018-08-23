@@ -3,12 +3,12 @@ package com.igorkazakov.user.redminepro.database.room.entity;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
-
-import io.realm.annotations.PrimaryKey;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
@@ -18,7 +18,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         childColumns = "parentId",
         onDelete = CASCADE))
 
-public class JournalsEntity {
+public class JournalsEntity extends EmptyEntity {
 
     @PrimaryKey
     @SerializedName("id")
@@ -36,6 +36,18 @@ public class JournalsEntity {
     private String createdOn;
 
     private Long parentId;
+
+    public JournalsEntity() {
+
+    }
+
+    public JournalsEntity(Journal journal, Long parentId) {
+        this.id = journal.getId();
+        this.user = journal.getUser();
+        this.notes = journal.getNotes();
+        this.createdOn = journal.getCreatedOn();
+        this.parentId = parentId;
+    }
 
     public Long getParentId() {
         return parentId;
@@ -75,5 +87,11 @@ public class JournalsEntity {
 
     public void setCreatedOn(String createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public static JournalsEntity createEmptyInstance() {
+        JournalsEntity entity = new JournalsEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

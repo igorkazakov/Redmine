@@ -7,32 +7,27 @@ import com.igorkazakov.user.redminepro.api.ContentType;
 import com.igorkazakov.user.redminepro.api.OggyApi;
 import com.igorkazakov.user.redminepro.api.RedmineApi;
 import com.igorkazakov.user.redminepro.api.response.LoginResponse;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 import com.igorkazakov.user.redminepro.api.responseEntity.Membership;
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.TimeEntry;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
-import com.igorkazakov.user.redminepro.database.realm.FixedVersionDAO;
-import com.igorkazakov.user.redminepro.database.realm.IssueDetailDAO;
-import com.igorkazakov.user.redminepro.database.realm.ProjectPriorityDAO;
-import com.igorkazakov.user.redminepro.database.realm.ShortUserDAO;
-import com.igorkazakov.user.redminepro.database.realm.StatusDAO;
-import com.igorkazakov.user.redminepro.database.realm.TrackerDAO;
 import com.igorkazakov.user.redminepro.database.room.database.RoomDbHelper;
+import com.igorkazakov.user.redminepro.database.room.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.ChildEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.DetailEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.FixedVersionEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueDetailEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.JournalsEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.OggyCalendarDayEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.PriorityEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.ProjectEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.ShortUserEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.StatusEntity;
 import com.igorkazakov.user.redminepro.database.room.entity.TimeEntryEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.TrackerEntity;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
 import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.screen.Issue_detail.IssueDetailServiceInterface;
@@ -101,6 +96,13 @@ public class Repository implements LoginServiceInterface,
     /// ============================================================================================
     /// CalendarServiceInterface
     /// ============================================================================================
+
+    public Single<List<OggyCalendarDayEntity>> getCalendarDaysForYearFromBd() {
+
+        return mRoomDbHelper.oggyCalendarDayEntityDAO()
+                .getAll()
+                .subscribeOn(Schedulers.io());
+    }
 
     public Single<List<OggyCalendarDayEntity>> getCalendarDaysForYear() {
 
@@ -207,40 +209,52 @@ public class Repository implements LoginServiceInterface,
     /// ============================================================================================
 
     @NonNull
-    public Observable<IssueDetail> getIssueDetails(long issueId) {
+    public Observable<IssueDetailEntity> getIssueDetails(long issueId) {
 
-        Observable<IssueDetail> observable;
-
-        Observable<IssueDetail> observableNetwork = mRedmineApi
+        Observable<IssueDetailEntity> observableNetwork = mRedmineApi
                 .issueDetails(issueId)
                 .lift(RxUtils.getApiErrorTransformer())
                 .map(issuesResponse -> {
 
                     IssueDetail issue = issuesResponse.getIssue();
 
+                    List<JournalsEntity> journalsEntitylist = new ArrayList<>(issue.getJournals().size());
+                    List<DetailEntity> detailEntities = new ArrayList<>(issue.getJournals().size());
                     for (Journal journal : issue.getJournals()) {
+                        journalsEntitylist.add(new JournalsEntity(journal, issue.getId()));
+
                         for (Detail detail : journal.getDetails()) {
-                            detail.generateId();
+
+                            DetailEntity detailEntity = new DetailEntity(detail, journal.getId());
+                            detailEntities.add(detailEntity);
                         }
                     }
 
-                    IssueDetailDAO.saveIssueDetail(issue);
-                    return issue;
+                    IssueDetailEntity issueDetailEntity = new IssueDetailEntity(issue);
+                    mRoomDbHelper.issueDetailEntityDAO().insertOrUpdate(issueDetailEntity);
+                    mRoomDbHelper.journalsEntityDAO().insertOrUpdate(journalsEntitylist);
+                    mRoomDbHelper.detailEntityDAO().deleteAllAndInsert(detailEntities);
+
+                    if (issue.getAttachments() != null) {
+                        mRoomDbHelper.attachmentEntityDAO().insertOrUpdate(issue.getAttachments());
+                    }
+
+                    if (issue.getChildren() != null) {
+                        mRoomDbHelper.childEntityDAO().insertOrUpdate(issue.getChildren());
+                    }
+
+                    return issueDetailEntity;
                 })
                 .subscribeOn(Schedulers.io());
 
-        IssueDetail cachedData = IssueDetailDAO.getIssueDetailById(issueId);
-
-        if (cachedData != null) {
-
-            observable = Observable.just(cachedData)
-                    .concatWith(observableNetwork);
-
-        } else {
-            observable = observableNetwork;
-        }
-
-        return observable.observeOn(AndroidSchedulers.mainThread());
+            return mRoomDbHelper
+                    .issueDetailEntityDAO()
+                    .getIssueDetailById(issueId)
+                    .subscribeOn(Schedulers.io())
+                    .toObservable()
+                    .onErrorReturn(throwable -> IssueDetailEntity.createEmptyInstance())
+                    .concatWith(observableNetwork)
+                    .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
@@ -263,32 +277,68 @@ public class Repository implements LoginServiceInterface,
         return mRoomDbHelper
                 .childEntityDAO()
                 .getChildrensById(issueDetailId)
+                .onErrorReturn(throwable -> new ArrayList<>())
                 .subscribeOn(Schedulers.io());
     }
 
     @Override
-    public ShortUser getUserById(long id) {
-        return ShortUserDAO.getUserById(id);
+    public Single<List<AttachmentEntity>> getAttachmentsByIssueDetailId(long issueDetailId) {
+
+        return mRoomDbHelper
+                .attachmentEntityDAO()
+                .getAttachmentsById(issueDetailId)
+                .onErrorReturn(throwable -> new ArrayList<>())
+                .subscribeOn(Schedulers.io());
     }
 
     @Override
-    public Status getStatusById(long id) {
-        return StatusDAO.getStatusById(id);
+    public Single<List<JournalsEntity>> getJournalsByIssueDetailId(long issueDetailId) {
+
+        return mRoomDbHelper
+                .journalsEntityDAO()
+                .getJournalsById(issueDetailId)
+                .onErrorReturn(throwable -> new ArrayList<>())
+                .subscribeOn(Schedulers.io());
     }
 
     @Override
-    public Tracker getTrackerById(long id) {
-        return TrackerDAO.getTrackerById(id);
+    public Single<List<DetailEntity>> getDetailEntitiesByJournalId(long journalId) {
+
+        return mRoomDbHelper
+                .detailEntityDAO()
+                .getDetailsById(journalId)
+                .onErrorReturn(throwable -> new ArrayList<>())
+                .subscribeOn(Schedulers.io());
     }
 
     @Override
-    public FixedVersion getVersionById(long id) {
-        return FixedVersionDAO.getFixedVersionById(id);
+    public ShortUserEntity getUserById(long id) {
+        return mRoomDbHelper.shortUserEntityDAO()
+                .getShortUserById(id);
     }
 
     @Override
-    public Priority getPriorityById(long id) {
-        return ProjectPriorityDAO.getPriorityById(id);
+    public StatusEntity getStatusById(long id) {
+        return mRoomDbHelper.statusEntityDAO()
+                .getStatusById(id);
+    }
+
+    @Override
+    public TrackerEntity getTrackerById(long id) {
+        return mRoomDbHelper.trackerEntityDAO()
+                .getTrackerById(id);
+    }
+
+    @Override
+    public FixedVersionEntity getVersionById(long id) {
+        return mRoomDbHelper.fixedVersionEntityDAO()
+                .getFixedVersionById(id);
+    }
+
+    @Override
+    public PriorityEntity getPriorityById(long id) {
+        return mRoomDbHelper.priorityEntityDAO()
+                .getPriorityById(id);
     }
 
     /// ============================================================================================

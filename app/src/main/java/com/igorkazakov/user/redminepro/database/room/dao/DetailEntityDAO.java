@@ -20,6 +20,12 @@ public abstract class DetailEntityDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insert(List<DetailEntity> detailEntities);
 
+    @Transaction
+    public void deleteAllAndInsert(List<DetailEntity> detailEntities) {
+        deleteAll();
+        insert(detailEntities);
+    }
+
     @Update(onConflict = OnConflictStrategy.IGNORE)
     public abstract void update(List<DetailEntity> detailEntities);
 
@@ -34,6 +40,9 @@ public abstract class DetailEntityDAO {
 
     @Query("SELECT * FROM DetailEntity")
     public abstract Single<List<DetailEntity>> getAll();
+
+    @Query("DELETE FROM DetailEntity")
+    public abstract void deleteAll();
 
     @Query("SELECT * FROM DetailEntity WHERE parentId = :id")
     public abstract Single<List<DetailEntity>> getDetailsById(Long id);

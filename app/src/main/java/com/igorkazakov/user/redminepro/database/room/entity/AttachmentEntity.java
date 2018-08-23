@@ -17,7 +17,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         childColumns = "parentId",
         onDelete = CASCADE))
 
-public class AttachmentEntity {
+public class AttachmentEntity extends EmptyEntity {
 
     @PrimaryKey
     @SerializedName("id")
@@ -118,5 +118,11 @@ public class AttachmentEntity {
 
     public void setCreatedOn(String createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public static AttachmentEntity createEmptyInstance() {
+        AttachmentEntity entity = new AttachmentEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

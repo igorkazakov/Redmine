@@ -9,6 +9,7 @@ import com.google.gson.annotations.SerializedName;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.AssignedTo;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Author;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Parent;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortProject;
@@ -16,7 +17,7 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.St
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 
 @Entity(tableName = "IssueDetailEntity")
-public class IssueDetailEntity {
+public class IssueDetailEntity extends EmptyEntity {
 
     @PrimaryKey
     @SerializedName("id")
@@ -78,6 +79,31 @@ public class IssueDetailEntity {
     @SerializedName("updated_on")
     @Expose
     private String updatedOn;
+
+    public IssueDetailEntity() {
+
+    }
+
+    public IssueDetailEntity(IssueDetail issueDetail) {
+
+        this.id = issueDetail.getId();
+        this.project = issueDetail.getProject();
+        this.parent = issueDetail.getParent();
+        this.tracker = issueDetail.getTracker();
+        this.status = issueDetail.getStatus();
+        this.priority = issueDetail.getPriority();
+        this.author = issueDetail.getAuthor();
+        this.assignedTo = issueDetail.getAssignedTo();
+        this.fixedVersion = issueDetail.getFixedVersion();
+        this.subject = issueDetail.getSubject();
+        this.description = issueDetail.getDescription();
+        this.spentHours = issueDetail.getSpentHours();
+        this.estimatedHours = issueDetail.getEstimatedHours();
+        this.startDate = issueDetail.getStartDate();
+        this.doneRatio = issueDetail.getDoneRatio();
+        this.createdOn = issueDetail.getCreatedOn();
+        this.updatedOn = issueDetail.getUpdatedOn();
+    }
 
     public double getSpentHours() {
         return spentHours;
@@ -213,5 +239,11 @@ public class IssueDetailEntity {
 
     public void setUpdatedOn(String updatedOn) {
         this.updatedOn = updatedOn;
+    }
+
+    public static IssueDetailEntity createEmptyInstance() {
+        IssueDetailEntity entity = new IssueDetailEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

@@ -35,6 +35,6 @@ public abstract class IssueEntityDAO {
     @Query("SELECT * FROM IssueEntity")
     public abstract Single<List<IssueEntity>> getAll();
 
-    @Query("SELECT * FROM IssueEntity WHERE id = :childrenIds")
+    @Query("SELECT * FROM IssueEntity WHERE id IN (:childrenIds)")
     public abstract Single<List<IssueEntity>> getChildIssues(List<Long> childrenIds);
 }

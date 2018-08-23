@@ -17,7 +17,7 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tr
 
 
 @Entity(tableName = "IssueEntity")
-public class IssueEntity {
+public class IssueEntity extends EmptyEntity {
 
     @PrimaryKey
     @SerializedName("id")
@@ -202,5 +202,11 @@ public class IssueEntity {
 
     public void setUpdatedOn(String updatedOn) {
         this.updatedOn = updatedOn;
+    }
+
+    public static IssueEntity createEmptyInstance() {
+        IssueEntity entity = new IssueEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

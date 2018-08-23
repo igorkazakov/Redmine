@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
+import com.igorkazakov.user.redminepro.database.room.entity.JournalsEntity;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 
 import butterknife.BindView;
@@ -30,7 +30,7 @@ public class JournalHolder extends RecyclerView.ViewHolder {
     RecyclerView mDetailJournalList;
 
     private Context mContext;
-    private Journal mJournalEntity;
+    private JournalsEntity mJournalEntity;
 
     public JournalHolder(View itemView, Context context) {
         super(itemView);
@@ -38,12 +38,12 @@ public class JournalHolder extends RecyclerView.ViewHolder {
         mContext = context;
     }
 
-    public void bind(Journal entity, IssueDetailPresenter issueDetailPresenter) {
+    public void bind(JournalsEntity entity, IssueDetailPresenter issueDetailPresenter) {
 
         mJournalEntity = entity;
 
         String text = String.format(mContext.getResources().getString(R.string.title_journal_issue_detail),
-                String.valueOf(mJournalEntity.getUser().getName()),
+                String.valueOf(mJournalEntity.getUser().getShortUserName()),
                 String.valueOf(DateUtils.timeDifference(
                         DateUtils.dateFromString(mJournalEntity.getCreatedOn(),
                                 DateUtils.getDateFormatterWithTime()))));
@@ -64,7 +64,12 @@ public class JournalHolder extends RecyclerView.ViewHolder {
             mNotesTextView.setVisibility(View.GONE);
         }
 
-        JournalDetailAdapter journalAdapter = new JournalDetailAdapter(entity, issueDetailPresenter);
-        mDetailJournalList.setAdapter(journalAdapter);
+        issueDetailPresenter.fetchDetails(entity.getId(), result -> {
+            if (!result.isEmpty()) {
+                JournalDetailAdapter journalAdapter =
+                        new JournalDetailAdapter(result, issueDetailPresenter);
+                mDetailJournalList.setAdapter(journalAdapter);
+            }
+        });
     }
 }

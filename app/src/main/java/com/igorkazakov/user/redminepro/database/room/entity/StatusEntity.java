@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Namable;
 
 @Entity(tableName = "StatusEntity")
-public class StatusEntity implements Namable {
+public class StatusEntity extends EmptyEntity implements Namable {
 
     @PrimaryKey
     @SerializedName("id")
@@ -34,5 +34,11 @@ public class StatusEntity implements Namable {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public static StatusEntity createEmptyInstance() {
+        StatusEntity entity = new StatusEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

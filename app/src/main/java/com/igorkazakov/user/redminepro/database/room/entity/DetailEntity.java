@@ -6,21 +6,22 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
 
-import java.util.UUID;
+import java.util.Date;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(
-        entity = AttachmentEntity.class,
+        entity = JournalsEntity.class,
         parentColumns = "id",
         childColumns = "parentId",
         onDelete = CASCADE))
 
-public class DetailEntity {
+public class DetailEntity extends EmptyEntity {
 
-    @PrimaryKey
-    private String id;
+    @PrimaryKey(autoGenerate = true)
+    private Long id;
 
     @SerializedName("property")
     @Expose
@@ -35,21 +36,39 @@ public class DetailEntity {
     @Expose
     private String oldValue;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public void generateId() {
-        UUID uuid = UUID.randomUUID();
-        String randomUUIDString = uuid.toString();
-        this.id = randomUUIDString;
+    private Long parentId;
+
+    public DetailEntity() {
+
     }
 
-    private Long parentId;
+    public DetailEntity(Detail detail, long parentId) {
+        this.property = detail.getProperty();
+        this.name = detail.getName();
+        this.newValue = detail.getNewValue();
+        this.oldValue = detail.getOldValue();
+        this.parentId = parentId;
+        generateId();
+    }
+
+    private void generateId() {
+
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        this.id = new Date().getTime();
+    }
 
     public Long getParentId() {
         return parentId;
@@ -89,5 +108,11 @@ public class DetailEntity {
 
     public void setOldValue(String oldValue) {
         this.oldValue = oldValue;
+    }
+
+    public static DetailEntity createEmptyInstance() {
+        DetailEntity entity = new DetailEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

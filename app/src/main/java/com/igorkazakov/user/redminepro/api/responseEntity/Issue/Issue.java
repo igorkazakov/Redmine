@@ -10,16 +10,12 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Sh
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by user on 13.07.17.
  */
 
-public class Issue extends RealmObject {
+public class Issue {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Long id;

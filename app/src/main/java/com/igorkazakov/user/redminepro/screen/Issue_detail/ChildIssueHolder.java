@@ -43,8 +43,8 @@ public class ChildIssueHolder extends RecyclerView.ViewHolder implements View.On
 
         mIssueEntity = entity;
         mTitleTextView.setText(entity.getSubject());
-        mTrackerTextView.setText(entity.getTracker().getName());
-        mAssignedToTextView.setText(entity.getAssignedTo().getName());
+        mTrackerTextView.setText(entity.getTracker().getTrackerName());
+        mAssignedToTextView.setText(entity.getAssignedTo().getAssignedToName());
         mStatusTextView.setText(entity.getStatus().getName());
     }
 

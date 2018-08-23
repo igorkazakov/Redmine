@@ -20,10 +20,10 @@ import io.reactivex.Single;
 public abstract class OggyCalendarDayDAO {
 
     @Query("SELECT * FROM OggyCalendarDayEntity")
-    public abstract List<OggyCalendarDayEntity> getAll();
+    public abstract Single<List<OggyCalendarDayEntity>> getAll();
 
     @Query("SELECT * FROM OggyCalendarDayEntity WHERE id = :id")
-    public abstract OggyCalendarDayEntity getById(long id);
+    public abstract Single<OggyCalendarDayEntity> getById(long id);
 
     @TypeConverters({DateConverter.class})
     @Query("SELECT sum(hours) FROM OggyCalendarDayEntity WHERE date >= :start AND date <= :end")

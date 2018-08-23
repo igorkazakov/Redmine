@@ -36,5 +36,5 @@ public abstract class StatusEntityDAO {
     public abstract Single<List<StatusEntity>> getAll();
 
     @Query("SELECT * FROM StatusEntity WHERE id = :id")
-    public abstract Single<StatusEntity> getStatusById(Long id);
+    public abstract StatusEntity getStatusById(Long id);
 }

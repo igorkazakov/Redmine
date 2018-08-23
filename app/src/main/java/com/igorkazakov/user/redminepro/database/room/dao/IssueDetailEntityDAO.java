@@ -18,15 +18,15 @@ import io.reactivex.Single;
 public abstract class IssueDetailEntityDAO {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void insert(List<IssueDetailEntity> issueDetailEntities);
+    public abstract void insert(IssueDetailEntity issueDetailEntity);
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void update(List<IssueDetailEntity> issueDetailEntities);
+    public abstract void update(IssueDetailEntity issueDetailEntity);
 
     @Transaction
-    public void insertOrUpdate(List<IssueDetailEntity> issueDetailEntities) {
-        insert(issueDetailEntities);
-        update(issueDetailEntities);
+    public void insertOrUpdate(IssueDetailEntity issueDetailEntity) {
+        insert(issueDetailEntity);
+        update(issueDetailEntity);
     }
 
     @Delete

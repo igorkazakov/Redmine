@@ -46,7 +46,7 @@ import com.igorkazakov.user.redminepro.database.room.entity.TrackerEntity;
         DetailEntity.class,
         IssueDetailEntity.class,
         IssueEntity.class,
-        JournalsEntity.class}, version = 6)
+        JournalsEntity.class}, version = 7)
 
 public abstract class RoomDbHelper extends RoomDatabase {
 

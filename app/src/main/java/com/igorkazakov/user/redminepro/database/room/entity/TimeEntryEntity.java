@@ -16,7 +16,7 @@ import java.util.Date;
 
 @Entity(tableName = "TimeEntryEntity")
 @TypeConverters({DateConverter.class})
-public class TimeEntryEntity {
+public class TimeEntryEntity extends EmptyEntity {
 
     @PrimaryKey
     private Integer id;
@@ -139,5 +139,11 @@ public class TimeEntryEntity {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public static TimeEntryEntity createEmptyInstance() {
+        TimeEntryEntity entity = new TimeEntryEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

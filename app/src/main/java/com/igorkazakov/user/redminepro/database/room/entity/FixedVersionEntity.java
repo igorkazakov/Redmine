@@ -10,7 +10,7 @@ import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Na
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortProject;
 
 @Entity(tableName = "FixedVersionEntity")
-public class FixedVersionEntity implements Namable {
+public class FixedVersionEntity extends EmptyEntity implements Namable {
 
     @PrimaryKey
     @SerializedName("id")
@@ -49,5 +49,11 @@ public class FixedVersionEntity implements Namable {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public static FixedVersionEntity createEmptyInstance() {
+        FixedVersionEntity entity = new FixedVersionEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

@@ -36,5 +36,5 @@ public abstract class FixedVersionEntityDAO {
     public abstract Single<List<FixedVersionEntity>> getAll();
 
     @Query("SELECT * FROM FixedVersionEntity WHERE id = :id")
-    public abstract Single<FixedVersionEntity> getFixedVersionById(Long id);
+    public abstract FixedVersionEntity getFixedVersionById(Long id);
 }

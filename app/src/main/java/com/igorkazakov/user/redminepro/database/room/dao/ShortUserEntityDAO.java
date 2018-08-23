@@ -36,5 +36,5 @@ public abstract class ShortUserEntityDAO {
     public abstract Single<List<ShortUserEntity>> getAll();
 
     @Query("SELECT * FROM ShortUserEntity WHERE id = :id")
-    public abstract Single<ShortUserEntity> getShortUserById(Long id);
+    public abstract ShortUserEntity getShortUserById(Long id);
 }

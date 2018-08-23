@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Namable;
 
 @Entity(tableName = "TrackerEntity")
-public class TrackerEntity implements Namable {
+public class TrackerEntity extends EmptyEntity implements Namable {
 
     @PrimaryKey
     @SerializedName("id")
@@ -34,5 +34,11 @@ public class TrackerEntity implements Namable {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public static TrackerEntity createEmptyInstance() {
+        TrackerEntity entity = new TrackerEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

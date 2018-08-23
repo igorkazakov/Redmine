@@ -2,10 +2,9 @@ package com.igorkazakov.user.redminepro.database.room.entity;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.PrimaryKey;
 
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.nestedObjects.TimeEntryCustomField;
-
-import io.realm.annotations.PrimaryKey;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
@@ -15,7 +14,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         childColumns = "timeEntryId",
         onDelete = CASCADE))
 
-public class TimeEntryCustomFieldEntity {
+public class TimeEntryCustomFieldEntity extends EmptyEntity {
 
     @PrimaryKey
     private Integer id;
@@ -23,7 +22,11 @@ public class TimeEntryCustomFieldEntity {
     private String value;
     private Integer timeEntryId;
 
-    TimeEntryCustomFieldEntity(TimeEntryCustomField customField, Integer parentId) {
+    public TimeEntryCustomFieldEntity() {
+
+    }
+
+    public TimeEntryCustomFieldEntity(TimeEntryCustomField customField, Integer parentId) {
         this.id = customField.getId();
         this.customFieldName = customField.getName();
         this.value = customField.getValue();
@@ -60,5 +63,11 @@ public class TimeEntryCustomFieldEntity {
 
     public void setTimeEntryId(Integer timeEntryId) {
         this.timeEntryId = timeEntryId;
+    }
+
+    public static TimeEntryCustomFieldEntity createEmptyInstance() {
+        TimeEntryCustomFieldEntity entity = new TimeEntryCustomFieldEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

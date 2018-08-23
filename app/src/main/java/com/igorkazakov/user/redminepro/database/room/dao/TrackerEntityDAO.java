@@ -36,5 +36,5 @@ public abstract class TrackerEntityDAO {
     public abstract Single<List<TrackerEntity>> getAll();
 
     @Query("SELECT * FROM TrackerEntity WHERE id = :id")
-    public abstract Single<TrackerEntity> getTrackerById(Long id);
+    public abstract TrackerEntity getTrackerById(Long id);
 }

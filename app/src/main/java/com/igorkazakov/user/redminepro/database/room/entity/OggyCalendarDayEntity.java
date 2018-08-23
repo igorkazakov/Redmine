@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Entity(tableName = "OggyCalendarDayEntity")
 @TypeConverters({DateConverter.class})
-public class OggyCalendarDayEntity {
+public class OggyCalendarDayEntity extends EmptyEntity {
 
     public static final String WORK = "work";
     public static final String HOLIDAY = "holiday";
@@ -84,5 +84,11 @@ public class OggyCalendarDayEntity {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public static OggyCalendarDayEntity createEmptyInstance() {
+        OggyCalendarDayEntity entity = new OggyCalendarDayEntity();
+        entity.setEmpty(true);
+        return entity;
     }
 }

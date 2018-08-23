@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
 /**
@@ -45,8 +46,9 @@ public class CalendarPresenter extends MvpPresenter<CalendarView> implements Lif
 
     public void loadAllCalendarDays() {
 
-        mDisposable.add(mRepository.getCalendarDaysForYear()
+        mDisposable.add(mRepository.getCalendarDaysForYearFromBd()
                 .doOnSubscribe(__ -> getViewState().showLoading())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::createMonthIndicatorArrays,
                         throwable -> {
                             ApiException exception = (ApiException)throwable;

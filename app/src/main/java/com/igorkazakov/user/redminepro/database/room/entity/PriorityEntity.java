@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Namable;
 
 @Entity(tableName = "PriorityEntity")
-public class PriorityEntity implements Namable {
+public class PriorityEntity extends EmptyEntity implements Namable {
 
     @PrimaryKey
     @SerializedName("id")
@@ -35,4 +35,11 @@ public class PriorityEntity implements Namable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public static PriorityEntity createEmptyInstance() {
+        PriorityEntity entity = new PriorityEntity();
+        entity.setEmpty(true);
+        return entity;
+    }
+
 }

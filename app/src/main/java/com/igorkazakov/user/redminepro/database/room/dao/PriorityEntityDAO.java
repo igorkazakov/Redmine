@@ -36,5 +36,5 @@ public abstract class PriorityEntityDAO {
     public abstract Single<List<PriorityEntity>> getAll();
 
     @Query("SELECT * FROM PriorityEntity WHERE id = :id")
-    public abstract Single<PriorityEntity> getPriorityById(Long id);
+    public abstract PriorityEntity getPriorityById(Long id);
 }
