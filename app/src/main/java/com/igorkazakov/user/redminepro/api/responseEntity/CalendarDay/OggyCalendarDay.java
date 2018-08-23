@@ -4,14 +4,12 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by user on 14.07.17.
  */
 
-public class OggyCalendarDay extends RealmObject {
+public class OggyCalendarDay {
 
     public static final String WORK = "work";
     public static final String HOLIDAY = "holiday";
@@ -20,7 +18,6 @@ public class OggyCalendarDay extends RealmObject {
     public static final String HOSPITAL = "hospital";
 
     @SerializedName("id")
-    @PrimaryKey
     private Long id;
 
     @SerializedName("user_id")

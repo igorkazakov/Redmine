@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
+import com.igorkazakov.user.redminepro.database.room.entity.AttachmentEntity;
 
 import java.util.List;
 
@@ -17,9 +17,9 @@ import java.util.List;
 
 public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentHolder> {
 
-    private List<Attachment> attachmentEntities;
+    private List<AttachmentEntity> attachmentEntities;
 
-    public AttachmentAdapter(List<Attachment> issueModels) {
+    public AttachmentAdapter(List<AttachmentEntity> issueModels) {
         this.attachmentEntities = issueModels;
     }
 

@@ -3,19 +3,13 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.UUID;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by user on 28.07.17.
  */
 
-public class Detail extends RealmObject {
+public class Detail {
 
-    @PrimaryKey
-    private String id;
+    private Long id = 0L;
 
     @SerializedName("property")
     @Expose
@@ -30,14 +24,8 @@ public class Detail extends RealmObject {
     @Expose
     private String oldValue;
 
-    public String getId() {
+    public Long getId() {
         return id;
-    }
-
-    public void generateId() {
-        UUID uuid = UUID.randomUUID();
-        String randomUUIDString = uuid.toString();
-        this.id = randomUUIDString;
     }
 
     public String getProperty() {

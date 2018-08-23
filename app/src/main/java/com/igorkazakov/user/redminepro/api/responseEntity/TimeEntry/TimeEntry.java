@@ -9,14 +9,10 @@ import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.nestedObject
 import com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.nestedObjects.TimeEntryUser;
 
 import java.util.Date;
+import java.util.List;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+public class TimeEntry {
 
-public class TimeEntry extends RealmObject {
-
-    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -49,7 +45,7 @@ public class TimeEntry extends RealmObject {
     private Date updatedOn;
     @SerializedName("custom_fields")
     @Expose
-    private RealmList<TimeEntryCustomField> customFields;
+    private List<TimeEntryCustomField> customFields;
 
     private String type;
 
@@ -141,11 +137,11 @@ public class TimeEntry extends RealmObject {
         this.updatedOn = updatedOn;
     }
 
-    public RealmList<TimeEntryCustomField> getCustomFields() {
+    public List<TimeEntryCustomField> getCustomFields() {
         return customFields;
     }
 
-    public void setCustomFields(RealmList<TimeEntryCustomField> customFields) {
+    public void setCustomFields(List<TimeEntryCustomField> customFields) {
         this.customFields = customFields;
     }
 }

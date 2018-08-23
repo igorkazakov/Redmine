@@ -3,17 +3,14 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import java.util.List;
 
 /**
  * Created by user on 28.07.17.
  */
 
-public class Journal extends RealmObject {
+public class Journal {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Long id;
@@ -28,7 +25,7 @@ public class Journal extends RealmObject {
     private String createdOn;
     @SerializedName("details")
     @Expose
-    private RealmList<Detail> details = null;
+    private List<Detail> details = null;
 
     public Long getId() {
         return id;
@@ -62,11 +59,11 @@ public class Journal extends RealmObject {
         this.createdOn = createdOn;
     }
 
-    public RealmList<Detail> getDetails() {
+    public List<Detail> getDetails() {
         return details;
     }
 
-    public void setDetails(RealmList<Detail> details) {
+    public void setDetails(List<Detail> details) {
         this.details = details;
     }
 }

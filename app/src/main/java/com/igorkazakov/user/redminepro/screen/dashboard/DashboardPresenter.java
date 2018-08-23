@@ -8,17 +8,13 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.BuildConfig;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.models.StatisticModel;
+import com.igorkazakov.user.redminepro.models.CurrentWeekHoursModel;
 import com.igorkazakov.user.redminepro.models.TimeInterval;
-import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.utils.DateUtils;
 import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.igorkazakov.user.redminepro.utils.NumberUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -30,10 +26,12 @@ import io.reactivex.disposables.Disposable;
 public class DashboardPresenter extends MvpPresenter<DashboardView> implements LifecycleObserver {
 
     private DashboardServiceInterface mRepository;
+    private KPIUtils mKPIUtils;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
-    public DashboardPresenter(DashboardServiceInterface repository) {
+    DashboardPresenter(DashboardServiceInterface repository, KPIUtils kpiUtils) {
         mRepository = repository;
+        mKPIUtils = kpiUtils;
     }
 
     @Override
@@ -60,17 +58,26 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> implements L
 
     public void setupView() {
 
-        getViewState().setupCurrentWeekStatistic(remainHoursForNormalKpi(),
-                remainHoursForWeek(), getWholeCurrentWeekHoursNorm());
-        getViewState().setupChart(KPIUtils.getHoursForYear(), KPIUtils.calculateKpiForYear());
-        getViewState().setupStatisticRecyclerView(getStatistics());
+        mCompositeDisposable.add(getDataForCurrentWeekStatistic().subscribe(result -> {
+            getViewState().setupCurrentWeekStatistic(result.getRemainHoursForNormalKpi(),
+                    result.getRemainHoursForWeek(),
+                    result.getCurrentWeekHoursNorm());
+        }));
+
+        mCompositeDisposable.add(mKPIUtils.getChartData().subscribe(result -> {
+            getViewState().setupChart(result.getTimeModel(), result.getKpi());
+        }));
+
+        mCompositeDisposable.add(mKPIUtils.getStatistics().subscribe(result -> {
+            getViewState().setupStatisticRecyclerView(result);
+        }));
     }
 
     private void loadRedmineData() {
-        mRepository.getStatuses().subscribe();
-        mRepository.getTrackers().subscribe();
-        mRepository.getProjectPriorities().subscribe();
-        mRepository.getProjects().subscribe();
+        mCompositeDisposable.add(mRepository.getStatuses().subscribe());
+        mCompositeDisposable.add(mRepository.getTrackers().subscribe());
+        mCompositeDisposable.add(mRepository.getProjectPriorities().subscribe());
+        mCompositeDisposable.add(mRepository.getProjects().subscribe());
     }
 
     private void loadTimeEntriesData() {
@@ -87,55 +94,65 @@ public class DashboardPresenter extends MvpPresenter<DashboardView> implements L
         mCompositeDisposable.add(disposable);
     }
 
-    private List<StatisticModel> getStatistics() {
+    private Single<CurrentWeekHoursModel> getDataForCurrentWeekStatistic() {
 
-        List<StatisticModel> timeModelList = new ArrayList<>();
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForCurrentMonth(),
-                KPIUtils.calculateKpiForCurrentMonth(), "Current month"));
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForPreviousWeek(),
-                KPIUtils.calculateKpiForPreviousWeek(), "Previous week"));
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForCurrentWeek(),
-                KPIUtils.calculateKpiForCurrentWeek(), "Current week"));
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForYesterday(),
-                KPIUtils.calculateKpiForDate(DateUtils.getYesterday()), "Yesterday"));
-        timeModelList.add(new StatisticModel(KPIUtils.getHoursForToday(),
-                KPIUtils.calculateKpiForDate(new Date()), "Today"));
+        return Single.zip(
+                getWholeCurrentWeekHoursNorm(),
+                remainHoursForNormalKpi(),
+                remainHoursForWeek(),
+                (currentWeekHoursNorm, remainHoursForNormalKpi, remainHoursForWeek) -> {
 
-        return timeModelList;
+                    return new CurrentWeekHoursModel(
+                            currentWeekHoursNorm,
+                            remainHoursForNormalKpi,
+                            remainHoursForWeek);
+                });
     }
 
-    private float getWholeCurrentWeekHoursNorm() {
+    private Single<Long> getWholeCurrentWeekHoursNorm() {
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
         return mRepository.fetchHoursNormForInterval(interval);
     }
 
-    private float remainHoursForNormalKpi() {
+    private Single<Float> remainHoursForNormalKpi() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        TimeModel model = mRepository.fetchWorkHoursWithInterval(interval);
-        float norm = mRepository.fetchHoursNormForInterval(interval);
-        float remainHours = NumberUtils.round(norm * BuildConfig.NORMAL_KPI -
-                (model.getRegularTime() + model.getTeamFuckupTime()));
-        if (remainHours > 0) {
-            return remainHours;
 
-        } else {
-            return 0;
-        }
+        return Single.zip(mRepository.fetchWorkHoursWithInterval(interval),
+                mRepository.fetchHoursNormForInterval(interval),
+                (model, norm) -> {
+
+                    float remainHours = NumberUtils.round(norm * BuildConfig.NORMAL_KPI -
+                            (model.getRegularTime() + model.getTeamFuckupTime()));
+                    if (remainHours > 0) {
+                        return remainHours;
+
+                    } else {
+                        return 0f;
+                    }
+                });
     }
 
-    private float remainHoursForWeek() {
+    private Single<Float> remainHoursForWeek() {
 
         TimeInterval interval = DateUtils.getCurrentWholeWeekInterval();
-        TimeModel model = mRepository.fetchWorkHoursWithInterval(interval);
-        float norm = mRepository.fetchHoursNormForInterval(interval);
-        float remainHours = norm - (model.getRegularTime() + model.getFuckupTime() + model.getTeamFuckupTime());
-        if (remainHours > 0) {
-            return remainHours;
 
-        } else {
-            return 0;
-        }
+        return Single.zip(mRepository.fetchWorkHoursWithInterval(interval),
+                mRepository.fetchHoursNormForInterval(interval),
+                (model, norm) -> {
+
+                    float remainHours = norm -
+                            (model.getRegularTime() +
+                                    model.getFuckupTime() +
+                                    model.getTeamFuckupTime());
+
+                    if (remainHours > 0) {
+                        return remainHours;
+
+                    } else {
+                        return 0f;
+                    }
+                });
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

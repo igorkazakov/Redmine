@@ -7,21 +7,17 @@ package com.igorkazakov.user.redminepro.api.responseEntity.TimeEntry.nestedObjec
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+public class TimeEntryIssue {
 
-public class TimeEntryIssue extends RealmObject {
-
-    @PrimaryKey
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private Integer issueId;
 
-    public Integer getId() {
-        return id;
+    public Integer getIssueId() {
+        return issueId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIssueId(Integer id) {
+        this.issueId = id;
     }
 }

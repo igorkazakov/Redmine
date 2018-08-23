@@ -18,6 +18,7 @@ import com.igorkazakov.user.redminepro.models.TimeModel;
 import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 import com.igorkazakov.user.redminepro.utils.ColorUtils;
+import com.igorkazakov.user.redminepro.utils.KPIUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -59,13 +60,16 @@ public class CalendarFragment extends BaseFragment implements CalendarView {
     @Inject
     Repository mRepository;
 
+    @Inject
+    KPIUtils mKPIUtils;
+
     private int colorHoliday;
     private int colorHospital;
     private int colorVacation;
 
     @ProvidePresenter
     CalendarPresenter provideCalendarPresenter() {
-        return new CalendarPresenter(mRepository);
+        return new CalendarPresenter(mRepository, mKPIUtils);
     }
 
     @Override

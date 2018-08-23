@@ -7,8 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Detail;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
+import com.igorkazakov.user.redminepro.database.room.entity.DetailEntity;
 
 import java.util.List;
 
@@ -18,19 +17,21 @@ import java.util.List;
 
 public class JournalDetailAdapter extends RecyclerView.Adapter<JournalDetailHolder> {
 
-    private List<Detail> detailEntities;
+    private List<DetailEntity> detailEntities;
     private IssueDetailPresenter issueDetailPresenter;
 
-    public JournalDetailAdapter(Journal entity, IssueDetailPresenter issueDetailPresenter) {
+    public JournalDetailAdapter(List<DetailEntity> detailEntities, IssueDetailPresenter issueDetailPresenter) {
         this.issueDetailPresenter = issueDetailPresenter;
-        this.detailEntities = entity.getDetails();//issueDetailPresenter.getJournalDetails(entity);
+        this.detailEntities = detailEntities;
     }
 
     @Override
     public JournalDetailHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         Context context = parent.getContext();
-        View view = LayoutInflater.from(context).inflate(R.layout.detail_journal_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.detail_journal_item,
+                parent,
+                false);
         return new JournalDetailHolder(view, context);
     }
 

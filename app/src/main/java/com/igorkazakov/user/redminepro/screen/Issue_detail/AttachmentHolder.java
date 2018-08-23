@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
+import com.igorkazakov.user.redminepro.database.room.entity.AttachmentEntity;
 import com.igorkazakov.user.redminepro.screen.attachment.AttachmentActivity;
 
 import butterknife.BindView;
@@ -22,7 +22,7 @@ public class AttachmentHolder extends RecyclerView.ViewHolder implements View.On
     TextView mTitleTextView;
 
     private Context mContext;
-    private Attachment mAttachmentEntity;
+    private AttachmentEntity mAttachmentEntity;
 
     public AttachmentHolder(View itemView, Context context) {
         super(itemView);
@@ -31,7 +31,7 @@ public class AttachmentHolder extends RecyclerView.ViewHolder implements View.On
         mContext = context;
     }
 
-    public void bind(Attachment entity) {
+    public void bind(AttachmentEntity entity) {
 
         mAttachmentEntity = entity;
         mTitleTextView.setText(entity.getFilename());

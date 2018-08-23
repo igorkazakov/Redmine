@@ -14,6 +14,7 @@ import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 import com.igorkazakov.user.redminepro.screen.calendar.CalendarFragment;
 import com.igorkazakov.user.redminepro.screen.dashboard.DashboardFragment;
 import com.igorkazakov.user.redminepro.screen.issues.IssuesFragment;
+import com.igorkazakov.user.redminepro.utils.KPIUtils;
 
 import javax.inject.Singleton;
 
@@ -38,4 +39,5 @@ public interface ApplicationComponent {
     void inject(LoginActivity loginActivity);
     void inject(IssueDetailActivity issueDetailActivity);
     void inject(Repository repository);
+    void inject(KPIUtils kpiUtils);
 }

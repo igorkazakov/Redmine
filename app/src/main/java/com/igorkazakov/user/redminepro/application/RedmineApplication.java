@@ -10,8 +10,6 @@ import com.squareup.leakcanary.LeakCanary;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
-
 /**
  * Created by user on 11.07.17.
  */
@@ -33,8 +31,6 @@ public class RedmineApplication extends MultiDexApplication {
                 .build();
 
         sComponent.inject(this);
-
-        Realm.init(this);
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.

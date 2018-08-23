@@ -2,14 +2,14 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.igorkazakov.user.redminepro.database.room.entity.AttachmentEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.ChildEntity;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import java.util.List;
 
-public class IssueDetail extends RealmObject {
 
-    @PrimaryKey
+public class IssueDetail {
+
     @SerializedName("id")
     @Expose
     private Long id;
@@ -63,16 +63,14 @@ public class IssueDetail extends RealmObject {
     private String updatedOn;
     @SerializedName("children")
     @Expose
-    private RealmList<Child> children;
+    private List<ChildEntity> children;
     @SerializedName("attachments")
     @Expose
-    private RealmList<Attachment> attachments;
-    //    @SerializedName("changesets")
-//    @Expose
-//    private RealmList<Object> changesets;
+    private List<AttachmentEntity> attachments;
+
     @SerializedName("journals")
     @Expose
-    private RealmList<Journal> journals;
+    private List<Journal> journals;
 
     public double getSpentHours() {
         return spentHours;
@@ -210,35 +208,27 @@ public class IssueDetail extends RealmObject {
         this.updatedOn = updatedOn;
     }
 
-    public RealmList<Child> getChildren() {
+    public List<ChildEntity> getChildren() {
         return children;
     }
 
-    public void setChildren(RealmList<Child> children) {
+    public void setChildren(List<ChildEntity> children) {
         this.children = children;
     }
 
-    public RealmList<Attachment> getAttachments() {
+    public List<AttachmentEntity> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(RealmList<Attachment> attachments) {
+    public void setAttachments(List<AttachmentEntity> attachments) {
         this.attachments = attachments;
     }
 
-//    public RealmList<Object> getChangesets() {
-//        return changesets;
-//    }
-//
-//    public void setChangesets(RealmList<Object> changesets) {
-//        this.changesets = changesets;
-//    }
-
-    public RealmList<Journal> getJournals() {
+    public List<Journal> getJournals() {
         return journals;
     }
 
-    public void setJournals(RealmList<Journal> journals) {
+    public void setJournals(List<Journal> journals) {
         this.journals = journals;
     }
 }

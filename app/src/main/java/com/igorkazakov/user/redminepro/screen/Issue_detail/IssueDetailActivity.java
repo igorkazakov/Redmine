@@ -15,11 +15,11 @@ import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Attachment;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Journal;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.database.room.entity.AttachmentEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueDetailEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.JournalsEntity;
 import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.base.BaseActivity;
 
@@ -150,56 +150,75 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
     }
 
     @Override
-    public void setupView(IssueDetail issueEntity) {
+    public void setupView(IssueDetailEntity issueEntity) {
 
-        mStatusTextView.setText(mPresenter.getSafeName(issueEntity.getStatus()));
-        mPriorityTextView.setText(mPresenter.getSafeName(issueEntity.getPriority()));
-        mAssignedToTextView.setText(mPresenter.getSafeName(issueEntity.getAssignedTo()));
-        mTrackerTextView.setText(mPresenter.getSafeName(issueEntity.getTracker()));
-        mFixedVersionTextView.setText(mPresenter.getSafeName(issueEntity.getFixedVersion()));
+        if (issueEntity.getStatus() != null) {
+            mStatusTextView.setText(issueEntity.getStatus().getName());
+        }
+
+        if (issueEntity.getPriority() != null) {
+            mPriorityTextView.setText(issueEntity.getPriority().getPriorityName());
+        }
+
+        if (issueEntity.getAssignedTo() != null) {
+            mAssignedToTextView.setText(issueEntity.getAssignedTo().getAssignedToName());
+        }
+
+        if (issueEntity.getTracker() != null) {
+            mTrackerTextView.setText(issueEntity.getTracker().getTrackerName());
+        }
+
+        if (issueEntity.getFixedVersion() != null) {
+            mFixedVersionTextView.setText(issueEntity.getFixedVersion().getFixedVersionName());
+        }
+
         mStartDateTextView.setText(issueEntity.getStartDate());
         mEstimatedHoursTextView.setText(String.valueOf(issueEntity.getEstimatedHours()));
         mSpentHoursTextView.setText(String.valueOf(issueEntity.getSpentHours()));
         mIssueNameTextView.setText(issueEntity.getSubject());
 
-        if (issueEntity.getChildren() != null) {
-            List<Issue> issueEntities = mPresenter.getChildIssues(issueEntity.getChildren());
-            if (issueEntities.size() == 0) {
-                mChildIssueListView.setVisibility(View.GONE);
+        mPresenter.checkChildIssues(issueEntity.getId());
+        mPresenter.checkAttachments(issueEntity.getId());
+        mPresenter.checkJournals(issueEntity.getId());
+    }
 
-            } else {
-                mChildIssueListView.setVisibility(View.VISIBLE);
-            }
+    @Override
+    public void setupChildIssues(List<IssueEntity> issueEntities) {
 
-            ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
-            mChildIssuesList.setAdapter(adapter);
+        if (issueEntities.size() == 0) {
+            mChildIssueListView.setVisibility(View.GONE);
 
         } else {
-            mChildIssueListView.setVisibility(View.GONE);
+            mChildIssueListView.setVisibility(View.VISIBLE);
+            ChildIssueAdapter adapter = new ChildIssueAdapter(issueEntities);
+            mChildIssuesList.setAdapter(adapter);
         }
+    }
 
-        List<Attachment> attachmentEntities = issueEntity.getAttachments();
+    @Override
+    public void setupAttachments(List<AttachmentEntity> attachmentEntities) {
+
         if (attachmentEntities.size() == 0) {
             mAttachmentListView.setVisibility(View.GONE);
 
         } else {
             mAttachmentListView.setVisibility(View.VISIBLE);
+            AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
+            mAttachmentList.setAdapter(attachmentAdapter);
         }
+    }
 
-        AttachmentAdapter attachmentAdapter = new AttachmentAdapter(attachmentEntities);
-        mAttachmentList.setAdapter(attachmentAdapter);
+    @Override
+    public void setupJournals(List<JournalsEntity> journalsEntities) {
 
-        List<Journal> journalEntities = issueEntity.getJournals();
-        if (journalEntities.size() == 0) {
+        if (journalsEntities.size() == 0) {
             mJournalListView.setVisibility(View.GONE);
 
         } else {
             mJournalListView.setVisibility(View.VISIBLE);
+            JournalAdapter journalAdapter = new JournalAdapter(journalsEntities, mPresenter);
+            mJournalIssuesList.setAdapter(journalAdapter);
         }
-
-        JournalAdapter journalAdapter = new JournalAdapter(journalEntities, mPresenter);
-        mJournalIssuesList.setAdapter(journalAdapter);
-
     }
 
     @Override
@@ -214,5 +233,4 @@ public class IssueDetailActivity extends BaseActivity implements IssueDetailView
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

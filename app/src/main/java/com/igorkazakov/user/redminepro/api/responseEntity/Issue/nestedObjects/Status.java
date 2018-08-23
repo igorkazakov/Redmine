@@ -3,34 +3,30 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by user on 25.07.17.
  */
 
-public class Status extends RealmObject implements Namable {
+public class Status implements Namable {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
-    private Long id;
+    private Long statusId;
     @SerializedName("name")
     @Expose
     private String name;
 
-    public Long getId() {
-        return id;
+    public Long getStatusId() {
+        return statusId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setStatusId(Long id) {
+        this.statusId = id;
     }
 
     @Override
     public String getName() {
-        return name;
+        return name != null ? name : "";
     }
 
     @Override

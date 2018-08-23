@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Project;
+import com.igorkazakov.user.redminepro.database.room.entity.ProjectEntity;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import java.util.List;
 public class ProjectsResponse {
 
     @SerializedName("projects")
-    private List<Project> projects;
+    private List<ProjectEntity> projects;
 
-    public List<Project> getProjects() {
+    public List<ProjectEntity> getProjects() {
         return projects;
     }
 
-    public void setProjects(List<Project> projects) {
+    public void setProjects(List<ProjectEntity> projects) {
         this.projects = projects;
     }
 }

@@ -6,19 +6,19 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.igorkazakov.user.redminepro.api.ApiException;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Child;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.FixedVersion;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.IssueDetail;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Namable;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Priority;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.ShortUser;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Status;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
+import com.igorkazakov.user.redminepro.database.room.entity.DetailEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.FixedVersionEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueDetailEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.PriorityEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.ShortUserEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.StatusEntity;
+import com.igorkazakov.user.redminepro.database.room.entity.TrackerEntity;
 
 import java.util.List;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by user on 28.07.17.
@@ -28,7 +28,7 @@ import io.reactivex.disposables.Disposable;
 public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
     private IssueDetailServiceInterface mRepository;
-    private Disposable mDisposable;
+    private CompositeDisposable mDisposable = new CompositeDisposable();
 
     public IssueDetailPresenter(IssueDetailServiceInterface redmineRepository) {
         mRepository = redmineRepository;
@@ -36,51 +36,83 @@ public class IssueDetailPresenter extends MvpPresenter<IssueDetailView> {
 
     public void tryLoadIssueDetailsData(long issueId) {
 
-        mDisposable = mRepository.getIssueDetails(issueId)
+        mDisposable.add(mRepository.getIssueDetails(issueId)
                 .doOnSubscribe(__ -> getViewState().showLoading())
                 .doOnTerminate(getViewState()::hideLoading)
                 .subscribe(this::setupView,
                         throwable -> {
-                            ApiException exception = (ApiException)throwable;
-                            getViewState().showError(exception);
-                        });
+                            if (throwable.getClass().isInstance(ApiException.class)) {
+                                ApiException exception = (ApiException) throwable;
+                                getViewState().showError(exception);
+                            }
+                        }));
     }
 
-    public void setupView(IssueDetail issueEntity) {
-        getViewState().setupView(issueEntity);
+    public void setupView(IssueDetailEntity issueEntity) {
+        if (!issueEntity.isEmpty()) {
+            getViewState().setupView(issueEntity);
+        }
     }
 
-    public String getSafeName(Namable object) {
-        return object != null &&
-                object.getName() != null ? object.getName() : "";
+    public void checkChildIssues(Long issueDetailId) {
+
+        mDisposable.add(mRepository.getChildsByIssueDetailId(issueDetailId)
+                .flatMap(response -> mRepository.getChildIssues(response))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    getViewState().setupChildIssues(result);
+                }));
     }
 
-    public List<Issue> getChildIssues(List<Child> children) {
+    public void checkAttachments(Long issueDetailId) {
 
-        return mRepository.getChildIssues(children);
+        mDisposable.add(mRepository.getAttachmentsByIssueDetailId(issueDetailId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    getViewState().setupAttachments(result);
+                }));
     }
 
-    public ShortUser getUserById(long id) {
+    public void checkJournals(Long issueDetailId) {
+
+        mDisposable.add(mRepository.getJournalsByIssueDetailId(issueDetailId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+                    getViewState().setupJournals(result);
+                }));
+    }
+
+    public void fetchDetails(long journalId, Consumer<? super List<DetailEntity>> onSuccess) {
+
+        mDisposable.add(mRepository.getDetailEntitiesByJournalId(journalId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onSuccess));
+    }
+
+    public ShortUserEntity getUserById(long id) {
 
         return mRepository.getUserById(id);
     }
 
-    public Status getStatusById(long id) {
+    public StatusEntity getStatusById(long id) {
 
         return mRepository.getStatusById(id);
     }
 
-    public Tracker getTrackerById(long id) {
+    public TrackerEntity getTrackerById(long id) {
 
         return mRepository.getTrackerById(id);
     }
 
-    public FixedVersion getVersionById(long id) {
+    public FixedVersionEntity getVersionById(long id) {
 
         return mRepository.getVersionById(id);
     }
 
-    public Priority getPriorityById(long id) {
+    public PriorityEntity getPriorityById(long id) {
 
         return mRepository.getPriorityById(id);
     }

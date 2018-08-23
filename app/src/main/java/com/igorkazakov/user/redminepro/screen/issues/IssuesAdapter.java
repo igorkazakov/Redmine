@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueEntity;
 
 import java.util.List;
 
@@ -17,9 +17,9 @@ import java.util.List;
 
 public class IssuesAdapter extends RecyclerView.Adapter<IssueHolder> {
 
-    private List<Issue> issueModels;
+    private List<IssueEntity> issueModels;
 
-    public IssuesAdapter(List<Issue> issueModels) {
+    public IssuesAdapter(List<IssueEntity> issueModels) {
         this.issueModels = issueModels;
     }
 
@@ -28,8 +28,7 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueHolder> {
 
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.issue_item, parent, false);
-        IssueHolder holder = new IssueHolder(view, context);
-        return holder;
+        return new IssueHolder(view, context);
     }
 
     @Override

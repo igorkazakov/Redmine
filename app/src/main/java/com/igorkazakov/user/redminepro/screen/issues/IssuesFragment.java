@@ -13,8 +13,8 @@ import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.igorkazakov.user.redminepro.R;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.Issue;
 import com.igorkazakov.user.redminepro.application.RedmineApplication;
+import com.igorkazakov.user.redminepro.database.room.entity.IssueEntity;
 import com.igorkazakov.user.redminepro.repository.Repository;
 import com.igorkazakov.user.redminepro.screen.base.BaseFragment;
 
@@ -75,10 +75,12 @@ public class IssuesFragment extends BaseFragment implements IssuesView {
     }
 
     @Override
-    public void setupView(List<Issue> issueModels) {
+    public void setupView(List<IssueEntity> issueModels) {
 
-        IssuesAdapter adapter = new IssuesAdapter(issueModels);
-        mIssueList.setAdapter(adapter);
-        mIssueSwipeRefresh.setRefreshing(false);
+        if (!issueModels.isEmpty()) {
+            IssuesAdapter adapter = new IssuesAdapter(issueModels);
+            mIssueList.setAdapter(adapter);
+            mIssueSwipeRefresh.setRefreshing(false);
+        }
     }
 }

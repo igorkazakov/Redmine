@@ -1,7 +1,7 @@
 package com.igorkazakov.user.redminepro.api.response;
 
 import com.google.gson.annotations.SerializedName;
-import com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects.Tracker;
+import com.igorkazakov.user.redminepro.database.room.entity.TrackerEntity;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import java.util.List;
 public class TrackersResponse {
 
     @SerializedName("trackers")
-    private List<Tracker> trackers;
+    private List<TrackerEntity> trackers;
 
-    public List<Tracker> getTrackers() {
+    public List<TrackerEntity> getTrackers() {
         return trackers;
     }
 
-    public void setTrackers(List<Tracker> trackers) {
+    public void setTrackers(List<TrackerEntity> trackers) {
         this.trackers = trackers;
     }
 }

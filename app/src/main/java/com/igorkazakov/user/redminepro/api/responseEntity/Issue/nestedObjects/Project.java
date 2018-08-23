@@ -3,16 +3,13 @@ package com.igorkazakov.user.redminepro.api.responseEntity.Issue.nestedObjects;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by user on 09.08.17.
  */
 
-public class Project extends RealmObject {
+public class Project {
 
-    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Long id;
