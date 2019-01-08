@@ -1,14 +1,19 @@
 package com.igorkazakov.user.redminepro.api.rxoperator.error;
 
+import android.util.Log;
+
 import com.igorkazakov.user.redminepro.api.ApiException;
 
 import java.io.IOException;
 
+import io.reactivex.Observable;
 import io.reactivex.ObservableOperator;
 import io.reactivex.Observer;
 import io.reactivex.SingleObserver;
 import io.reactivex.SingleOperator;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.fuseable.HasUpstreamObservableSource;
+import io.reactivex.internal.operators.observable.ObservableMap;
 import retrofit2.Response;
 import retrofit2.adapter.rxjava2.HttpException;
 
@@ -29,8 +34,7 @@ public final class ApiErrorOperator<T> implements ObservableOperator<T, T>, Sing
 
             @Override
             public void onError(Throwable e) {
-
-                handleError(e, (CompositeObservable) observer);
+                handleError(e, observer);
             }
 
             @Override
@@ -61,20 +65,37 @@ public final class ApiErrorOperator<T> implements ObservableOperator<T, T>, Sing
     }
 
     private void handleError(Throwable e, CompositeObservable observer) {
-
-        if (e instanceof HttpException) {
-
-            HttpException error = (HttpException) e;
-            Response response = error.response();
-            ApiException exception = new ApiException(response.message(), response.code());
-
-            observer.onError(exception);
-
-        } else if (e instanceof IOException) {
+        Log.d("Auth_error_1", e.toString());
+        e.printStackTrace();
+        if (e instanceof IOException) {
             ApiException exception = new ApiException("No Network Connection", 1);
             observer.onError(exception);
 
-        } else {
+        } else if (e instanceof retrofit2.HttpException) {
+            retrofit2.HttpException error = (retrofit2.HttpException)e;
+            Response response = error.response();
+            ApiException exception = new ApiException(response.message(), response.code());
+            observer.onError(exception);
+        }
+        else {
+            observer.onError(new ApiException(e.getLocalizedMessage(), 2));
+        }
+    }
+
+    private void handleError(Throwable e, Observer observer) {
+        Log.d("Auth_error_1", e.toString());
+        e.printStackTrace();
+        if (e instanceof IOException) {
+            ApiException exception = new ApiException("No Network Connection", 1);
+            observer.onError(exception);
+
+        } else if (e instanceof retrofit2.HttpException) {
+            retrofit2.HttpException error = (retrofit2.HttpException)e;
+            Response response = error.response();
+            ApiException exception = new ApiException(response.message(), response.code());
+            observer.onError(exception);
+        }
+        else {
             observer.onError(new ApiException(e.getLocalizedMessage(), 2));
         }
     }
